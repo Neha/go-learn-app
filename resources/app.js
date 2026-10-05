@@ -1382,7 +1382,9 @@ function runSearch(raw, opts) {
 }
 
 function restoreSearchFromHistory() {
-  const q = ((history.state && history.state.search) || new URLSearchParams(location.search).get("q") || "").trim();
+  /* Only an entry we created carries this state. A hash link keeps ?q= in the
+     address but has no state, and some browsers fire popstate for that click. */
+  const q = (history.state && history.state.search || "").trim();
   if (q.length >= 2) {
     $("#search").value = q;
     runSearch(q, { fromHistory: true });
@@ -1457,7 +1459,11 @@ function init() {
 
   /* shareable (and testable) search links: ?q=printf */
   const q0 = new URLSearchParams(location.search).get("q");
-  if (q0) { $("#search").value = q0; runSearch(q0, { fromHistory: true }); }
+  if (q0) {
+    $("#search").value = q0;
+    if (q0.trim().length >= 2) history.replaceState({ search: q0.trim() }, "", location.href);
+    runSearch(q0, { fromHistory: true });
+  }
 
   addEventListener("popstate", () => {
     popRestoring = true;
@@ -1465,6 +1471,7 @@ function init() {
     if (restoreSearchFromHistory()) return;
     searching = false;
     if ($("#search")) $("#search").value = "";
+    if (new URLSearchParams(location.search).get("q")) history.replaceState(null, "", urlWithQuery(""));
     route();
     trackVisit();
   });
