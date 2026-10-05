@@ -11,6 +11,16 @@ No build step, no dependencies. Plain HTML, CSS and vanilla JavaScript. A local 
 
 **GitHub:** [Neha/go-learn-app](https://github.com/Neha/go-learn-app)
 
+**Version:** see `#/releases`. The number lives in `resources/data/release.js`.
+
+## How changes ship
+
+Pull requests target **`stage`**. **`main`** is the live site, and Vercel publishes that branch.
+
+1. Open the pull request against `stage`.
+2. When the work is ready for readers, open a pull request from `stage` into `main`.
+3. On that promotion, edit `resources/data/release.js`: bump `version` and add a note at the top of `notes`. The footer and the release notes page both read that file.
+
 The hosted site records anonymous visits with [Vercel Web Analytics](https://vercel.com/docs/analytics): visitors, page views, bounce rate, referrers, country and device. Numbers are in the Vercel project’s **Analytics** tab. A local copy does not send them.
 
 ![Homepage of Go From Zero, with the course sidebar, the opening pitch, and the first two modules](docs/preview.png)
@@ -141,6 +151,7 @@ and one sheet per page break; "Print sheets" opens a clean print view containing
 | `#/playground` | Index of every runnable program *(behind the `playground` feature flag — off by default)* |
 | `#/how-to-use` | The intended path, every feature, suggested schedules |
 | `#/about` | What this is, what it isn't, accuracy, credits, the author |
+| `#/releases` | Version and release notes |
 | `#/privacy` | Privacy policy, data stored, copyright and licence terms |
 
 Every page ends with a site footer carrying those links, the copyright line and a one-line privacy
@@ -202,6 +213,7 @@ resources/data/diagrams.js              animated SVG figures (keyed by id)
 resources/data/glossary.js              glossary terms, definitions and cross-links
 resources/data/runnable.js              complete programs for the Run button, keyed "<module>|<title>"
 resources/data/pages.js                 About / How to use / Privacy & copyright
+resources/data/release.js               version and release notes (bump when stage is promoted to main)
 resources/data/flags.js                 feature flags (playground: false)
 ```
 

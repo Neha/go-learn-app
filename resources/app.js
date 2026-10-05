@@ -515,6 +515,7 @@ function renderNav() {
     : "") +
   navItem("#/how-to-use", "__how", "🧭", "How to use", "how to use guide path schedule shortcuts", false) +
   navItem("#/about", "__about", "🐹", "About", "about author neha sharma credits", false) +
+  navItem("#/releases", "__releases", "📋", "Release notes", "release notes version changelog what changed", false) +
   navItem("#/privacy", "__privacy", "🔒", "Privacy & copyright", "privacy policy copyright licence data", false));
   markActive();
 }
@@ -545,6 +546,7 @@ function markActive() {
   else if (h === "#/about") id = "__about";
   else if (h === "#/how-to-use") id = "__how";
   else if (h === "#/privacy") id = "__privacy";
+  else if (h === "#/releases") id = "__releases";
   $$("#nav .nav-item").forEach(a => {
     const on = a.dataset.id === id;
     a.classList.toggle("active", on);
@@ -858,17 +860,36 @@ function staticPage(id) {
     "</article></div>";
 }
 
+function releasesPage() {
+  const rel = window.RELEASE || { version: "", notes: [] };
+  const notes = (rel.notes || []).map(n =>
+    '<section class="release">' +
+      "<h2>v" + esc(n.version) + "</h2>" +
+      '<p class="lead">' + esc(n.date) + "</p>" +
+      "<ul>" + (n.items || []).map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>" +
+    "</section>").join("");
+  return '<div class="wrap"><article class="page">' +
+    '<header class="mod-head">' +
+      '<div class="crumbs"><a href="#/">Home</a> / Release notes</div>' +
+      "<h1><span>📋</span>Release notes</h1>" +
+      '<p class="lead">Version ' + esc(rel.version) + ". What changed for readers.</p>" +
+    "</header>" + notes + "</article></div>";
+}
+
 function siteFooter() {
   const year = new Date().getFullYear();
+  const ver = (window.RELEASE && RELEASE.version) ? RELEASE.version : "";
   return '<footer class="site-foot"><div class="wrap">' +
     '<div class="sf-row">' +
       '<div class="sf-brand"><span aria-hidden="true">🐹</span><b>Go<span>From</span>Zero</b>' +
         "<span class='sf-sub'>" + MODULES.length + " modules · " + PROJECTS.length +
-        " projects · " + SHEETS.length + " cheat sheets</span></div>" +
+        " projects · " + SHEETS.length + " cheat sheets" +
+        (ver ? ' · <a href="#/releases">v' + esc(ver) + "</a>" : "") + "</span></div>" +
       '<nav class="sf-links" aria-label="Site information">' +
         '<a href="#/about">About</a>' +
         '<a href="#/how-to-use">How to use</a>' +
         '<a href="#/glossary">Glossary</a>' +
+        '<a href="#/releases">Release notes</a>' +
         (flagOn("playground") ? '<a href="#/playground">Playground</a>' : "") +
         '<a href="#/privacy">Privacy &amp; copyright</a>' +
         '<a href="' + AUTHOR.github + '" target="_blank" rel="noopener">GitHub ↗</a>' +
@@ -901,6 +922,7 @@ function route() {
   else if (h === "#/about")      main.innerHTML = staticPage("about");
   else if (h === "#/how-to-use") main.innerHTML = staticPage("how-to-use");
   else if (h === "#/privacy")    main.innerHTML = staticPage("privacy");
+  else if (h === "#/releases")   main.innerHTML = releasesPage();
   else if (h === "#/" || h === "#") main.innerHTML = home();
   else                           main.innerHTML = notFound();
   main.insertAdjacentHTML("beforeend", siteFooter());
@@ -921,7 +943,9 @@ function route() {
           : h.startsWith("#/m/") && INDEX.has(h.slice(4)) ? MODULES[INDEX.get(h.slice(4))].title
           : h.startsWith("#/p/") && PINDEX.has(h.slice(4)) ? PROJECTS[PINDEX.get(h.slice(4))].name
           : null;
-  document.title = t ? t + " — Go From Zero" : "Go From Zero — Learn Golang, Beginner to Internals";
+  document.title = t ? t + " — Go From Zero"
+    : h === "#/releases" ? "Release notes — Go From Zero"
+    : "Go From Zero — Learn Golang, Beginner to Internals";
 }
 
 /* #/sheets/<id> and #/glossary/<term> land on that card, not the top of the page. */
