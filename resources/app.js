@@ -34,7 +34,7 @@ function keepFlagged(str) {
   return flagOn(m[1]) ? String(str).replace(FLAG_RE, "") : null;
 }
 const filterFlagged = arr => (arr || []).map(keepFlagged).filter(x => x !== null);
-const AUTHOR   = { name: "Neha Sharma", x: "https://x.com/hellonehha", handle: "@hellonehha" };
+const AUTHOR   = { name: "Neha Sharma", x: "https://x.com/hellonehha", handle: "@hellonehha", github: "https://github.com/Neha/go-learn-app" };
 let CUR_MOD = "";   /* set while rendering a module, so codeBlock can find programs */
 const LEVELS   = ["Beginner", "Intermediate", "Advanced", "Production"];
 const INDEX    = new Map(MODULES.map((m, i) => [m.id, i]));
@@ -871,6 +871,7 @@ function siteFooter() {
         '<a href="#/glossary">Glossary</a>' +
         (flagOn("playground") ? '<a href="#/playground">Playground</a>' : "") +
         '<a href="#/privacy">Privacy &amp; copyright</a>' +
+        '<a href="' + AUTHOR.github + '" target="_blank" rel="noopener">GitHub ↗</a>' +
         '<a href="' + AUTHOR.x + '" target="_blank" rel="noopener me">' + AUTHOR.handle + " ↗</a>" +
       "</nav>" +
     "</div>" +

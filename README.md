@@ -9,6 +9,8 @@ No build step, no dependencies. Plain HTML, CSS and vanilla JavaScript. A local 
 
 **Live site:** [go-learn-app-seven.vercel.app](https://go-learn-app-seven.vercel.app/)
 
+**GitHub:** [Neha/go-learn-app](https://github.com/Neha/go-learn-app)
+
 The hosted site records anonymous visits with [Vercel Web Analytics](https://vercel.com/docs/analytics): visitors, page views, bounce rate, referrers, country and device. Numbers are in the Vercel project’s **Analytics** tab. A local copy does not send them.
 
 ![Homepage of Go From Zero, with the course sidebar, the opening pitch, and the first two modules](docs/preview.png)
