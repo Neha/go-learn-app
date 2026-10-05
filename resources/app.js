@@ -761,7 +761,7 @@ function modulePage(id) {
     '<div class="mark-done' + (state.done[m.id] ? " on" : "") + '" data-markwrap="' + m.id + '">' +
       '<button class="btn ' + (state.done[m.id] ? "btn-ghost" : "btn-primary") + '" type="button" data-markdone="' + m.id + '">' +
         (state.done[m.id] ? "✓ Completed — mark as not done" : "✓ Mark this module complete") + "</button>" +
-      '<span class="md-note">Answering all five questions marks it automatically — ' +
+      '<span class="md-note">Answering every question correctly marks it automatically — ' +
       "or tick it here if you only came for the reading.</span></div>" +
 
     '<nav class="pager">' +
@@ -780,12 +780,21 @@ function shuffled(n) {
 
 function quizHTML(m) {
   const sc = state.scores[m.id];
+  const missed = new Set((sc && sc.missed) || []);
+  const passed = !!(sc && sc.total && sc.correct === sc.total);
+  const missedLabel = [...missed].sort((a, b) => a - b).map(i => "Q" + (i + 1)).join(", ");
   return '<section class="quiz" data-quiz="' + m.id + '">' +
     '<div class="quiz-head"><h2>🧠 Try these five</h2>' +
     '<span class="score" data-score>' + (sc ? sc.correct + " / " + sc.total : "0 / " + m.quiz.length) + "</span></div>" +
-    '<p class="hint">Pick an answer to see whether it is right and why. Answer all five to mark this module complete.</p>' +
+    '<p class="hint">Pick an answer to see whether it is right and why. ' +
+    (passed ? "You answered every question correctly."
+            : "Answer every question correctly to mark this module complete, or use the button below after reading.") +
+    "</p>" +
+    (missed.size && !passed
+      ? '<p class="hint">Last attempt missed ' + esc(missedLabel) + ".</p>"
+      : "") +
     m.quiz.map((q, qi) =>
-      '<div class="q" data-q="' + qi + '" data-answer="' + q.answer + '">' +
+      '<div class="q' + (missed.has(qi) ? " missed" : "") + '" data-q="' + qi + '" data-answer="' + q.answer + '">' +
         '<div class="q-text"><span class="num">Q' + (qi + 1) + ".</span><span>" + md(q.q) + "</span></div>" +
         '<div class="opts">' +
           shuffled(q.options.length).map((oi, pos) =>
@@ -944,29 +953,33 @@ function onQuizClick(btn) {
   $("[data-score]", quiz).textContent = correctN + " / " + qs.length;
 
   if (done.length === qs.length) {
-    state.scores[modId] = { correct: correctN, total: qs.length };
-    state.done[modId] = true;
+    const missed = qs.filter(x => x.dataset.answered !== "right").map(x => Number(x.dataset.q));
+    const passed = correctN === qs.length;
+    state.scores[modId] = { correct: correctN, total: qs.length, missed };
+    if (passed) state.done[modId] = true;
     save();
-    paintProgress();
-    renderNav();
-    applyNavFilter($("#search") ? $("#search").value : "");
-    const head = $(".mod-meta");
-    if (head && !head.querySelector(".done-chip")) {
-      head.insertAdjacentHTML("beforeend", '<span class="done-chip" style="color:var(--ok)">✓ completed</span>');
-    }
-    const mdBtn = $("[data-markdone]");
-    if (mdBtn) {
-      mdBtn.closest("[data-markwrap]").classList.add("on");
-      mdBtn.className = "btn btn-ghost";
-      mdBtn.textContent = "✓ Completed — mark as not done";
+    if (passed) {
+      paintProgress();
+      renderNav();
+      applyNavFilter($("#search") ? $("#search").value : "");
+      const head = $(".mod-meta");
+      if (head && !head.querySelector(".done-chip")) {
+        head.insertAdjacentHTML("beforeend", '<span class="done-chip" style="color:var(--ok)">✓ completed</span>');
+      }
+      const mdBtn = $("[data-markdone]");
+      if (mdBtn) {
+        mdBtn.closest("[data-markwrap]").classList.add("on");
+        mdBtn.className = "btn btn-ghost";
+        mdBtn.textContent = "✓ Completed — mark as not done";
+      }
     }
 
     const box = $(".quiz-done", quiz);
-    const msg = correctN === qs.length ? "Perfect score. 🐹 Nothing left to review here."
-              : correctN >= qs.length - 1 ? "Strong. Skim the summary for the one you missed."
-              : correctN >= 3 ? "Good. Re-read the sections behind the misses before moving on."
-              : "Worth another pass — scroll up and work through the module again.";
-    box.innerHTML = "<b>" + correctN + " / " + qs.length + " — module complete ✓</b><p>" + msg + "</p>";
+    const missedLabel = missed.map(i => "Q" + (i + 1)).join(", ");
+    const msg = passed ? "Perfect score. 🐹 Nothing left to review here."
+              : "Missed " + missedLabel + ". This module stays incomplete until every answer is correct, or you mark it complete yourself.";
+    box.innerHTML = "<b>" + correctN + " / " + qs.length + (passed ? " — module complete ✓" : " — not complete yet") + "</b><p>" + msg + "</p>" +
+      (passed ? "" : '<button class="btn btn-primary" type="button" data-retry style="margin-top:12px">Try again</button>');
     box.classList.add("show");
   }
 }
@@ -1423,6 +1436,14 @@ function init() {
   $("#main").addEventListener("click", async e => {
     const opt = e.target.closest(".opt");
     if (opt && !opt.disabled) { onQuizClick(opt); return; }
+
+    const retry = e.target.closest("[data-retry]");
+    if (retry) {
+      const quiz = retry.closest(".quiz");
+      const m = MODULES[INDEX.get(quiz.dataset.quiz)];
+      if (m) quiz.outerHTML = quizHTML(m);
+      return;
+    }
 
     const md = e.target.closest("[data-markdone]");
     if (md) {
