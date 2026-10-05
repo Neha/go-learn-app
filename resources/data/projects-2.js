@@ -16,6 +16,7 @@ window.PROJECTS = (window.PROJECTS || []).concat([
   blocks: [
     { t: "p", html: "Go is excellent at the thing the industry forgot how to do: render HTML on the server, fast, from one binary. This project is a real multi-user web app — public blog, login, draft/publish workflow, image uploads, comments with moderation — and the entire frontend is <code>html/template</code> plus about 30 lines of HTMX. No npm, no build step, no hydration." },
     { t: "h", text: "Pages and routes" },
+    { t: "p", html: "These are the pages and the form posts. Public routes need no login. The rest should refuse a request that has no session." },
     { t: "code", title: "The surface", code:
 `PUBLIC
   GET  /                      paginated post list
@@ -39,6 +40,7 @@ ADMIN  (requires a session + the author/admin role)
   POST     /admin/comments/{id}/approve | /delete`
     },
     { t: "h", text: "Templates: layout + partials, parsed once" },
+    { t: "p", html: "Parse the templates once when the program starts, and embed them in the binary. A request only fills in the data." },
     { t: "code", title: "html/template done properly", code:
 `//go:embed templates/* static/*
 var assets embed.FS
@@ -84,6 +86,7 @@ func (s *Server) render(w http.ResponseWriter, status int, page string, data any
     { t: "note", kind: "warn", title: "html/template escapes — until you hand it HTML", html: "<code>html/template</code> is <em>contextually</em> auto-escaping: it knows the difference between an attribute, a URL, a JS literal and body text, which kills most XSS for free. The moment you return <code>template.HTML</code> from a markdown renderer, you have opted out — so sanitise the rendered output with <code>bluemonday.UGCPolicy()</code> before marking it safe. Never use <code>text/template</code> for HTML." },
 
     { t: "h", text: "Sessions, cookies and CSRF" },
+    { t: "p", html: "The session cookie must be HttpOnly so a script cannot read it, Secure so it is only sent over HTTPS, and SameSite so another site cannot send it. A CSRF token is a second check on every form post." },
     { t: "code", title: "The security basics that are non-negotiable", code:
 `// Cookie flags: get these wrong and everything else is theatre.
 http.SetCookie(w, &http.Cookie{
@@ -185,6 +188,7 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
   blocks: [
     { t: "p", html: "An HTTP request lives for milliseconds; a WebSocket lives for hours. That single difference breaks every habit you built from request/response work: now you own goroutine lifetimes, backpressure for slow consumers, heartbeats, reconnection, and state that must survive a deploy. It is the best possible exercise for Go's concurrency primitives." },
     { t: "h", text: "Architecture" },
+    { t: "p", html: "Each browser connection is one client. One goroutine reads from that connection and one writes to it, so a slow browser cannot block the others." },
     { t: "code", title: "One hub, two goroutines per client", code:
 `  browser ──WS──┐
   browser ──WS──┤──▶ Client{ conn, send chan []byte, rooms map[string]bool }
@@ -298,6 +302,7 @@ func (h *Hub) send(c *Client, msg []byte) {
   blocks: [
     { t: "p", html: "Everything you have built so far forgives a retry or a lost update. Payments do not. This project teaches the patterns that exist specifically because money is involved: integer currency, idempotency keys, webhook signature verification, exactly-once effects from at-least-once delivery, and state machines that cannot go backwards." },
     { t: "h", text: "The flow" },
+    { t: "p", html: "The browser talks only to your server. Your server talks to the payment provider. The provider is the source of truth for whether money moved." },
     { t: "code", title: "Who is the source of truth?", code:
 ` browser                your server                    payment provider
    │  GET /products          │                                 │
@@ -431,6 +436,7 @@ func (o *Order) To(next Status) error {
   blocks: [
     { t: "p", html: "<em>snip</em> taught you a working API. This one teaches the hundred decisions that separate a working API from one other teams can build on: how errors are shaped, how clients page through a million rows without timing out, how a token is revoked, how you add a field without breaking anyone, and how all of that is documented and tested." },
     { t: "h", text: "The surface" },
+    { t: "p", html: "This is the HTTP API. The auth routes hand out a short-lived token. Every other route requires that token." },
     { t: "code", title: "A bookshelf API — boring domain, interesting engineering", code:
 `AUTH
   POST   /v1/auth/register
@@ -454,6 +460,7 @@ META
   GET    /healthz /readyz /version`
     },
     { t: "h", text: "One error contract, documented and tested" },
+    { t: "p", html: "Every error response has the same JSON shape. A client checks a code, not the wording of a sentence." },
     { t: "code", title: "Clients should never have to parse prose", code:
 `// Every non-2xx response has exactly this shape. Pick it once; never deviate.
 type APIError struct {
@@ -574,6 +581,7 @@ func (s *Server) requireAuth(next http.Handler) http.Handler {
   blocks: [
     { t: "p", html: "REST is how services talk to browsers; gRPC is how they talk to each other. You get a typed contract both sides compile against, HTTP/2 multiplexing, real streaming, generated clients, and deadlines that propagate automatically. Build two services — an <code>accounts</code> service and a <code>ledger</code> service — and make them call each other properly." },
     { t: "h", text: "The contract comes first" },
+    { t: "p", html: "The <code>.proto</code> file is the API. Generate the Go types from it, and do not hand-write a second copy." },
     { t: "code", title: "proto/ledger/v1/ledger.proto", code:
 `syntax = "proto3";
 package ledger.v1;
@@ -715,6 +723,7 @@ conn, _ := grpc.NewClient(target,
   blocks: [
     { t: "p", html: "File handling is where <code>io.Reader</code> and <code>io.Writer</code> stop being abstractions you read about and start being the reason your service survives a 4 GB upload on a 512 MB container. Nothing here may ever call <code>io.ReadAll</code> on user data." },
     { t: "h", text: "The API" },
+    { t: "p", html: "Small files are uploaded in the request body. Large files get a short-lived address to upload to directly, so the request does not hold the whole file in memory." },
     { t: "code", title: "Three upload paths, because size matters", code:
 `POST   /v1/files                      small files: streaming multipart (<= 32 MB)
 POST   /v1/files/presign              large files: client uploads DIRECTLY to S3
@@ -847,6 +856,7 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) {
   blocks: [
     { t: "p", html: "Every platform grows one of these. Building it yourself — on top of <code>httputil.ReverseProxy</code>, which is about 400 lines of standard library — demystifies Nginx, Envoy and Kong, and forces you to understand HTTP hop-by-hop semantics, streaming bodies, connection pooling and cross-cutting resilience in one place." },
     { t: "h", text: "What it does" },
+    { t: "p", html: "A YAML file lists each path and the servers behind it. The gateway reads that file and forwards the request." },
     { t: "code", title: "Config-driven routing", code:
 `# gateway.yaml
 listen: ":8080"

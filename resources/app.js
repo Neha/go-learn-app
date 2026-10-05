@@ -56,11 +56,23 @@ const PPOS = new Map(PORDER.map((p, i) => [p.id, i]));
 const KEY = "gofromzero.v1";
 let state = load();
 function load() {
-  const base = { done: {}, scores: {}, theme: null, ms: {}, animPaused: false, collapsed: {} };
+  const base = { done: {}, scores: {}, theme: null, text: 16, ms: {}, animPaused: false, collapsed: {} };
   try { return Object.assign(base, JSON.parse(localStorage.getItem(KEY) || "{}")); }
   catch { return base; }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} }
+
+const TEXT_SIZES = [14, 16, 18, 20, 22];
+function currentText() { return TEXT_SIZES.includes(state.text) ? state.text : 16; }
+function setTextSize(px) {
+  if (!TEXT_SIZES.includes(px)) return;
+  state.text = px;
+  document.documentElement.style.fontSize = px + "px";
+  const down = $("#textSmaller"), up = $("#textLarger");
+  if (down) down.disabled = px === TEXT_SIZES[0];
+  if (up) up.disabled = px === TEXT_SIZES[TEXT_SIZES.length - 1];
+  save();
+}
 
 /* ---------- tiny helpers ---------- */
 const $  = (s, r = document) => r.querySelector(s);
@@ -167,7 +179,9 @@ function codeBlock(b) {
     '<span class="title">' + esc(b.title || "go") + "</span>" +
     (prog ? '<button class="copy run" type="button" data-play title="Copy this runnable program and open the Go Playground">▶ Run</button>' : "") +
     '<button class="copy" type="button" data-copy>Copy</button></div>' +
-    "<pre><code>" + highlight(b.code) + "</code></pre></div>";
+    "<pre><code>" + highlight(b.code) + "</code></pre>" +
+    (b.out ? '<div class="code-out"><span>Output</span><pre>' + esc(b.out) + "</pre></div>" : "") +
+    "</div>";
 }
 
 const PLAYGROUND = "https://go.dev/play/";
@@ -1493,6 +1507,7 @@ function init() {
   if (!MODULES.length) { $("#main").innerHTML = '<div class="wrap"><div class="empty">Course data failed to load. Serve the folder over HTTP (<code>python3 -m http.server</code>) and reload.</div></div>'; return; }
 
   setTheme(state.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+  setTextSize(currentText());
   buildSearchIndex();
   renderNav();
   paintProgress();
@@ -1527,6 +1542,14 @@ function init() {
     trackVisit();
   });
   $("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+  $("#textSmaller").addEventListener("click", () => {
+    const i = TEXT_SIZES.indexOf(currentText());
+    if (i > 0) setTextSize(TEXT_SIZES[i - 1]);
+  });
+  $("#textLarger").addEventListener("click", () => {
+    const i = TEXT_SIZES.indexOf(currentText());
+    if (i < TEXT_SIZES.length - 1) setTextSize(TEXT_SIZES[i + 1]);
+  });
   $("#navToggle").addEventListener("click", () => $("#sidebar").classList.contains("open") ? closeDrawer() : openDrawer());
   $("#scrim").addEventListener("click", closeDrawer);
   $("#nav").addEventListener("click", e => {

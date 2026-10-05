@@ -15,6 +15,7 @@ window.PROJECTS = [
   blocks: [
     { t: "p", html: "A single static binary that takes a path and prints a table: files scanned, total bytes, lines, words, the largest files, and a breakdown by extension. It sounds trivial — and then you hit symlinks, permission errors, files bigger than memory, Unicode, and the fact that walking 200,000 files serially is slow. That is exactly the point." },
     { t: "h", text: "Target behaviour" },
+    { t: "p", html: "This is what the finished command should print. Build until your program matches it." },
     { t: "code", title: "The CLI you're building", code:
 `$ gostat ./myproject
 PATH  ./myproject          FILES 1,284     SIZE 42.1 MB     TIME 310ms
@@ -33,6 +34,7 @@ $ gostat --exclude 'vendor,node_modules,.git' .
 $ gostat --version`
     },
     { t: "h", text: "Architecture" },
+    { t: "p", html: "This is how the pieces connect. Read it before you create the packages." },
     { t: "code", title: "A three-stage pipeline", code:
 `  main.go              flags -> Config, then calls run(cfg, os.Stdout)
      |
@@ -114,6 +116,7 @@ func countFile(path string) (FileStat, error) {
   blocks: [
     { t: "p", html: "This is the project to build if you only build one. It is small enough to finish and complete enough to be genuinely production-shaped: a real datastore, real migrations, real middleware, real tests, a real container, and real operational endpoints." },
     { t: "h", text: "The API" },
+    { t: "p", html: "These are the requests the program must accept, and what it sends back." },
     { t: "code", title: "Endpoints", code:
 `POST   /api/links            {"url":"https://go.dev","custom":"godev","ttl":"720h"}
        -> 201 {"code":"godev","short":"http://localhost:8080/godev","expires_at":"..."}
@@ -126,6 +129,7 @@ GET    /healthz /readyz /version        (public, cheap)
 GET    /metrics  /debug/pprof/*         (INTERNAL admin port 9090 only)`
     },
     { t: "h", text: "Layout: dependencies point inward" },
+    { t: "p", html: "Each folder is one package. A package may import only what this layout allows, and <code>internal</code> keeps the rest of the module from reaching in." },
     { t: "code", title: "Package structure", code:
 `cmd/server/main.go            load config -> run() -> wire -> serve
 cmd/migrate/main.go
@@ -227,6 +231,7 @@ func status(err error) int {
   blocks: [
     { t: "p", html: "Crawling one page is twenty lines. Crawling ten thousand pages politely, in parallel, without duplicating work, without leaking goroutines, without melting the target server, and stopping cleanly on Ctrl-C is a genuine engineering exercise — and it will teach you more about Go's concurrency model than any tutorial." },
     { t: "h", text: "Target behaviour" },
+    { t: "p", html: "This is what the finished command should print. Build until your program matches it." },
     { t: "code", title: "The CLI", code:
 `$ crawlr --depth 3 --workers 20 --rps 5 --timeout 10s \\
          --same-host --out sitemap.json https://example.com
@@ -242,6 +247,7 @@ wrote sitemap.json (842 pages, 3,118 edges)
 ^C  -> cancelling: draining 20 workers... flushed partial results to sitemap.json`
     },
     { t: "h", text: "Architecture" },
+    { t: "p", html: "This is how the pieces connect. Read it before you create the packages." },
     { t: "code", title: "Bounded everything", code:
 `                       ┌──────── frontier (buffered chan Task) ────────┐
                        │  Task{URL string; Depth int}                   │
@@ -336,6 +342,7 @@ body := io.LimitReader(resp.Body, 5<<20)   // 5 MB ceiling`
   blocks: [
     { t: "p", html: "A Bitcask-style engine: every write appends to a log file, an in-memory hash index maps each key to a file offset, and reads are one seek. It is the design behind Riak and the ancestor of a dozen embedded stores — simple enough to build in a weekend, deep enough to teach you durability, file formats, crash recovery and what <code>fsync</code> actually costs." },
     { t: "h", text: "The record format" },
+    { t: "p", html: "This is one record on disk, byte by byte. Design it before you write Put and Get, because every later feature has to read this layout." },
     { t: "code", title: "On-disk layout — design this first, on paper", code:
 ` ┌────────┬───────────┬──────────┬────────────┬─────────┬───────────┐
  │ CRC32  │ Timestamp │ KeyLen   │ ValueLen   │   Key   │   Value   │
@@ -426,6 +433,7 @@ func (db *DB) Get(key string) ([]byte, error) {
   blocks: [
     { t: "p", html: "Almost every real backend needs one of these: send the email, generate the report, call the slow third-party API — later, reliably, without blocking the request. Building it yourself teaches the hard parts of distributed systems in a single process you can fully understand: exactly-once is impossible, at-least-once plus idempotency is the answer, and every failure mode has to be designed for." },
     { t: "h", text: "Why Postgres and not Redis" },
+    { t: "p", html: "The useful part is one SQL statement. Several workers can each lock a different row, and a row that is already locked is skipped instead of blocking the others." },
     { t: "code", title: "FOR UPDATE SKIP LOCKED is the whole trick", code:
 `-- Multiple workers can claim DIFFERENT rows concurrently with no contention
 -- and no lost jobs: the row lock is the lease, inside a transaction.
@@ -553,6 +561,7 @@ func (w *Worker) safeHandle(ctx context.Context, j Job) (err error) {
   blocks: [
     { t: "p", html: "A dashboard that aggregates several slow, unreliable upstream APIs — GitHub repo stats, a weather endpoint, your own services' <code>/metrics</code> — and streams live updates to a browser. One binary, no npm, no separate frontend: templates and assets are compiled in with <code>go:embed</code>. This is the project that shows Go doing a full product end to end." },
     { t: "h", text: "Architecture" },
+    { t: "p", html: "This is how the pieces connect. Read it before you create the packages." },
     { t: "code", title: "Fan-in, cache, broadcast", code:
 `  poller (background goroutine, ticker)
      │  errgroup: fetch every source CONCURRENTLY with a per-source

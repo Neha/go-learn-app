@@ -12,6 +12,7 @@ window.CURRICULUM_PARTS.push([
   blurb: "Table-driven tests, fuzzing, benchmarks with -benchmem, and finding the real bottleneck with pprof.",
   blocks: [
     { t: "h", text: "Testing is built in — no framework required" },
+    { t: "p", html: "A test is a function named <code>TestXxx</code> in a file ending in <code>_test.go</code>. Those files are not compiled into your program. <code>go test</code> runs them. A table of cases in one test is the usual shape: one row per input and expected output." },
     { t: "code", title: "math_test.go", code:
 `package math
 
@@ -65,6 +66,7 @@ go test -timeout 30s ./...`
     },
 
     { t: "h", text: "Helpers, cleanup, and fixtures" },
+    { t: "p", html: "<code>t.Helper()</code> makes a failure point at the caller, not at the helper. <code>t.Cleanup</code> runs after the test, even if it fails. <code>t.TempDir()</code> is a directory that is deleted afterwards. Prefer these over <code>TestMain</code> unless every test in the package shares one expensive setup." },
     { t: "code", title: "The testing API you'll actually use", code:
 `func newTestDB(t *testing.T) *DB {
     t.Helper()                      // failures report the CALLER's line, not this one
@@ -119,6 +121,7 @@ svc := NewService(fakeStore{getFn: func(_ context.Context, id int) (*User, error
     },
 
     { t: "h", text: "The test pyramid, in Go terms" },
+    { t: "p", html: "Most tests should be small and fast. A few should start the real program. This table is that split: what each level covers, what it is allowed to depend on, and how many of them you want." },
     { t: "table", head: ["Level", "Scope", "Dependencies", "Speed", "How many"],
       rows: [
         ["<strong>Unit</strong>", "One function or type", "None — pure logic", "µs–ms", "Most of them"],
@@ -191,6 +194,7 @@ func withTx(t *testing.T) *sql.Tx {
     { t: "note", kind: "tip", title: "Flaky tests are worse than missing tests", html: "A test that fails 1% of the time trains your team to re-run CI instead of reading failures. The usual causes in Go: depending on map iteration order, <code>time.Sleep</code> instead of synchronisation, shared global state between <code>t.Parallel()</code> tests, real clocks (inject a <code>Clock</code> interface), real network calls, and fixed ports (always use <code>:0</code> or <code>httptest</code>). Fix or delete a flake the day you find it — and <code>go test -shuffle=on -count=5</code> will find most of them for you." },
 
     { t: "h", text: "Fuzzing: the compiler finds your edge cases" },
+    { t: "p", html: "A fuzz test takes a <code>[]byte</code> or other inputs and tries random values, then remembers the ones that crash. <code>go test -fuzz</code> runs it. The goal is \"this function must not panic\", not \"this equals 4\"." },
     { t: "code", title: "Built in since Go 1.18", code:
 `func FuzzParse(f *testing.F) {
     f.Add("valid input")              // seed corpus
@@ -210,6 +214,7 @@ func withTx(t *testing.T) *sql.Tx {
     },
 
     { t: "h", text: "Benchmarking" },
+    { t: "p", html: "A benchmark function is <code>BenchmarkXxx</code> and loops <code>b.N</code> times. <code>go test -bench=. -benchmem</code> reports time and allocations. Compare two runs with <code>benchstat</code>, not by eye, because a single run is noisy." },
     { t: "code", title: "Measure, don't guess", code:
 `// MODERN FORM (Go 1.24+): for b.Loop() { ... }
 // It runs the body a framework-chosen number of times, keeps setup outside the
@@ -256,6 +261,7 @@ func BenchmarkParallel(b *testing.B) {
     { t: "note", kind: "warn", title: "The compiler can delete your benchmark", html: "If the result is unused, dead-code elimination may remove the work entirely and you'll \"optimise\" to 0.3 ns/op. Assign to a package-level <code>var sink</code>, or use the result. Also beware <code>b.N</code> loops that mutate shared state across iterations." },
 
     { t: "h", text: "Testing concurrent code without sleeps" },
+    { t: "p", html: "A sleep in a test is a race against the machine. Wait on a channel, a <code>sync.WaitGroup</code>, or <code>synctest</code> (Go 1.24) so the test proceeds when the work is done. <code>go test -race</code> is how you find unsynchronised access." },
     { t: "code", title: "testing/synctest — a fake clock and a bubble (Go 1.24 experiment, 1.25 stable)", code:
 `// The usual way to test "this retries after 30 seconds" is time.Sleep, which
 // makes the suite slow AND flaky. synctest runs your goroutines in an isolated
@@ -287,6 +293,7 @@ func TestRetryBackoff(t *testing.T) {
     { t: "note", kind: "tip", title: "If you can't use synctest", html: "Inject a clock. Define <code>type Clock interface { Now() time.Time; After(time.Duration) &lt;-chan time.Time }</code>, pass the real one in production and a controllable fake in tests. Any test containing <code>time.Sleep</code> to \"let the goroutine finish\" is a future flake — synchronise on a channel or a <code>WaitGroup</code> instead." },
 
     { t: "h", text: "Profiling with pprof" },
+    { t: "p", html: "<code>go test -cpuprofile</code> or an HTTP <code>/debug/pprof</code> endpoint records where time and memory go. <code>go tool pprof</code> shows the functions that dominate. Optimise the top of that list, not the function you guessed." },
     { t: "code", title: "From a benchmark", code:
 `go test -bench=. -cpuprofile=cpu.out -memprofile=mem.out ./...
 go tool pprof -http=:8080 cpu.out     # flame graph in your browser
@@ -368,6 +375,7 @@ go tool trace trace.out
     { t: "p", html: "Go's standard library is production-grade. You can serve HTTP, speak JSON, talk to SQL, log structurally, and shut down cleanly with <strong>zero dependencies</strong>." },
 
     { t: "h", text: "HTTP server, with the 1.22+ router" },
+    { t: "p", html: "The standard library router matches a method and a path, including <code>{id}</code> wildcards, and <code>r.PathValue</code> reads them. Build an <code>http.Server</code> and set timeouts. <code>http.ListenAndServe</code> with no timeouts will wait forever on a slow client." },
     { t: "code", title: "Method and wildcard patterns are now built in", code:
 `func main() {
     mux := http.NewServeMux()
@@ -405,6 +413,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
     { t: "note", kind: "warn", title: "Never use `http.ListenAndServe` with the default settings in production", html: "The zero-value <code>http.Server</code> has <strong>no timeouts</strong>. A single slow or malicious client can hold a connection — and its goroutine and memory — open indefinitely. Setting <code>ReadHeaderTimeout</code> alone prevents the classic Slowloris attack." },
 
     { t: "h", text: "Middleware is just a function that wraps a Handler" },
+    { t: "p", html: "Middleware is a function that takes an <code>http.Handler</code> and returns another. The returned handler does something, then calls the one inside. Logging, authentication, and recovery from panic are all that shape. There is no framework required." },
     { t: "diagram", id: "middleware" },
     { t: "code", title: "No framework needed", code:
 `func logging(next http.Handler) http.Handler {
@@ -431,6 +440,7 @@ func recoverer(next http.Handler) http.Handler {
     },
 
     { t: "h", text: "JSON" },
+    { t: "p", html: "<code>json.Marshal</code> turns a struct into bytes. <code>Unmarshal</code> fills a struct from bytes. A field is included only if its name is exported. The <code>json</code> tag renames it. <code>omitempty</code> drops the field when it is the zero value. <code>-</code> drops it always." },
     { t: "code", title: "encoding/json and struct tags", code:
 `type User struct {
     ID      int       ` + "`json:\"id\"`" + `
@@ -487,6 +497,7 @@ json.Unmarshal(b, &any1)        // numbers arrive as float64!
     },
 
     { t: "h", text: "Structured logging with slog (Go 1.21+)" },
+    { t: "p", html: "<code>slog</code> logs key-value pairs instead of one string, so a log system can filter on <code>user_id</code> without parsing text. Set the level and the output once. Pass a <code>context</code> when you want the request id included." },
     { t: "code", title: "Stop using log.Printf in services", code:
 `logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
     Level: slog.LevelInfo,
@@ -503,6 +514,7 @@ reqLog.Info("handling")
     },
 
     { t: "h", text: "database/sql" },
+    { t: "p", html: "<code>sql.Open</code> does not connect. It prepares a pool, and the first query connects. Always pass a <code>context</code>. Close rows with <code>defer rows.Close()</code> and check <code>rows.Err()</code> after the loop. A query with <code>?</code> or <code>$1</code> placeholders is how you avoid building SQL from user text." },
     { t: "code", title: "A driver-agnostic interface with a built-in pool", code:
 `import _ "github.com/lib/pq"          // driver registers itself via init()
 
@@ -546,6 +558,7 @@ return tx.Commit()
     { t: "note", kind: "deep", title: "Timers: the classic leak, and what Go 1.23 changed", html: "<code>time.After(d)</code> inside a <code>select</code> in a loop used to leak: the timer stayed alive for the full duration even after the select returned, so a hot loop with a 10-minute timeout accumulated timers. <strong>Go 1.23 made unreferenced timers eligible for collection immediately</strong> and stopped buffering their channel, which removes the leak and makes <code>Reset</code>/<code>Stop</code> behave intuitively. On any older version — or whenever the timeout is long and the loop is hot — use an explicit <code>timer := time.NewTimer(d)</code> with <code>defer timer.Stop()</code>. Always <code>defer ticker.Stop()</code> for a <code>time.Ticker</code> regardless of version." },
 
     { t: "h", text: "Graceful shutdown" },
+    { t: "p", html: "On SIGTERM, stop accepting new requests and let the ones in flight finish, up to a deadline. <code>server.Shutdown(ctx)</code> does that. <code>Close</code> drops them. Pair it with <code>signal.NotifyContext</code>." },
     { t: "code", title: "Finish in-flight requests, then exit", code:
 `func main() {
     srv := &http.Server{Addr: ":8080", Handler: mux}
@@ -629,6 +642,7 @@ http.Handle("GET /static/", http.FileServerFS(assets))
   blurb: "Naming, project layout, the common mistakes, a performance checklist, and a roadmap.",
   blocks: [
     { t: "h", text: "Naming" },
+    { t: "p", html: "Packages are short, lower-case, and named for what they provide, not <code>util</code>. Exported names start with a capital letter. Do not stutter: <code>user.New</code>, not <code>user.NewUser</code>. Getters have no <code>Get</code> prefix." },
     { t: "code", title: "Short, lowercase, no stutter", code:
 `// Packages: short, lowercase, singular, no underscores or camelCase
 //   good: http, json, user, store
@@ -656,6 +670,7 @@ userID, serveHTTP, parseURL, APIKey`
     },
 
     { t: "h", text: "The mistakes nearly everyone makes once" },
+    { t: "p", html: "Each row is a mistake the compiler will not catch, and the habit that replaces it." },
     { t: "table", head: ["Mistake", "Instead"],
       rows: [
         ["Ignoring errors with <code>_</code>", "Handle, wrap, or deliberately comment why it's safe"],
@@ -676,6 +691,7 @@ userID, serveHTTP, parseURL, APIKey`
     },
 
     { t: "h", text: "Performance checklist — in priority order" },
+    { t: "p", html: "Measure before you change anything. Then, in order: do less work, allocate less, and only then reach for tricks. A profile tells you which of those matters. A guess usually optimises the wrong function." },
     { t: "list", ordered: true, items: [
       "<strong>Measure.</strong> <code>-benchmem</code>, then pprof, then <code>go tool trace</code>. Optimising unmeasured code is how readable programs die.",
       "<strong>Fix the algorithm first.</strong> O(n²) → O(n log n) beats every micro-optimisation combined.",
@@ -688,6 +704,7 @@ userID, serveHTTP, parseURL, APIKey`
     ]},
 
     { t: "h", text: "Profile-guided optimisation — the free 5%" },
+    { t: "p", html: "PGO feeds a real CPU profile back into the compiler so it inlines the functions your program actually calls. Put the profile next to <code>main</code> as <code>default.pgo</code> and <code>go build</code> uses it. The gain is usually a few percent, not a rewrite." },
     { t: "code", title: "PGO: Go 1.21+, and almost nobody uses it", code:
 `# 1. Collect a CPU profile from PRODUCTION (or a representative load test)
 curl -o cpu.pprof 'http://prod-host:6060/debug/pprof/profile?seconds=60'
@@ -707,6 +724,7 @@ go build -pgo=./prod.pprof ./...`
     },
 
     { t: "h", text: "What the compiler does for you (and how to see it)" },
+    { t: "p", html: "The compiler inlines small functions, removes dead code, and decides stack versus heap. <code>go build -gcflags=\"-m\"</code> prints those decisions. You do not annotate them yourself." },
     { t: "code", title: "Inlining, bounds-check elimination, devirtualisation", code:
 `go build -gcflags="-m -m" ./...     # inlining + escape decisions, verbosely
 go build -gcflags="-d=ssa/check_bce/debug=1" ./...   # bounds checks NOT eliminated
@@ -729,6 +747,7 @@ type counter struct { n atomic.Int64; _ [56]byte }`
     },
 
     { t: "h", text: "Build tags, generate, and cgo" },
+    { t: "p", html: "A build tag such as <code>//go:build integration</code> includes a file only when you pass <code>-tags=integration</code>. <code>go generate</code> runs commands you listed, such as stringer. cgo calls C code. It works, and it makes cross compiling and the race detector harder, so prefer pure Go." },
     { t: "code", title: "Conditional compilation and code generation", code:
 `//go:build linux && amd64 && !race
 package main
@@ -750,6 +769,7 @@ package main
     { t: "note", kind: "warn", title: "unsafe: the escape hatch, and its two legitimate uses", html: "<code>unsafe.Pointer</code> defeats the type system and the GC's assumptions; the rules in its documentation are the <em>only</em> valid patterns, and \"it works today\" is not one of them. The two uses worth knowing: <code>unsafe.String(ptr, len)</code> and <code>unsafe.Slice(ptr, len)</code> (Go 1.20+) for a zero-copy <code>[]byte</code>↔<code>string</code> view on a provably immutable buffer, and <code>unsafe.Sizeof/Offsetof/Alignof</code> for reasoning about layout. Everything else — pointer arithmetic, struct punning, reaching into another package's fields — will break on a compiler upgrade. Measure first: the allocation you're avoiding is usually not the bottleneck." },
 
     { t: "h", text: "The tooling you should wire into CI" },
+    { t: "p", html: "A useful pipeline is <code>go test ./...</code>, <code>go vet</code>, and a linter, on every change. <code>govulncheck</code> reports vulnerabilities your code can actually reach. Formatting is <code>gofmt</code>, and CI should fail if it would change a file." },
     { t: "code", title: "A reasonable baseline", code:
 `gofmt -l .                 # or gofumpt: stricter
 go vet ./...               # ships with Go; catches real bugs
@@ -762,6 +782,7 @@ go mod tidy -diff          # fails if go.mod/go.sum are stale (1.22+)`
     { t: "note", kind: "tip", title: "Read the canon", html: "<a href=\"https://go.dev/doc/effective_go\" target=\"_blank\" rel=\"noopener\">Effective Go</a>, the <a href=\"https://go.dev/wiki/CodeReviewComments\" target=\"_blank\" rel=\"noopener\">Code Review Comments</a> wiki, <a href=\"https://google.github.io/styleguide/go/\" target=\"_blank\" rel=\"noopener\">Google's Go Style Guide</a>, and <a href=\"https://go.dev/doc/faq\" target=\"_blank\" rel=\"noopener\">the FAQ</a> (which explains <em>why</em> the language is shaped this way). Then read standard library source — it's the best Go you'll find, and <code>go doc -src</code> is one command away." },
 
     { t: "h", text: "Proverbs that are actually useful" },
+    { t: "p", html: "These are short rules from the Go community. Each one is a decision you can apply: return an error rather than panic, accept interfaces and return structs, and do not communicate by sharing memory." },
     { t: "list", items: [
       "<em>Clear is better than clever.</em>",
       "<em>Don't communicate by sharing memory; share memory by communicating.</em>",
@@ -774,6 +795,7 @@ go mod tidy -diff          # fails if go.mod/go.sum are stale (1.22+)`
     ]},
 
     { t: "h", text: "What to build next" },
+    { t: "p", html: "Pick a project in this course that matches what you want to ship: a CLI, an HTTP service, or something concurrent. The point of the project is to use the standard library, not to add a framework first." },
     { t: "list", ordered: true, items: [
       "<strong>A CLI tool</strong> — <code>flag</code> or <code>cobra</code>: a file renamer, a log parser, an HTTP load tester.",
       "<strong>A JSON REST API</strong> with Postgres, migrations, middleware, and real tests.",

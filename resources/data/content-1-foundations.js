@@ -21,15 +21,17 @@ window.CURRICULUM_PARTS.push([
     { t: "note", kind: "deep", title: "So where does the speed come from?", html: "A compiled language starts at full speed — there is no warm-up and no interpreter loop. A <em>JIT</em> language can eventually match or beat it on long-running hot loops, because it optimises using real run-time information, but it pays for that with startup latency and a heavy VM. Go takes a third route: compile everything up front, and optionally feed a <strong>production profile back into the compiler</strong> (PGO) to get some of the JIT's advantage without the JIT." },
 
     { t: "h", text: "The pipeline, end to end" },
+    { t: "p", html: "<code>go build</code> does not jump from <code>main.go</code> to a program in one step. It walks through five steps. The names show up in compiler output, so here is what each one actually does." },
     { t: "list", ordered: true, items: [
-      "<strong>Scan &amp; parse</strong> — source text becomes an abstract syntax tree (AST).",
-      "<strong>Type-check</strong> — every expression gets a type; most bugs die here.",
-      "<strong>SSA &amp; optimise</strong> — the compiler lowers to Static Single Assignment form, inlines small functions, eliminates dead code, and runs <em>escape analysis</em> to decide stack vs heap.",
-      "<strong>Generate machine code</strong> — real instructions for amd64, arm64, etc.",
-      "<strong>Link</strong> — your code plus every dependency plus the Go <em>runtime</em> are linked into one binary."
+      "<strong>Scan and parse.</strong> The compiler reads your file as text and builds a tree: this node is a function, that node is a call, this one is <code>+</code>. That tree is the abstract syntax tree (AST). \"Abstract\" means the tree keeps the structure and throws away the spaces and comments.",
+      "<strong>Type-check.</strong> Every value is given a type, such as <code>int</code> or <code>string</code>. Adding a string to an int stops the build here. Most mistakes you will make are caught at this step, before the program runs.",
+      "<strong>SSA and optimise.</strong> SSA (Static Single Assignment) is a rewrite where each value is set once. That shape is easier to tidy. Tidying means three things: inline a tiny function by pasting it into its caller, delete code that can never run, and escape analysis — decide whether a value can stay in the function's stack memory or must move to the heap because something still needs it after the function returns.",
+      "<strong>Generate machine code.</strong> The tidied program becomes instructions for one kind of CPU. <code>amd64</code> is Intel and AMD. <code>arm64</code> is Apple Silicon and many servers.",
+      "<strong>Link.</strong> Your instructions, the packages you imported, and the Go runtime are joined into one file. That file is the program. The runtime is the scheduler (which goroutine runs next), the garbage collector (frees memory nothing can reach), and the memory allocator (hands that memory out). They travel inside the file, so the other machine does not need Go installed."
     ]},
     { t: "diagram", id: "pipeline" },
-    { t: "code", title: "Build once, ship anywhere (cross compilation is a single env var)", code:
+    { t: "p", html: "<strong>Cross compiling</strong> means building the program for a different computer than the one you are typing on. <code>GOOS</code> is the operating system (<code>linux</code>, <code>darwin</code> for macOS, <code>windows</code>). <code>GOARCH</code> is the CPU (<code>amd64</code> or <code>arm64</code>). Set those two names and run <code>go build</code>. You do not install a second compiler." },
+    { t: "code", title: "Build for this machine, or for another one", code:
 `# Native build
 go build -o app .
 
@@ -47,9 +49,10 @@ go build -gcflags="-m" .`
     { t: "p", html: "It has a runtime — it just <strong>ships inside your binary</strong> instead of being installed on the machine. The Go runtime is a few megabytes of Go and assembly that provides the things the language promises: the <strong>goroutine scheduler</strong>, the <strong>garbage collector</strong>, the <strong>memory allocator</strong>, channel and map implementations, panic/recover, and reflection metadata. That's why a trivial Go program is ~1.5–2 MB rather than 20 KB. You pay a fixed floor and get managed memory plus cheap concurrency." },
 
     { t: "h", text: "Garbage collected — and what that costs" },
-    { t: "p", html: "Go is <strong>garbage collected</strong>: you never call <code>free</code>. The collector is a <em>concurrent, tri-colour, mark-and-sweep</em> design that runs <em>alongside</em> your program and is tuned for low latency — sub-millisecond stop-the-world pauses are typical, even with multi-gigabyte heaps. It is deliberately <strong>not</strong> a compacting or generational collector, which keeps it simple and predictable. Module 12 opens the hood." },
+    { t: "p", html: "Go is <strong>garbage collected</strong>: you never call <code>free</code>. While your program keeps running, the collector finds the objects you can still reach and throws the rest away. That search is called mark-and-sweep. The pauses are usually under a millisecond, even on a large heap. It does not sort objects into young and old, and it does not slide them together to close gaps. The later runtime lesson opens this up." },
 
     { t: "h", text: "The feature list — what you actually get" },
+    { t: "p", html: "Each row is one thing the language gives you, and what that means when you are writing a program." },
     { t: "table", head: ["Feature", "What it means in practice"],
       rows: [
         ["<strong>Compiles to one static binary</strong>", "<code>scp</code> the file and run it. No runtime to install, no virtualenv, no <code>node_modules</code>, no JVM version to match"],
@@ -86,6 +89,7 @@ go build -gcflags="-m" .`
     { t: "note", kind: "tip", title: "The pattern in that list", html: "Go dominates <strong>network services, infrastructure and CLI tools</strong> — software that handles many concurrent connections, must deploy as a single artifact, and is maintained by rotating teams. That is not a coincidence; it is exactly what the language was designed for. It is <em>not</em> the leader in data science, machine learning, mobile apps or game engines, and pretending otherwise wastes your time." },
 
     { t: "h", text: "Advantages — and the honest trade-offs" },
+    { t: "p", html: "Every advantage below has a cost in the next column. Read both before you pick Go for a job." },
     { t: "table", head: ["Advantage", "The cost that comes with it"],
       rows: [
         ["<strong>Deployment is trivial</strong>: one static binary, tiny containers, instant start (great for serverless and autoscaling)", "Binaries start at ~2 MB because the runtime ships inside; no shared-library savings"],
@@ -101,6 +105,7 @@ go build -gcflags="-m" .`
     { t: "note", kind: "warn", title: "When Go is the wrong choice", html: "Hard-real-time or microcontroller work (GC and runtime in the way), numeric/GPU computing and machine learning (Python's ecosystem is unmatched), rich native desktop or mobile UIs, and problems that genuinely want a strong type system with sum types and exhaustive matching (Rust, Kotlin, TypeScript, OCaml). Choosing the right tool is a senior skill; a language you like is not automatically the right answer." },
 
     { t: "h", text: "Go vs. the neighbours" },
+    { t: "p", html: "The same kind of program looks different in each language. This table is the short version of those differences." },
     { t: "table", head: ["", "Go", "Python", "Java", "Rust", "C"],
       rows: [
         ["Execution", "AOT compiled", "Interpreted", "Bytecode + JIT", "AOT compiled", "AOT compiled"],
@@ -113,6 +118,7 @@ go build -gcflags="-m" .`
     },
 
     { t: "h", text: "The design philosophy (it explains the odd bits)" },
+    { t: "p", html: "The choices that feel strict — no inheritance, unused imports are errors, errors are values — are there so a large program stays readable and builds quickly. Each line below is one of those choices." },
     { t: "list", items: [
       "<strong>Readability over expressiveness.</strong> One obvious way to do things. No inheritance, no operator overloading, no exceptions.",
       "<strong>Fast builds are a feature.</strong> Unused imports are a compile error partly to keep the dependency graph honest and the build fast.",
@@ -168,6 +174,7 @@ go build -gcflags="-m" .`
   blurb: "Install Go, understand packages and modules, and read hello-world line by line.",
   blocks: [
     { t: "h", text: "Install" },
+    { t: "p", html: "Install the latest stable release, then run <code>go version</code>. That command prints the release you actually have." },
     { t: "note", kind: "tip", title: "Latest stable release: Go 1.27.1", html: "The current stable release is <strong>Go 1.27.1</strong>, published on 28 August 2026 (language version 1.27, August 2026). Installers for every OS are on <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. <code>go version</code> prints the release you actually have." },
     { t: "code", title: "Install and verify", code:
 `# macOS
@@ -209,6 +216,7 @@ go get github.com/google/uuid                # now allowed`
     { t: "note", kind: "deep", title: "A different question: when to create a NEW module inside an existing project?", html: "Much rarer, and people over-do it. A new module means a <strong>separately versioned, separately released unit</strong> — so create one only when another repository must depend on part of your code at its own version, or when a sub-tree needs genuinely different dependencies. Everything else should be a <em>package</em> (just a new directory) inside the existing module: one <code>go.mod</code>, one version, atomic refactors across the whole tree. A dozen modules in one repo means a dozen dependency bumps every time you change a shared type." },
 
     { t: "h", text: "Create a module" },
+    { t: "p", html: "A module is one project: the folder Go versions and downloads as a unit. <code>go mod init</code> writes <code>go.mod</code>, which records the module path and the Go version. The path looks like a URL because that is the name other code uses to import you." },
     { t: "code", title: "A new project", code:
 `mkdir hello && cd hello
 go mod init github.com/you/hello   # creates go.mod
@@ -220,6 +228,7 @@ go mod init github.com/you/hello   # creates go.mod
     { t: "p", html: "A <strong>module</strong> is a versioned collection of packages — the unit you publish and depend on. A <strong>package</strong> is a directory of <code>.go</code> files sharing a namespace. The module path doubles as the import prefix, which is why it looks like a URL: it's how <code>go get</code> finds your code." },
 
     { t: "h", text: "Hello, line by line" },
+    { t: "p", html: "<code>package main</code> means this folder builds a program, not a library. <code>import \"fmt\"</code> brings in the printing package. <code>func main</code> is where that program starts, and <code>Println</code> writes the text plus a newline." },
     { t: "code", title: "main.go", code:
 `package main        // this package compiles to an executable, not a library
 
@@ -227,7 +236,8 @@ import "fmt"        // standard library: formatted I/O
 
 func main() {       // the entry point of package main
     fmt.Println("Hello, Gopher!")
-}`
+}`,
+      out: `Hello, Gopher!`
     },
     { t: "list", items: [
       "<code>package main</code> is special: it tells the linker to build a program. Any other name builds a library.",
@@ -237,6 +247,7 @@ func main() {       // the entry point of package main
     ]},
 
     { t: "h", text: "Run, build, install" },
+    { t: "p", html: "<code>go run</code> compiles and runs, then deletes the binary. <code>go build</code> leaves the binary in the folder. <code>go install</code> puts it on your PATH. The other commands format the code, warn about suspicious code, run tests, or show documentation without a browser." },
     { t: "code", title: "The commands you'll use hourly", code:
 `go run .            # compile + execute the package in this directory
 go build -o hello . # produce the ./hello binary
@@ -248,6 +259,7 @@ go doc fmt.Println  # read docs offline`
     },
 
     { t: "h", text: "Adding a dependency" },
+    { t: "p", html: "<code>go get</code> downloads a package and writes its version into <code>go.mod</code>. <code>go mod tidy</code> adds what your code imports and removes what it does not. <code>go.sum</code> stores a hash of each download so a silently changed package fails the build." },
     { t: "code", title: "Dependencies are code, not configuration", code:
 `go get github.com/google/uuid        # adds a require line to go.mod, writes go.sum
 go mod tidy                          # add what's missing, drop what's unused
@@ -257,6 +269,7 @@ go mod why github.com/google/uuid    # why is this here?`
     { t: "p", html: "<code>go.sum</code> records a cryptographic hash of every module version you use. If an upstream author force-pushes a different tag, your build fails loudly instead of silently changing. Commit both <code>go.mod</code> and <code>go.sum</code>." },
 
     { t: "h", text: "A layout that scales" },
+    { t: "p", html: "<code>cmd</code> holds programs: each subfolder has its own <code>main</code>. <code>internal</code> is code only this module may import, and the compiler enforces that. <code>pkg</code> is optional code you expect other modules to import." },
     { t: "code", title: "Conventional project structure", code:
 `myapp/
 ├── go.mod
@@ -313,323 +326,154 @@ go mod why github.com/google/uuid    # why is this here?`
   level: "Beginner",
   icon: "🛠️",
   title: "Your Dev Environment: IDE, gopls, Linters & Debugger",
-  minutes: 20,
-  blurb: "Which editor, which extensions, how to configure gopls, which linters to actually enable, and debugging with Delve.",
+  minutes: 16,
+  blurb: "The editor, gopls, formatting, and the debugger. What to set up now, and what to leave until you need it.",
   blocks: [
-    { t: "p", html: "Go's tooling story is unusually good: one official formatter nobody argues about, one official language server, one debugger, and a vet tool in the compiler toolchain. Spend thirty minutes here and the rest of the course — and your job — gets measurably easier." },
+    { t: "p", html: "You need three things to write Go: an editor, <code>gofmt</code> (the formatter), and <code>gopls</code> (the program that powers completion and jump-to-definition). A debugger is useful once the program is doing something you cannot see from a print statement. You do not need a long list of plugins to start." },
 
     { t: "h", text: "Which editor?" },
-    { t: "table", head: ["Editor", "Cost", "Strengths", "Pick it if…"],
+    { t: "p", html: "Use <strong>VS Code and the official Go extension</strong> unless you already have an editor you like. GoLand is JetBrains' paid Go IDE. Neovim, Zed, Helix, and Emacs also work. They all talk to the same <code>gopls</code>, so switching editors later does not mean relearning Go." },
+    { t: "table", head: ["Editor", "Choose it when"],
       rows: [
-        ["<strong>VS Code</strong> + the official Go extension", "free", "The reference experience. gopls, test gutters, debugging, coverage, profiling, refactors — all wired up by one extension maintained by the Go team", "<strong>You're starting out, or you want zero setup friction</strong>"],
-        ["<strong>GoLand</strong> (JetBrains)", "paid (free for students/OSS)", "The best refactoring and debugger in the business, plus integrated database tools, HTTP client, profiler UI and coverage", "You do heavy refactoring, or you already live in JetBrains tools"],
-        ["<strong>Neovim / Vim</strong>", "free", "Fastest, fully scriptable; gopls via <code>nvim-lspconfig</code>, debugging via <code>nvim-dap</code>", "You already use it — don't learn Vim <em>and</em> Go at once"],
-        ["<strong>Zed / Helix / Emacs</strong>", "free", "All speak LSP, so gopls works; less Go-specific glue out of the box", "You have a strong existing preference"]
+        ["<strong>VS Code</strong> + the Go extension", "You want the usual setup. Free, and the Go team maintains the extension."],
+        ["<strong>GoLand</strong>", "You already live in JetBrains, or you rename and move code all day. Paid; free for students."],
+        ["<strong>Neovim, Zed, Helix, Emacs</strong>", "You already use that editor. Do not learn a new editor and Go in the same week."]
       ]
     },
-    { t: "note", kind: "tip", title: "The honest recommendation", html: "Start with <strong>VS Code + the Go extension</strong>. Everything in this course works there with no configuration beyond one settings block. If you later find yourself doing large-scale renames and interface extractions daily, GoLand earns its licence. Every option above uses the same <code>gopls</code> under the hood, so you are never locked in — and the editor is <em>not</em> where your productivity comes from." },
 
-    { t: "h", text: "gopls — the engine behind all of them" },
-    { t: "p", html: "<code>gopls</code> (\"go please\") is the official language server. It provides completion, go-to-definition, find-references, rename, inline diagnostics, quick fixes, signature help, inlay hints, and automatic import management. Your editor is mostly a front end for it." },
-    { t: "code", title: "Managing gopls directly", code:
-`go install golang.org/x/tools/gopls@latest   # editors usually offer to do this
-gopls version
-gopls check ./main.go                        # diagnostics from the command line
-
-# When completion or go-to-definition goes stale:
-#  1. Reload/restart the language server ("Go: Restart Language Server")
-#  2. Make sure the editor's workspace root is the directory with go.mod
-#     — opening a subdirectory is the #1 cause of "no packages found"
-#  3. Multiple modules in one window? Create a go.work (see the modules module)
-#  4. go clean -cache if the build cache itself is suspect
-#  5. Check the gopls log/output pane before guessing`
+    { t: "h", text: "gopls is the brain; the editor is the window" },
+    { t: "p", html: "<code>gopls</code> (say \"go please\") is a program that runs beside the editor. When you ask to complete a name, jump to a function, rename a variable, or see an error, the editor asks gopls and draws the answer. You almost never type <code>gopls</code> yourself. The Go extension installs it." },
+    { t: "p", html: "If completion or jump-to-definition stops working, check these in order. The first two fix it almost every time." },
+    { t: "list", items: [
+      "Restart it: in VS Code, Command Palette → <strong>Go: Restart Language Server</strong>.",
+      "Open the folder that contains <code>go.mod</code>. Opening a subfolder is the usual reason for \"no packages found\".",
+      "A repo with several modules needs a <code>go.work</code> file. That comes up in the modules lesson.",
+      "Read the <strong>Go</strong> log in VS Code's Output panel before changing settings."
+    ]},
+    { t: "code", title: "You only install gopls by hand if the editor did not", code:
+`go install golang.org/x/tools/gopls@latest
+gopls version`
     },
-    { t: "code", title: "VS Code settings.json — a sane baseline", code:
+
+    { t: "h", text: "The settings that matter" },
+    { t: "p", html: "Put this in VS Code settings. It does three jobs: format the file when you save, fix the import lines when you save, and use tabs, which is what Go's formatter expects." },
+    { t: "code", title: "settings.json — enough to start", code:
 `{
-  // Format and fix imports on every save. Non-negotiable.
   "[go]": {
     "editor.defaultFormatter": "golang.go",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": { "source.organizeImports": "explicit" },
-    "editor.insertSpaces": false,        // Go uses TABS; gofmt will fight you
-    "editor.suggest.snippetsPreventQuickSuggestions": false
+    "editor.insertSpaces": false
   },
-
   "go.useLanguageServer": true,
-  "go.formatTool": "custom",
-  "go.alternateTools": { "customFormatter": "gofumpt" },  // stricter gofmt
-  "go.lintTool": "golangci-lint",
   "go.lintOnSave": "package",
-  "go.vetOnSave": "package",
-  "go.testFlags": ["-race", "-count=1"],   // catch races + skip the test cache
-  "go.testTimeout": "60s",
-  "go.coverOnSingleTest": true,            // inline coverage highlighting
-  "go.toolsManagement.autoUpdate": true,
-
-  "gopls": {
-    "ui.semanticTokens": true,
-    "ui.diagnostic.staticcheck": true,     // staticcheck findings inline
-    "ui.diagnostic.analyses": {
-      "unusedparam": true, "unusedwrite": true,
-      "nilness": true, "shadow": false     // shadow is noisy; judge for yourself
-    },
-    "ui.codelenses": { "gc_details": true, "test": true, "run_govulncheck": true },
-    "ui.inlayhint.hints": {                // excellent while LEARNING Go
-      "assignVariableTypes": true, "compositeLiteralFields": true,
-      "constantValues": true, "functionTypeParameters": true,
-      "parameterNames": true, "rangeVariableTypes": true
-    },
-    "formatting.gofumpt": true,
-    "build.buildFlags": ["-tags=integration"]   // so tagged files aren't "unused"
-  }
+  "go.vetOnSave": "package"
 }`
     },
-    { t: "note", kind: "warn", title: "Tabs, not spaces — and don't fight it", html: "<code>gofmt</code> indents with tabs and aligns with spaces, and that is the end of the discussion. If your editor is set to insert spaces in Go files, every save will produce a confusing diff. Set the tab width to whatever you like to <em>look</em> at (4 is common) — it only affects display." },
+    { t: "note", kind: "warn", title: "Go indents with tabs", html: "<code>gofmt</code> rewrites indentation to tabs. If the editor inserts spaces, every save turns into a noisy diff. You can still <em>display</em> a tab as 4 spaces. That only changes how wide it looks, not the file." },
+    { t: "p", html: "Leave the rest of the gopls settings alone until something annoys you. Two that are worth knowing later: inlay hints (the editor prints the type next to a variable, which helps while you are learning) and <code>go.testFlags</code> set to <code>[\"-race\"]</code> (the race detector, covered with concurrency)." },
 
-    { t: "h", text: "Extensions worth installing (VS Code)" },
-    { t: "list", items: [
-      "<strong>Go</strong> (<code>golang.go</code>) — the only mandatory one. Run <em>Go: Install/Update Tools</em> once and tick everything.",
-      "<strong>Error Lens</strong> — puts diagnostics inline at the end of the line; catches typos before you save.",
-      "<strong>GitLens</strong> — blame and history inline, which matters more than it sounds when learning an unfamiliar codebase.",
-      "<strong>Test Explorer / the built-in Testing panel</strong> — run and debug individual table-test subtests from the gutter.",
-      "<strong>Even Better TOML</strong> + <strong>YAML</strong> + <strong>Docker</strong> — for the config files around every real Go service.",
-      "<strong>REST Client</strong> or <strong>Bruno</strong> — hit your own API from a <code>.http</code> file you commit next to the code.",
-      "<strong>Code Spell Checker</strong> — exported identifiers and doc comments are public API; typos in them are forever."
-    ]},
-    { t: "code", title: "What `Go: Install/Update Tools` actually installs", code:
-`gopls           language server: completion, refactors, diagnostics
-dlv             Delve, the debugger
-staticcheck     the best single linter for Go
-gotests         generate table-driven test skeletons from a function
-gomodifytags    add/remove struct tags (json, db, validate) across a struct
-impl            generate stub methods to satisfy an interface
-goplay          send a snippet to the Go Playground
-go-outline      document symbols
+    { t: "h", text: "One extension is required" },
+    { t: "p", html: "Install the <strong>Go</strong> extension (<code>golang.go</code>). Then run <strong>Go: Install/Update Tools</strong> once and accept the defaults. That installs <code>gopls</code> and the debugger. Other extensions — Error Lens, GitLens, YAML, Docker — are convenient. None of them teach you Go." },
 
-# All of them are just Go programs; you can install any of them yourself:
-go install honnef.co/go/tools/cmd/staticcheck@latest
-go install github.com/go-delve/delve/cmd/dlv@latest
-go install mvdan.cc/gofumpt@latest`
-    },
+    { t: "h", text: "Formatting is one command" },
+    { t: "p", html: "<code>gofmt</code> rewrites a Go file into the one official layout. It ships with Go. Turn it on at save, and code review stops being about braces and indentation." },
+    { t: "p", html: "<code>goimports</code> is gofmt plus import cleanup: it adds the imports you used and deletes the ones you did not. \"Organise imports on save\" in the settings above is goimports. <code>gofumpt</code> is a stricter goimports some teams adopt later. You do not need it to start." },
 
-    { t: "h", text: "Formatters: gofmt, goimports, gofumpt" },
-    { t: "table", head: ["Tool", "What it does", "Use it?"],
+    { t: "h", text: "Linters report likely mistakes" },
+    { t: "p", html: "A linter reads the code and points at things that are probably wrong, without running the program. Start with the one that is already installed." },
+    { t: "table", head: ["Tool", "What it is", "When to use it"],
       rows: [
-        ["<code>gofmt</code>", "The canonical formatter. Ships with Go", "Baseline — always on"],
-        ["<code>goimports</code>", "gofmt + adds/removes/groups imports automatically", "Yes — this is what your editor should run on save"],
-        ["<code>gofumpt</code>", "goimports + a stricter superset (tightens blank lines, simplifies some forms). Still gofmt-compatible", "<strong>Recommended</strong> — one less thing to review"],
-        ["<code>golines</code>", "Wraps long lines, which gofmt deliberately won't", "Optional; some teams like it"]
+        ["<code>go vet</code>", "Comes with Go. Catches real bugs: a <code>Printf</code> with the wrong arguments, a cancelled function you dropped, a lock that was copied.", "Always. If vet complains, fix it."],
+        ["<code>staticcheck</code>", "A separate install. Deeper checks, still quiet. Dead code, impossible conditions, misused standard library.", "When <code>go vet</code> feels too quiet."],
+        ["<code>golangci-lint</code>", "One program that runs vet, staticcheck, and others together. This is what CI usually calls.", "When the team wants a single lint command."]
       ]
     },
-    { t: "note", kind: "tip", title: "Why this is settled", html: "Every Go codebase on earth is formatted the same way, so diffs contain changes rather than style, and code review never discusses braces. Add <code>test -z \"$(gofmt -l .)\"</code> to CI and the subject never comes up again." },
+    { t: "code", title: "The commands", code:
+`go vet ./...
+staticcheck ./...          # go install honnef.co/go/tools/cmd/staticcheck@latest
+golangci-lint run
 
-    { t: "h", text: "Linters: what to run, and what to ignore" },
-    { t: "code", title: "Three layers", code:
-`go vet ./...            # ships with Go. Low noise, high value. Catches
-                        # Printf arg mismatches, lost context.CancelFunc,
-                        # copied locks, bad struct tags, unreachable code.
-                        # Treat any vet finding as a bug.
-
-staticcheck ./...       # ~150 deep checks: dead code, impossible conditions,
-                        # misused stdlib, expensive conversions, bad
-                        # concurrency. Excellent signal-to-noise. Install it
-                        # even if you install nothing else.
-
-golangci-lint run       # an AGGREGATOR that runs vet, staticcheck and ~100
-                        # more in parallel with caching. One config, one
-                        # command, one CI step.`
+# On an old repo that already has thousands of findings, fail only on new ones:
+golangci-lint run --new-from-rev=main`
     },
-    { t: "code", title: ".golangci.yml — a starting point you can defend", code:
-`# NOTE: golangci-lint v2 (2025) reorganised this file's schema. Check
-# "golangci-lint --version" and its migration guide; the SELECTION below is
-# the part that matters and is unchanged in substance.
-linters:
-  enable:
-    - errcheck        # unchecked errors — the single most valuable check
-    - govet
-    - staticcheck
-    - ineffassign     # assignments that are never used
-    - unused          # dead code
-    - errorlint       # %v where %w belongs, == where errors.Is belongs
-    - nilerr          # "return nil" after checking err != nil
-    - bodyclose       # unclosed HTTP response bodies (a real leak)
-    - rowserrcheck    # missing rows.Err() after a sql iteration
-    - sqlclosecheck   # unclosed sql.Rows / Stmt
-    - noctx           # HTTP/SQL calls without a context
-    - contextcheck    # a non-inherited context passed down
-    - copyloopvar     # the pre-1.22 "i := i" copies, now redundant
-    - gocritic        # a broad, generally sensible grab-bag
-    - revive          # golint's successor: naming and doc-comment style
-    - misspell
-    - gosec           # security: weak crypto, path traversal, SQL building
-
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-  revive:
-    rules:
-      - name: exported          # exported identifiers need doc comments
-  gocritic:
-    enabled-tags: [diagnostic, performance, style]
-
-issues:
-  exclude-rules:
-    - path: _test\\.go           # tests may be noisier than production code
-      linters: [errcheck, gosec, dupl]
-
-# DELIBERATELY NOT ENABLED — these generate argument, not bugs:
-#   lll / funlen / gocyclo    arbitrary numeric limits; use review instead
-#   gochecknoglobals          too blunt; package-level vars are often correct
-#   wsl / nlreturn            whitespace opinions beyond gofmt
-#   exhaustruct               fights Go's useful zero values
-# Start strict on CORRECTNESS linters, lenient on STYLE linters.`
-    },
-    { t: "code", title: "Running and suppressing", code:
-`golangci-lint run                     # changed packages, cached
-golangci-lint run ./internal/...
-golangci-lint run --fix               # auto-fix what can be auto-fixed
-golangci-lint run --new-from-rev=main # only NEW issues — the way to adopt a
-                                      # linter in an existing codebase
-
-// Suppression requires a reason. A bare nolint is a code smell:
-//nolint:errcheck // best-effort cleanup; failure here cannot be handled
-defer f.Close()
-
-// And set this so a blanket //nolint can never hide something new:
-// linters-settings: nolintlint: { require-explanation: true, require-specific: true }`
+    { t: "p", html: "If you add a config, enable checks that catch bugs: ignored errors (<code>errcheck</code>), a wrong error comparison (<code>errorlint</code>), an HTTP body you never closed (<code>bodyclose</code>). Leave off the ones that only count lines or ban a coding style. Those start arguments, not bug fixes." },
+    { t: "p", html: "To silence one finding, name the check and say why. A bare <code>//nolint</code> hides the next real bug too." },
+    { t: "code", title: "Silence one line, with a reason", code:
+`//nolint:errcheck // closing a file on the way out; nothing useful to do with the error
+defer f.Close()`
     },
 
-    { t: "h", text: "Debugging with Delve" },
-    { t: "p", html: "You can get a long way with <code>fmt.Println</code> and tests — most Go engineers do — but a debugger pays for itself on unfamiliar code and on concurrency bugs." },
-    { t: "code", title: "dlv from the terminal", code:
-`dlv debug ./cmd/server -- --config=dev.yaml   # build with debug info and run
-dlv test ./internal/user                      # debug a package's tests
-dlv attach 12345                              # attach to a running process
-dlv core ./app /cores/core.1234               # post-mortem from a core dump
-
-# Inside the REPL:
-(dlv) break main.go:42          (dlv) b internal/user.(*Service).Create
-(dlv) condition 1 id == 7       # conditional breakpoint
-(dlv) continue / next / step / stepout
-(dlv) print user                (dlv) locals / args
-(dlv) goroutines                # EVERY goroutine — the killer feature
-(dlv) goroutine 18 bt           # switch to one and see its stack
-(dlv) stack / frame 2
-(dlv) set x = 10                # change a value and keep going
-
-# Optimisation and inlining can confuse a debugger; turn them off:
-go build -gcflags="all=-N -l" -o app ./cmd/server`
+    { t: "h", text: "The debugger pauses the program" },
+    { t: "p", html: "<strong>Delve</strong> (<code>dlv</code>) stops the program on a line so you can look at variables. In VS Code, click the gutter next to a line number, then press F5. That is the whole everyday workflow. The editor writes a debug config the first time you do it." },
+    { t: "table", head: ["Action", "What it does"],
+      rows: [
+        ["Continue", "Run until the next breakpoint"],
+        ["Step over", "Run this line, and do not go inside the function it calls"],
+        ["Step into", "Go inside that function"],
+        ["<code>goroutines</code>", "List every running goroutine. Use this when the bug is \"something else is stuck\""]
+      ]
     },
-    { t: "code", title: "VS Code launch.json — the four configurations you need", code:
-`{
-  "version": "0.2.0",
-  "configurations": [
-    { "name": "Debug server", "type": "go", "request": "launch",
-      "mode": "debug", "program": "\${workspaceFolder}/cmd/server",
-      "args": ["--addr=:8080"],
-      "env": { "APP_ENV": "dev", "DATABASE_URL": "postgres://localhost/dev" } },
+    { t: "p", html: "The terminal is the same tool, for when you are not in the editor. <code>goroutine 18 bt</code> means \"show me the stack of goroutine 18\"." },
+    { t: "code", title: "dlv, when you are not in the editor", code:
+`dlv debug .                 # build this package and stop at the start
+dlv test .                   # same, but for the tests
 
-    { "name": "Debug current test", "type": "go", "request": "launch",
-      "mode": "test", "program": "\${fileDirname}",
-      "args": ["-test.run", "\${selectedText}", "-test.v"] },
-
-    { "name": "Debug with race detector", "type": "go", "request": "launch",
-      "mode": "debug", "program": "\${workspaceFolder}/cmd/server",
-      "buildFlags": "-race" },
-
-    { "name": "Attach to container", "type": "go", "request": "attach",
-      "mode": "remote", "port": 2345, "host": "127.0.0.1",
-      "substitutePath": [{ "from": "\${workspaceFolder}", "to": "/src" }] }
-  ]
-}
-
-# For that last one, run this INSIDE the container (never in production):
-#   dlv exec --headless --listen=:2345 --api-version=2 --accept-multiclient /app`
+(dlv) break main.go:42
+(dlv) continue
+(dlv) print user
+(dlv) goroutines
+(dlv) goroutine 18 bt`
     },
+    { t: "note", kind: "tip", title: "If the debugger skips lines", html: "The compiler inlines small functions and reorders code, so the highlighted line can look wrong. Rebuild with <code>go build -gcflags=\"all=-N -l\"</code> to turn that off while you are debugging. Do not ship that build." },
 
-    { t: "h", text: "The rest of the toolbox" },
-    { t: "code", title: "Install these when you need them, not before", code:
-`# Generation
-gotests -all -w ./user.go                    # table-test skeletons
-mockery / moq / gomock                       # interface fakes (often unnecessary
-                                             #  in Go — a 20-line struct works)
-stringer -type=Status                        # String() for enums
-sqlc generate                                # type-safe Go from SQL queries
-oapi-codegen -generate types,server api.yaml # Go from an OpenAPI spec
-protoc / buf generate                        # Go from .proto
-
-# Inner loop
-air  /  wgo run ./cmd/server                 # live reload on file change
-task  /  make                                # task runner; a Makefile is fine
-entr -r go run ./...                         # the unix-y alternative
-
-# Quality & security
-govulncheck ./...                            # reachable CVEs
-gosec ./...                                  # security linter
-benchstat old.txt new.txt                    # statistically sound benchmarks
-graphviz                                     # required by pprof's -http graphs
-
-# Release & ops
-goreleaser release --clean                   # cross-compiled, signed releases
-lefthook / pre-commit                        # run fmt+vet+test before a commit
-grpcurl / hey / vegeta / k6                  # poke and load-test your service`
-    },
-    { t: "code", title: "Two files every repo should have", code:
-`# .editorconfig — so the whole team's editor agrees
+    { t: "h", text: "Two small files, then stop" },
+    { t: "p", html: "A <code>.editorconfig</code> tells every editor on the team to use tabs for Go. A <code>Makefile</code> gives the project one command that matches what CI runs. You will meet generators, live reload, and load-test tools when a later lesson needs them. Installing them now does not help." },
+    { t: "code", title: ".editorconfig and a short Makefile", code:
+`# .editorconfig
 root = true
-[*]
-charset = utf-8
-insert_final_newline = true
-trim_trailing_whitespace = true
 [*.go]
 indent_style = tab
-[*.{yml,yaml,json,md}]
-indent_style = space
-indent_size = 2
 
-# Makefile — the project's real interface
-.PHONY: fmt lint test run
-fmt:   ; gofumpt -l -w . && go mod tidy
-lint:  ; go vet ./... && golangci-lint run && govulncheck ./...
-test:  ; go test -race -cover ./...
-run:   ; go run ./cmd/server
-check: fmt lint test          # what CI runs, runnable locally in one word`
+# Makefile
+.PHONY: test vet
+test:
+	go test ./...
+vet:
+	go vet ./...`
     },
-    { t: "note", kind: "deep", title: "On AI assistants in your editor", html: "Copilot, Claude and friends are genuinely useful in Go — the language is regular, the stdlib is well documented, and boilerplate like table tests and struct conversions is exactly what they're good at. Two cautions worth internalising: they <em>confidently produce outdated idioms</em> (pre-1.22 <code>i := i</code>, <code>interface{}</code>, hand-rolled <code>Contains</code>, <code>gorilla/mux</code> for trivial routing), and they will invent plausible APIs that don't exist. Your ground truth is <code>gopls</code> red squiggles, <code>go build</code>, <code>go vet</code> and a failing test — not the suggestion's confidence." }
+    { t: "note", kind: "tip", title: "Editor AI is a suggestion, not a compiler", html: "An assistant is useful for a test table or a boring conversion. It also invents functions that do not exist, and it still writes old Go (<code>interface{}</code> instead of <code>any</code>, a router you do not need). If <code>gopls</code> draws a red underline, or <code>go test</code> fails, the assistant is wrong." }
   ],
   summary: [
-    "VS Code + the official Go extension is the default recommendation; GoLand for heavy refactoring; Neovim if you already use it. All of them run the same `gopls`.",
-    "Configure once: format on save, organise imports on save, tabs not spaces, `-race` in test flags, staticcheck diagnostics and inlay hints in gopls.",
-    "Open the editor at the directory containing `go.mod` — most \"gopls isn't working\" reports are a wrong workspace root.",
-    "Formatting is settled: gofmt → goimports → **gofumpt**. Enforce with `gofmt -l` in CI and never discuss it again.",
-    "Three linter layers: `go vet` (treat findings as bugs), `staticcheck` (best single tool), `golangci-lint` (aggregator for CI).",
-    "Enable correctness linters (errcheck, errorlint, nilerr, bodyclose, rowserrcheck, noctx, gosec); skip arbitrary-limit style linters that only generate argument.",
-    "Adopt linting on a legacy codebase with `--new-from-rev=main`, and require a reason on every `//nolint`.",
-    "Delve: `dlv debug`, `dlv test`, `dlv attach`, and `goroutines` / `goroutine N bt` for concurrency bugs; build with `-gcflags=\"all=-N -l\"` when the debugger gets confused.",
-    "A committed `.editorconfig` and a `make check` that mirrors CI save more time than any plugin.",
-    "AI assistants are useful but suggest outdated idioms and invented APIs — gopls, the compiler and tests are the ground truth."
+    "Install VS Code and the official Go extension, unless you already have an editor. Every editor uses the same `gopls`.",
+    "gopls answers completion, jump-to-definition, and rename. If it breaks, restart it, and open the folder that contains `go.mod`.",
+    "Turn on format-on-save and organise-imports. Go files use tabs. `gofmt` rewrites anything else.",
+    "`go vet ./...` is the linter to run first. Treat its findings as bugs. Add staticcheck, then golangci-lint, when you want more.",
+    "On an old codebase, `golangci-lint run --new-from-rev=main` fails only on new findings. A `//nolint` needs a reason.",
+    "Debug by clicking the gutter and pressing F5. `goroutines`, then `goroutine N bt`, shows why a concurrent program is stuck.",
+    "An editor assistant does not replace `gopls`, `go build`, or a failing test."
   ],
   quiz: [
     { q: "What is `gopls`?",
       options: ["A linter", "Go's official language server — completion, go-to-definition, rename, diagnostics", "The Go package manager", "A formatter"],
       answer: 1,
-      explain: "VS Code, Neovim, Zed, Helix and Emacs all front-end the same gopls, which is why the core experience is consistent across editors." },
+      explain: "The editor is the window. gopls is the program that answers completion, jump-to-definition, rename, and errors. VS Code, Neovim, Zed, Helix, and Emacs all ask the same gopls." },
     { q: "Go files should be indented with…?",
       options: ["4 spaces", "2 spaces", "Tabs — gofmt will rewrite anything else", "Whatever the team prefers"],
       answer: 2,
-      explain: "gofmt indents with tabs and aligns with spaces. Set your displayed tab width to taste; it doesn't change the bytes." },
+      explain: "gofmt rewrites indentation to tabs. You can display a tab as 4 spaces. That changes the look, not the file." },
     { q: "Which linter finding should you treat as a probable bug rather than a style opinion?",
       options: ["`lll` — line too long", "`funlen` — function too long", "`go vet` reporting a lost context.CancelFunc", "`wsl` — whitespace placement"],
       answer: 2,
-      explain: "vet is deliberately low-noise and high-signal. A leaked cancel func is a real resource leak; line length is taste." },
+      explain: "go vet reports real bugs. A lost CancelFunc leaks work that should have been cancelled. Line length and whitespace are style." },
     { q: "You're adding golangci-lint to a 200k-line legacy codebase and it reports 4,000 issues. Best first move?",
       options: ["Fix all 4,000 before merging", "Disable every failing linter", "`--new-from-rev=main`, so only newly introduced issues fail", "Add `//nolint` at the top of each file"],
       answer: 2,
-      explain: "It ratchets quality on new code without a 4,000-issue megadiff. Burn down the backlog package by package afterwards." },
+      explain: "`--new-from-rev=main` makes CI fail on new findings only. Fix the old 4,000 later, one package at a time. A file-wide nolint hides new bugs." },
     { q: "In Delve, which command is the most useful for diagnosing a concurrency bug?",
       options: ["`print x`", "`next`", "`goroutines`, then `goroutine N bt`", "`restart`"],
       answer: 2,
-      explain: "It lists every goroutine and lets you inspect any stack — the same insight as the pprof goroutine dump, but interactive." }
+      explain: "`goroutines` lists every goroutine. `goroutine 18 bt` shows the stack of number 18, which is how you see who is stuck and where." }
   ]
 },
 
@@ -639,33 +483,56 @@ check: fmt lint test          # what CI runs, runnable locally in one word`
   level: "Beginner",
   icon: "📦",
   title: "Variables, Zero Values & Constants",
-  minutes: 15,
-  blurb: "Declaration forms, the := shorthand, why Go has no `null` for numbers, iota.",
+  minutes: 22,
+  blurb: "How to name a value, where that name lives in memory, what you get if you do not set it, and what iota is counting.",
   blocks: [
-    { t: "h", text: "Four ways to declare" },
-    { t: "code", title: "Pick the shortest one that's clear", code:
-`var age int = 30      // explicit type and value
-var age2 = 30         // type inferred -> int
-var age3 int          // no value -> ZERO VALUE, which is 0
-age4 := 30            // short form: declare + infer + assign (functions only)
+    { t: "h", text: "A variable is a name for a slot" },
+    { t: "p", html: "A variable is a name, a type, and a place in memory that holds a value of that type. <code>age</code> below is an <code>int</code>. Go will not let you store a string in it." },
+    { t: "p", html: "There are four spellings. The first three can appear anywhere. The last one, <code>:=</code>, only works inside a function. <code>var age3 int</code> sets no value, so Go puts in the starting value for an int, which is <code>0</code>." },
+    { t: "code", title: "Four spellings, then print them", code:
+`var age int = 30   // name, type, and value
+var age2 = 30      // type worked out from 30: int
+var age3 int       // no value given: 0
+age4 := 30         // short form, inside a function only
 
-// Grouped, which gofmt will align for you
-var (
-    name    string = "Ada"
-    retries int    = 3
-    debug   bool   // false
-)
+fmt.Println(age, age2, age3, age4)
 
-// Multiple assignment, and the idiomatic swap
 a, b := 1, 2
-a, b = b, a`
+a, b = b, a        // both sides are read first, then written
+fmt.Println(a, b)`,
+      out: `30 30 0 30
+2 1`
     },
-    { t: "note", kind: "warn", title: "`:=` has two rules people trip on", html: "It only works <strong>inside a function</strong> (package-level declarations need <code>var</code>), and <strong>at least one variable on the left must be new</strong>. <code>x, err := f()</code> followed by <code>y, err := g()</code> is legal because <code>y</code> is new — <code>err</code> is simply reassigned." },
+    { t: "note", kind: "warn", title: "Two rules for :=", html: "It is illegal outside a function. At the top of a file, write <code>var</code>. Inside a function, <code>:=</code> is allowed only when <strong>at least one name on the left is new</strong>. So <code>x, err := f()</code> followed by <code>y, err := g()</code> is fine: <code>y</code> is new, and <code>err</code> is just given a new value." },
 
     { t: "diagram", id: "variable" },
 
-    { t: "h", text: "Zero values: Go has no uninitialised memory" },
-    { t: "p", html: "Every declared variable is usable immediately. There is no \"undefined\", and numbers are never <code>null</code>." },
+    { t: "h", text: "Where the box is, and what happens when you change it" },
+    { t: "p", html: "The box in the diagram is on the <strong>stack</strong>. The stack is scratch memory for the function that is running right now. On a 64-bit machine an <code>int</code> is 8 bytes there. <code>age := 30</code> writes 30 into those bytes." },
+    { t: "p", html: "<code>age = 40</code> writes 40 into the <strong>same</strong> bytes. The number 30 is not kept somewhere else. Nothing is allocated, so the garbage collector has nothing to do. Reassigning a small value is an overwrite." },
+    { t: "code", title: "Reassigning overwrites the same slot", code:
+`age := 30
+fmt.Println(age)
+age = 40
+fmt.Println(age)`,
+      out: `30
+40`
+    },
+    { t: "p", html: "When the function returns, that stack slot is finished. The next call reuses it. That is not garbage collection. The memory was only ever the function's scratch space, and the function is over." },
+    { t: "p", html: "The <strong>heap</strong> is the other place a value can live. Go puts a value there when it has to survive the function — you return a pointer to it, store it in a long-lived structure, or a goroutine still needs it. You do not call <code>malloc</code>. The compiler chooses." },
+    { t: "p", html: "Garbage collection frees heap memory that nothing can reach anymore. A string variable holds a small header (where the bytes are, and how long they are), not the letters themselves. After <code>name = \"Grace\"</code>, the variable's header points at Grace. If nothing else still points at the old letters, the collector reclaims them later, while the program keeps running. You never call <code>free</code>." },
+    { t: "code", title: "The name stays; the old text can be collected", code:
+`name := "Ada"
+fmt.Println(name)
+name = "Grace"
+fmt.Println(name)`,
+      out: `Ada
+Grace`
+    },
+    { t: "p", html: "A local variable you declare and never read does not get as far as the garbage collector. The program does not compile. A variable that simply falls out of scope, and that nothing else points at, is the stack case above: it disappears with the function. The later runtime lesson is where the collector itself is taken apart. This is the part that the diagram is showing." },
+
+    { t: "h", text: "If you set nothing, Go still picks a value" },
+    { t: "p", html: "Every type has a starting value, called the zero value. There is no \"undefined\", and a number is never null. You can read the variable on the next line." },
     { t: "table", head: ["Type", "Zero value", "Usable as-is?"],
       rows: [
         ["<code>int</code>, <code>float64</code>, all numerics", "<code>0</code>", "yes"],
@@ -674,113 +541,166 @@ a, b = b, a`
         ["<code>pointer</code>, <code>func</code>, <code>interface</code>, <code>chan</code>", "<code>nil</code>", "no — dereferencing/calling panics"],
         ["<code>slice</code>", "<code>nil</code>", "<strong>partly</strong>: len/cap/range/append all work"],
         ["<code>map</code>", "<code>nil</code>", "<strong>reads work, writes panic</strong>"],
-        ["<code>struct</code>", "every field at its own zero", "yes"]
+        ["<code>struct</code>", "each field at its own zero value", "yes — explained next"]
       ]
     },
-    { t: "code", title: "The zero value as a design tool", code:
-`type Counter struct {
-    mu    sync.Mutex   // zero value is a ready-to-use unlocked mutex
-    count int
+    { t: "p", html: "Two of those rows surprise people. A nil slice has no elements yet, but <code>len</code>, <code>range</code>, and <code>append</code> all accept it. A nil map can be read (you get the zero value) and <strong>panics if you write to it</strong>. Call <code>make</code> before the first write." },
+
+    { t: "h", text: "A struct is a group of named fields" },
+    { t: "p", html: "A struct is one value made of named fields. It is Go's version of a record. There is no class. You read a field with a dot: <code>p.X</code>." },
+    { t: "code", title: "A struct you did not fill in", code:
+`type Point struct {
+    X int
+    Y int
 }
-var c Counter          // no constructor needed; this already works
+
+var p Point            // no constructor; X and Y are already 0
+fmt.Println(p.X, p.Y)`,
+      out: `0 0`
+    },
+    { t: "p", html: "Structs are covered properly later, with methods and embedding. You need this much here: the zero value of a struct is the zero value of each field. Some library types are designed so that zero value is already usable. <code>sync.Mutex</code> starts unlocked. <code>bytes.Buffer</code> starts empty and ready to write. You do not call a constructor." },
+    { t: "code", title: "A usable zero value, and the nil map trap", code:
+`type Counter struct {
+    mu    sync.Mutex   // zero value: unlocked, ready to Lock
+    count int          // zero value: 0
+}
+
+var c Counter
 c.mu.Lock()
 c.count++
 c.mu.Unlock()
+fmt.Println(c.count)
 
-var buf bytes.Buffer   // likewise: ready to write to
+var buf bytes.Buffer
 buf.WriteString("hi")
+fmt.Println(buf.String())
 
-// The two nil traps
 var s []int
-s = append(s, 1)       // fine — append handles nil slices
+s = append(s, 1)          // a nil slice is fine for append
+fmt.Println(s)
 
 var m map[string]int
-fmt.Println(m["k"])    // 0 — reading a nil map is fine
-// m["k"] = 1          // PANIC: assignment to entry in nil map
-m = make(map[string]int) // maps must be made before writing`
+fmt.Println(m["k"])       // reading a missing key gives 0
+m = make(map[string]int)  // required before any write
+m["k"] = 1
+fmt.Println(m["k"])`,
+      out: `1
+hi
+[1]
+0
+1`
     },
-    { t: "note", kind: "tip", title: "Design rule", html: "\"Make the zero value useful.\" If your struct works correctly with no constructor call, your API got simpler for everyone." },
+    { t: "note", kind: "tip", title: "Make the zero value useful", html: "If <code>var c Counter</code> already works, callers do not have to remember a constructor. Writing <code>m[\"k\"] = 1</code> on the nil map above panics with \"assignment to entry in nil map\"." },
 
-    { t: "h", text: "Constants" },
-    { t: "p", html: "Constants are fixed at compile time and must be a boolean, string, or number. No slices, maps, structs, or function results." },
-    { t: "code", title: "Typed, untyped, and iota", code:
-`const Pi = 3.14159              // UNTYPED: adapts to context
-const MaxUsers int = 1000       // typed: strictly an int
+    { t: "h", text: "Constants do not change" },
+    { t: "p", html: "A constant is fixed when the program is compiled. It has to be a boolean, a string, or a number. You cannot make a constant slice, map, or struct." },
+    { t: "p", html: "If you leave the type off, the constant stays flexible: <code>Pi</code> can be used as a <code>float32</code> or a <code>float64</code>. If you write the type, it is locked. <code>MaxUsers</code> is an <code>int</code>, so it does not fit in an <code>int64</code> without a conversion." },
+    { t: "code", title: "Flexible number, locked number", code:
+`const Pi = 3.14159         // no type written
+const MaxUsers int = 1000  // locked to int
 
-var f float32 = Pi              // works — untyped constant converts
-var i int = MaxUsers            // works
-// var j int64 = MaxUsers       // compile error: cannot use int as int64
+var f float32 = Pi
+var i int = MaxUsers
+fmt.Println(f, i)
+// var j int64 = MaxUsers  // does not compile: MaxUsers is an int`,
+      out: `3.14159 1000`
+    },
 
-// iota: an auto-incrementing counter, reset to 0 in each const block
-type Weekday int
+    { t: "h", text: "iota counts lines inside one const block" },
+    { t: "p", html: "<code>iota</code> is not a function. In a <code>const ( ... )</code> block it is <strong>0 on the first line and 1 higher on each next line</strong>. The next <code>const</code> block starts again at 0. A line that gives no formula copies the formula from the line above, with the new <code>iota</code>." },
+    { t: "p", html: "That is the whole weekday list. <code>Sunday</code> is <code>iota</code> on line 0, so 0. <code>Monday</code> copies <code>Weekday = iota</code> and <code>iota</code> is now 1. <code>Tuesday</code> is 2." },
+    { t: "code", title: "iota as 0, 1, 2", code:
+`type Weekday int
 const (
-    Sunday Weekday = iota   // 0
-    Monday                  // 1
-    Tuesday                 // 2
+    Sunday Weekday = iota  // iota is 0
+    Monday                 // iota is 1; same formula
+    Tuesday                // iota is 2; same formula
 )
 
-// Skip with _, and compute: 1 << (10*n) gives binary byte sizes
-const (
+fmt.Println(int(Sunday), int(Monday), int(Tuesday))`,
+      out: `0 1 2`
+    },
+
+    { t: "h", text: "What the KB, MB, GB block is doing" },
+    { t: "p", html: "Read it one line at a time. <code>1 &lt;&lt; n</code> means \"shift the bit 1 left by n places\", which is 2 to the power n. <code>_</code> means \"compute this and throw it away\"." },
+    { t: "list", items: [
+      "Line 0: <code>_ = iota</code>. <code>iota</code> is 0. The value is discarded. If this line were <code>KB</code>, the formula would be <code>1 &lt;&lt; 0</code>, which is 1, not a kilobyte.",
+      "Line 1: <code>KB = 1 &lt;&lt; (10 * iota)</code>. <code>iota</code> is 1. <code>10 * 1</code> is 10. <code>1 &lt;&lt; 10</code> is 1024.",
+      "Line 2: <code>MB</code> has no formula of its own. Go repeats <code>1 &lt;&lt; (10 * iota)</code>, and <code>iota</code> is now 2. <code>1 &lt;&lt; 20</code> is 1048576.",
+      "Line 3: <code>GB</code> repeats it again. <code>iota</code> is 3. <code>1 &lt;&lt; 30</code> is 1073741824."
+    ]},
+    { t: "code", title: "The same block, with the values it produces", code:
+`const (
     _  = iota
-    KB = 1 << (10 * iota)   // 1024
-    MB                      // 1048576
-    GB                      // 1073741824
+    KB = 1 << (10 * iota)  // iota 1 → 1 << 10
+    MB                     // iota 2 → 1 << 20
+    GB                     // iota 3 → 1 << 30
 )
 
-// Give your enum a String() method and it prints nicely everywhere
-func (d Weekday) String() string {
-    return [...]string{"Sunday", "Monday", "Tuesday"}[d]
-}`
+fmt.Println(KB)
+fmt.Println(MB)
+fmt.Println(GB)`,
+      out: `1024
+1048576
+1073741824`
     },
 
-    { t: "h", text: "Scope, shadowing, and the unused-variable rule" },
-    { t: "code", title: "Two things the compiler is strict about", code:
+    { t: "h", text: "A name inside a block can hide the outer one" },
+    { t: "p", html: "<code>x := 20</code> inside the <code>if</code> creates a <strong>new</strong> <code>x</code>. The outer <code>x</code> is still 10. This is called shadowing. It compiles, and it is a common way to update the wrong variable." },
+    { t: "code", title: "Inside the if, x is a different variable", code:
 `x := 10
 if true {
-    x := 20          // NEW x, shadows the outer one — vet -shadow catches this
-    fmt.Println(x)   // 20
+    x := 20
+    fmt.Println("inside", x)
 }
-fmt.Println(x)       // 10
-
-func f() {
-    count := 5       // compile error: declared and not used
-}
-
-// _ is the blank identifier: "I know, and I don't want it"
-_, err := doWork()
-for _, v := range items { use(v) }`
+fmt.Println("outside", x)`,
+      out: `inside 20
+outside 10`
     },
-    { t: "note", kind: "warn", title: "Unused *imports* and unused *local variables* are errors, not warnings", html: "Unused package-level variables are allowed. The strictness is deliberate: dead code never accumulates. Use <code>_</code> when you genuinely need to discard something." }
+    { t: "p", html: "A local variable you never read is a compile error, not a warning. <code>_</code> is the name you use when you mean to ignore a value, such as an error you have decided not to handle, or the index from <code>range</code>." },
+    { t: "code", title: "An unused local name does not compile", code:
+`func f() {
+    count := 5
+}`,
+      out: `count declared and not used`
+    },
+    { t: "code", title: "_ means you are ignoring that value on purpose", code:
+`n, err := strconv.Atoi("nope")
+_ = n
+fmt.Println(err)`,
+      out: `strconv.Atoi: parsing "nope": invalid syntax`
+    }
   ],
   summary: [
-    "`var` works anywhere; `:=` only inside functions and needs at least one new variable on the left.",
-    "Nothing is uninitialised — every type has a zero value, and good APIs make it useful.",
-    "nil slice: append/len/range all fine. nil map: reads fine, **writes panic** — `make` it first.",
-    "Untyped constants adapt to context; typed constants do not.",
-    "`iota` auto-increments within a const block; pair enums with a `String()` method.",
-    "Unused imports and unused local variables fail the build; `_` discards deliberately."
+    "`var` works anywhere. `:=` only works inside a function, and at least one name on the left must be new.",
+    "A local number lives on the stack. Reassigning it overwrites the same bytes. The stack slot disappears when the function returns.",
+    "The garbage collector frees a heap value only when nothing can still reach it — for example the previous contents of a string or slice you replaced.",
+    "Every type has a zero value. A struct's zero value is each field at its own zero value. A nil map can be read; writing to it panics until you `make` it.",
+    "A constant with no type can be used as several numeric types. A constant with a type cannot.",
+    "`iota` is 0 on the first line of a const block and increases by 1 each line. A line with no formula repeats the previous formula. `_ = iota` throws away 0 so `KB` lands on `1 << 10`.",
+    "An inner `:=` can hide an outer variable. An unused local variable does not compile. `_` means you are ignoring that value on purpose."
   ],
   quiz: [
     { q: "`var m map[string]int` then `m[\"a\"] = 1`. Result?",
       options: ["Works, m becomes length 1", "Panics: assignment to entry in nil map", "Compile error", "Silently ignored"],
       answer: 1,
-      explain: "A nil map is read-only. `m = make(map[string]int)` (or a literal) before writing." },
+      explain: "Reading m[\"a\"] would give 0. Writing needs a real map first: m = make(map[string]int)." },
     { q: "What is the zero value of a `string`?",
       options: ["nil", "`\"\"`", "`\"0\"`", "undefined"],
       answer: 1,
-      explain: "The empty string. Go strings are never nil." },
+      explain: "The empty string. A Go string is never nil." },
     { q: "Why does `y, err := g()` compile right after `x, err := f()`?",
       options: ["err is special-cased", "`:=` only needs one new variable on the left; err is reassigned", "It doesn't compile", "err is shadowed in a new scope"],
       answer: 1,
-      explain: "At least one new name is enough. Same scope, so err is assigned, not redeclared." },
+      explain: "y is new, so := is allowed. err already exists in this function, so it is given a new value. It is not a second err." },
     { q: "In `const ( _ = iota; KB = 1 << (10*iota); MB )` — what is MB?",
       options: ["2048", "1048576", "1024", "20"],
       answer: 1,
-      explain: "iota is 2 on the MB line, so 1 << 20 = 1048576. The expression repeats implicitly." },
+      explain: "Line 0 throws iota 0 away. KB is line 1: iota is 1, so 1 << 10 = 1024. MB has no formula, so Go repeats 1 << (10 * iota) with iota equal to 2. 1 << 20 = 1048576." },
     { q: "A function declares `n := 5` and never uses it. What happens?",
       options: ["Nothing", "A vet warning", "A compile error", "n is optimised away silently"],
       answer: 2,
-      explain: "Unused local variables are a hard compile error in Go." }
+      explain: "The file does not compile. An unused local variable is an error. Use _ only when you mean to ignore a value." }
   ]
 },
 
@@ -790,10 +710,11 @@ for _, v := range items { use(v) }`
   level: "Beginner",
   icon: "🔢",
   title: "Data Types, Strings, Runes & Conversion",
-  minutes: 16,
-  blurb: "Sized integers, float gotchas, and why strings are bytes but range gives you runes.",
+  minutes: 18,
+  blurb: "The basic types, why Go will not convert a number for you, and why a string is bytes.",
   blocks: [
     { t: "h", text: "The basic types" },
+    { t: "p", html: "These are the types built into the language. <code>int</code>, <code>float64</code>, <code>string</code>, and <code>bool</code> cover almost everything. The sized types exist for binary formats and bit work. A <code>byte</code> is one raw 8-bit value. A <code>rune</code> is one Unicode character, stored as a 32-bit number." },
     { t: "table", head: ["Group", "Types", "Notes"],
       rows: [
         ["Signed int", "int8 int16 int32 int64 <strong>int</strong>", "<code>int</code> is 64-bit on modern platforms. <strong>Default choice.</strong>"],
@@ -806,37 +727,53 @@ for _, v := range items { use(v) }`
     },
     { t: "note", kind: "tip", title: "Default picks", html: "Use <code>int</code> for counts and indexes, <code>float64</code> for real numbers, <code>string</code> for text, <code>byte</code> for binary data. Reach for sized types only for wire formats, bit manipulation, or measured memory pressure." },
 
-    { t: "h", text: "No implicit conversion. Ever." },
-    { t: "code", title: "Explicit conversion is mandatory", code:
+    { t: "h", text: "Implicit conversion and explicit conversion" },
+    { t: "p", html: "<strong>Implicit conversion</strong> means the language changes the type for you. In C, Java, and many other languages, <code>float f = someInt</code> is legal: the compiler inserts the conversion. Go will not. If <code>i</code> is an <code>int</code>, this line does not compile:" },
+    { t: "code", title: "Go refuses to convert this for you", code:
 `var i int = 42
-var f float64 = float64(i)   // required; "var f float64 = i" is a compile error
-var u uint8 = uint8(i)
+var f float64 = i   // does not compile`,
+      out: `cannot use i (variable of type int) as float64 value in variable declaration`
+    },
+    { t: "p", html: "<strong>Explicit conversion</strong> means you write the conversion yourself. The Go spelling is the type name, then the value in parentheses: <code>float64(i)</code>. That says \"make a float64 from this int\". It is not a C cast, <code>(float64)i</code>, and it is not <code>i.(float64)</code>. That last form is a type assertion. It only works when the value is an interface, which an <code>int</code> is not." },
+    { t: "code", title: "You name the type you want", code:
+`var i int = 42
+var f float64 = float64(i)
+fmt.Println(f)`,
+      out: `42`
+    },
+    { t: "p", html: "Because you asked for the conversion, Go does it even when the value does not fit, and it does not return an error. A fraction is cut off toward zero, not rounded: <code>int(3.99)</code> is <code>3</code>. An integer that is too big for the destination wraps. <code>uint8</code> only holds 0 through 255, so <code>uint8(300)</code> keeps the remainder after 256, which is 44." },
+    { t: "code", title: "A variable conversion cuts or wraps, with no error", code:
+`x := 3.99
+fmt.Println(int(x))
 
-// Converting a VARIABLE truncates or wraps silently — you asked for it
-f := 3.99
-fmt.Println(int(f))          // 3    (truncates toward zero, never rounds)
 n := 300
-fmt.Println(uint8(n))        // 44   (300 mod 256, silent wraparound)
+fmt.Println(uint8(n))`,
+      out: `3
+44`
+    },
+    { t: "note", kind: "warn", title: "A constant is checked. A variable is not.", html: "Write the number in the source and Go can see that it does not fit. <code>int(3.99)</code> fails with \"cannot convert 3.99 (untyped float constant) to type int\". <code>uint8(300)</code> fails with \"constant 300 overflows uint8\". Put those numbers in variables first, as above, and the same conversion compiles and quietly cuts or wraps." },
+    { t: "p", html: "Dividing two integers follows the same rule. Both sides are <code>int</code>, so the result is an <code>int</code> and the fraction is dropped. <code>float64(7) / 2</code> works because that <code>2</code> is an untyped constant: Go may use it as a <code>float64</code>. An <code>int</code> variable is not flexible. <code>float64(7) / two</code> does not compile when <code>two</code> has type <code>int</code>. Convert it yourself: <code>float64(7) / float64(two)</code>." },
+    { t: "code", title: "Integer division drops the fraction", code:
+`fmt.Println(7 / 2)
+fmt.Println(7.0 / 2.0)
+fmt.Println(float64(7) / 2)`,
+      out: `3
+3.5
+3.5`
+    },
+    { t: "p", html: "<code>string(72)</code> is also an explicit conversion, and it does <strong>not</strong> mean the digits 72. It means \"the character whose Unicode number is 72\", which is <code>H</code>. To turn a number into decimal text, or text into a number, use <code>strconv</code>." },
+    { t: "code", title: "string(n) is a character; strconv is the decimal text", code:
+`fmt.Println(string(72))
+fmt.Println(strconv.Itoa(72))
 
-// Converting a CONSTANT is checked exactly, and the compiler REFUSES:
-//   int(3.99)    -> error: constant 3.99 truncated to integer
-//   uint8(300)   -> error: constant 300 overflows uint8
-// Constants are arbitrary-precision and verified at compile time; variables
-// are not. That asymmetry catches everyone once.
+n, err := strconv.Atoi("42")
+fmt.Println(n, err)
 
-// Integer division truncates
-fmt.Println(7 / 2)           // 3
-fmt.Println(7.0 / 2.0)       // 3.5
-fmt.Println(float64(7) / 2)  // 3.5
-
-// Strings <-> numbers live in strconv, NOT in conversion syntax
-n, err := strconv.Atoi("42")             // string -> int
-s := strconv.Itoa(42)                    // int -> string
-x, err := strconv.ParseFloat("3.14", 64)
-b, err := strconv.ParseBool("true")
-s2 := strconv.FormatInt(255, 16)         // "ff"
-
-// string(65) is "A", not "65" — a classic bug. go vet flags it.`
+fmt.Println(strconv.FormatInt(255, 16))`,
+      out: `H
+72
+42 <nil>
+ff`
     },
     { t: "note", kind: "warn", title: "Floats are not decimals", html: "<code>0.1 + 0.2 == 0.3</code> is <code>false</code> — IEEE-754 binary floats can't represent those exactly. Compare with a tolerance (<code>math.Abs(a-b) &lt; 1e-9</code>), and for <strong>money, use integer cents</strong> or a decimal library. Never store currency in a float." },
 
@@ -868,11 +805,18 @@ var sb strings.Builder
 for i := 0; i < 1000; i++ {
     sb.WriteString("x")                // O(n) total, one growing buffer
 }
-out := sb.String()`
+out := sb.String()`,
+      out: `14
+9
+195
+0:H 1:é 3:l 4:l 5:o 6:, 7:  8:世 11:界 
+世
+9`
     },
     { t: "note", kind: "deep", title: "Why `+=` in a loop is quadratic", html: "Strings are immutable, so <code>s += \"x\"</code> allocates a brand-new string and copies everything each iteration — O(n²) and n allocations. <code>strings.Builder</code> amortises growth like <code>append</code> does. For joining a known list, <code>strings.Join</code> is both fastest and clearest." },
 
     { t: "h", text: "The string toolbox you'll actually use" },
+    { t: "p", html: "These are the functions you will call most often. <code>Contains</code>, <code>HasPrefix</code>, <code>Split</code>, and <code>Join</code> search and cut text. <code>Fields</code> splits on any whitespace. <code>EqualFold</code> compares letters without caring about case. The <code>fmt</code> verbs below are the codes <code>Printf</code> uses to decide how a value is printed." },
     { t: "code", title: "strings and fmt", code:
 `strings.Contains("seafood", "foo")      // true
 strings.HasPrefix("golang", "go")       // true
@@ -896,7 +840,7 @@ msg := fmt.Sprintf("user %s has %d items", name, n)   // build, don't print`
   ],
   summary: [
     "Default to `int`, `float64`, `string`; sized types are for wire formats and bit work.",
-    "No implicit numeric conversion — and explicit conversions truncate/overflow silently.",
+    "Go will not turn an int into a float64 for you. Write float64(i). That conversion cuts off a fraction or wraps a too-big integer, and it does not return an error.",
     "`string(65)` is `\"A\"`; use `strconv` for real number↔string conversion.",
     "Floats are inexact: compare with a tolerance, and represent money as integers.",
     "`len(s)` counts bytes; `range s` yields runes with byte offsets; `[]rune(s)` for character indexing.",
@@ -910,11 +854,11 @@ msg := fmt.Sprintf("user %s has %d items", name, n)   // build, don't print`
     { q: "`var i int = 5` — which line compiles?",
       options: ["`var f float64 = i`", "`var f float64 = float64(i)`", "`var f float64 = (float64)i`", "`var f float64 = i.(float64)`"],
       answer: 1,
-      explain: "Conversion is `T(v)`. Go never converts numeric types implicitly, and type assertions only apply to interfaces." },
+      explain: "`float64(i)` is an explicit conversion: you wrote the type. `var f float64 = i` would be an implicit conversion, and Go refuses it. `(float64)i` is C syntax, not Go. `i.(float64)` asks an interface what it holds; an int is not an interface, so that does not compile either." },
     { q: "`fmt.Println(string(72))` prints what?",
       options: ["\"72\"", "\"H\"", "72", "compile error"],
       answer: 1,
-      explain: "Converting an integer to string interprets it as a Unicode code point; 72 is 'H'. Use `strconv.Itoa` for \"72\" — `go vet` warns about this." },
+      explain: "`string(72)` does not mean the digits 72. It means the character whose code is 72, which is H. `strconv.Itoa(72)` is the text \"72\"." },
     { q: "Fastest way to build a string from 10,000 pieces in a loop?",
       options: ["`s += piece`", "`strings.Builder` + WriteString", "`fmt.Sprintf` each time", "Append to a []string then index it"],
       answer: 1,
@@ -938,6 +882,7 @@ msg := fmt.Sprintf("user %s has %d items", name, n)   // build, don't print`
     { t: "p", html: "You will type <code>fmt</code> more than any other package. It is also where a surprising amount of Go's design shows up: interfaces (<code>Stringer</code>, <code>io.Writer</code>), reflection, and the fact that <code>go vet</code> understands format strings. Learn it properly once." },
 
     { t: "h", text: "The four families" },
+    { t: "p", html: "The name tells you where the result goes. <code>Print</code> writes to the terminal. <code>Sprint</code> builds a string and does not print. <code>Fprint</code> writes to anything that accepts bytes: a file, a buffer, or an HTTP response. <code>Errorf</code> builds an error. <code>Appendf</code> adds onto a byte slice." },
     { t: "code", title: "Print / Printf / Println × nothing / S / F / Err", code:
 `// 1. To STANDARD OUTPUT
 fmt.Print("a", "b", 1, 2)       // ab1 2   ← see the spacing rule below
@@ -965,6 +910,7 @@ b = fmt.Appendf(b, "%d,", n)`
     { t: "note", kind: "warn", title: "The spacing rule people get wrong", html: "<code>Println</code> <strong>always</strong> puts a space between operands and adds a newline. <code>Print</code> and <code>Sprint</code> add a space <strong>only when neither neighbour is a string</strong> — which is why <code>fmt.Print(\"a\", \"b\", 1, 2)</code> gives <code>ab1 2</code>. If you care about the exact output, use <code>Printf</code>." },
 
     { t: "h", text: "The verbs" },
+    { t: "p", html: "A verb is the code after <code>%</code> in a format string. It tells <code>fmt</code> how to turn a value into text. <code>%v</code> is the one to use when you are not sure." },
     { t: "table", head: ["Verb", "Meaning", "Example output"],
       rows: [
         ["<code>%v</code>", "Default format — works for every type", "<code>{Ada 30}</code>"],
@@ -1007,6 +953,7 @@ fmt.Printf("%v", error(nil))       // <nil>`
     { t: "note", kind: "tip", title: "Map printing is deterministic", html: "Since Go 1.12 <code>fmt</code> sorts map keys before printing, so <code>%v</code> on a map produces stable output you can safely use in golden-file tests. Iterating the map yourself is still randomised — only <em>printing</em> is sorted." },
 
     { t: "h", text: "Make your own types print well: Stringer" },
+    { t: "p", html: "If your type has a method <code>String() string</code>, then <code>fmt</code>, <code>log</code>, and <code>slog</code> call it whenever they print a value of that type. That is how <code>Temp(21.5)</code> can print <code>21.5°C</code> instead of a bare number. A tool named <code>stringer</code> can write that method for a list of constants so they print as names, not numbers." },
     { t: "code", title: "One method, and the whole ecosystem cooperates", code:
 `type Temp float64
 
@@ -1060,6 +1007,7 @@ func (u User) String() string {
     },
 
     { t: "h", text: "When the format string is wrong" },
+    { t: "p", html: "A bad verb does not crash. <code>fmt</code> inserts a marker such as <code>%!d(string=hello)</code> into the text, which is easy to miss in a log. <code>go vet</code> finds these mismatches, including in your own functions whose names end in <code>f</code>." },
     { t: "code", title: "fmt tells you in-band — and go vet catches it first", code:
 `fmt.Printf("%d", "hello")    // %!d(string=hello)      wrong verb for the type
 fmt.Printf("%d %d", 1)       // 1 %!d(MISSING)         too few arguments
@@ -1080,6 +1028,7 @@ func (l *Logger) Debugf(format string, args ...any) {
     },
 
     { t: "h", text: "Reading input, briefly" },
+    { t: "p", html: "<code>Scan</code> reads whitespace-separated values from the keyboard or a string. It is enough for an exercise. For real input, read a line with <code>bufio.Scanner</code> and convert it with <code>strconv</code>, because <code>Scan</code> stops at the first value it cannot parse." },
     { t: "code", title: "Scan is fine for exercises; bufio for real input", code:
 `var name string; var age int
 fmt.Scan(&name, &age)                      // whitespace-separated from stdin
@@ -1093,6 +1042,7 @@ fmt.Fscan(r, &x)                            // from any io.Reader
     },
 
     { t: "h", text: "Performance and production habits" },
+    { t: "p", html: "<code>fmt</code> is convenient and slow, because it inspects types while the program runs. On a hot path, <code>strconv</code> is faster. In a service, log with <code>slog</code> rather than <code>Println</code>, and do not put secrets into a format string." },
     { t: "list", items: [
       "<strong><code>fmt</code> uses reflection</strong>, so it is far slower than direct conversion. On a hot path, <code>strconv.Itoa(n)</code> beats <code>fmt.Sprintf(\"%d\", n)</code> by roughly an order of magnitude, and <code>s1 + s2</code> beats <code>Sprintf(\"%s%s\", …)</code>.",
       "Passing values to <code>...any</code> <strong>boxes them, forcing a heap allocation</strong> — which is why <code>fmt.Println</code> shows up in escape-analysis output and in allocation profiles.",
@@ -1147,6 +1097,7 @@ fmt.Fscan(r, &x)                            // from any io.Reader
   blurb: "One loop keyword, a switch with superpowers, and `defer` for guaranteed cleanup.",
   blocks: [
     { t: "h", text: "if — with an initialiser" },
+    { t: "p", html: "The condition does not use parentheses, and the braces are required. The useful form is <code>if v, err := f(); err != nil</code>: <code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>. A guard clause returns early on the bad case so the rest of the function stays flat." },
     { t: "code", title: "Scope errors to the branch that handles them", code:
 `if x > 10 {
     // no parentheses around the condition; braces are mandatory
@@ -1176,6 +1127,7 @@ func process(data []byte) error {
 
     { t: "diagram", id: "control-flow" },
     { t: "h", text: "for — the only loop in the language" },
+    { t: "p", html: "Go has no <code>while</code> and no <code>foreach</code>. <code>for</code> covers all of them: a counter, a condition, an infinite loop, and <code>range</code>, which walks a slice, a map, a string, a channel, or (since Go 1.22) the integers from 0 up to a number. Map keys come out in a random order on purpose." },
     { t: "code", title: "Five shapes, one keyword", code:
 `for i := 0; i < 5; i++ { }            // classic three-clause
 
@@ -1202,6 +1154,7 @@ for i := 0; i < 3; i++ {
     { t: "note", kind: "deep", title: "Go 1.22 fixed the loop-variable trap", html: "Before 1.22, <code>i</code> was <strong>one variable reused</strong> every iteration, so <code>go func(){ print(i) }()</code> inside a loop usually printed the final value. Since Go 1.22 (with <code>go 1.22+</code> in go.mod) each iteration gets a <strong>fresh</strong> variable, and the bug is gone. You'll still see the old workaround <code>i := i</code> in older code." },
 
     { t: "h", text: "switch — far more useful than C's" },
+    { t: "p", html: "A <code>case</code> does not fall into the next one. You do not write <code>break</code>. One case can list several values. A <code>switch</code> with no value after it is a chain of conditions. <code>switch v := i.(type)</code> asks an interface value what concrete type it holds, and <code>v</code> has that type inside the matching case." },
     { t: "code", title: "No fallthrough, no break, and conditions allowed", code:
 `switch day {
 case "Sat", "Sun":            // multiple values per case
@@ -1241,6 +1194,7 @@ func describe(i any) string {
     },
 
     { t: "h", text: "defer — cleanup you can't forget" },
+    { t: "p", html: "<code>defer</code> schedules a call to run when the function returns, including when it panics. Several defers run in reverse order: the last one scheduled runs first. Arguments are saved at the <code>defer</code> line, so <code>defer fmt.Println(i)</code> prints the value <code>i</code> had then. A deferred function with no arguments reads <code>i</code> later, when it actually runs." },
     { t: "diagram", id: "defer-stack" },
     { t: "code", title: "Runs when the function returns, whatever happens", code:
 `func readFile(path string) ([]byte, error) {
@@ -1273,7 +1227,15 @@ func withTiming() (elapsed time.Duration) {
     defer func() { elapsed = time.Since(start) }()
     heavyWork()
     return    // elapsed is set by the deferred func
-}`
+}
+
+order()
+trap()`,
+      out: `3
+2
+1
+closure: 1
+captured: 0`
     },
     { t: "note", kind: "warn", title: "Never `defer` inside a loop body", html: "Deferred calls fire when the <strong>function</strong> returns, not at the end of each iteration — so looping over 10,000 files with <code>defer f.Close()</code> holds 10,000 handles open. Either close explicitly at the end of the iteration, or move the body into its own function (or a closure you call immediately)." }
   ],
