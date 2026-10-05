@@ -900,7 +900,8 @@ function route() {
   else if (h === "#/about")      main.innerHTML = staticPage("about");
   else if (h === "#/how-to-use") main.innerHTML = staticPage("how-to-use");
   else if (h === "#/privacy")    main.innerHTML = staticPage("privacy");
-  else                           main.innerHTML = home();
+  else if (h === "#/" || h === "#") main.innerHTML = home();
+  else                           main.innerHTML = notFound();
   main.insertAdjacentHTML("beforeend", siteFooter());
   if (h.startsWith("#/m/") || h.startsWith("#/p/") || PAGES[h.slice(2)]) {
     const seen = new Set();   /* one tooltip per term per page */
