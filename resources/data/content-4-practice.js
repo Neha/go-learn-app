@@ -804,7 +804,17 @@ go mod tidy -diff          # fails if go.mod/go.sum are stale (1.22+)`
       "<strong>Something with gRPC</strong> (protobuf + <code>grpc-go</code>) once REST feels routine.",
       "<strong>Contribute</strong> to a Go project you already run: Kubernetes, Prometheus, Grafana, Traefik, Hugo all take first-timers."
     ]},
-    { t: "p", html: "Interactive practice: <a href=\"https://go.dev/tour/\" target=\"_blank\" rel=\"noopener\">A Tour of Go</a> (official, in-browser), <a href=\"https://gobyexample.com\" target=\"_blank\" rel=\"noopener\">Go by Example</a>, <a href=\"https://exercism.org/tracks/go\" target=\"_blank\" rel=\"noopener\">Exercism's Go track</a> (human mentoring), <a href=\"https://quii.gitbook.io/learn-go-with-tests\" target=\"_blank\" rel=\"noopener\">Learn Go with Tests</a>, and the <a href=\"https://go.dev/play/\" target=\"_blank\" rel=\"noopener\">Playground</a> for anything you want to check in ten seconds." }
+    { t: "p", html: "Interactive practice: <a href=\"https://go.dev/tour/\" target=\"_blank\" rel=\"noopener\">A Tour of Go</a> (official, in-browser), <a href=\"https://gobyexample.com\" target=\"_blank\" rel=\"noopener\">Go by Example</a>, <a href=\"https://exercism.org/tracks/go\" target=\"_blank\" rel=\"noopener\">Exercism's Go track</a> (human mentoring), <a href=\"https://quii.gitbook.io/learn-go-with-tests\" target=\"_blank\" rel=\"noopener\">Learn Go with Tests</a>, and the <a href=\"https://go.dev/play/\" target=\"_blank\" rel=\"noopener\">Playground</a> for anything you want to check in ten seconds." },
+
+    { t: "h", text: "Write these five programs" },
+    { t: "p", html: "These use the advanced lessons: goroutines, channels, <code>select</code>, <code>context</code>, generics, iterators or the standard library, HTTP, and tests. Each one should be small enough to finish in one sitting. You are done when <code>go test</code> or the running program matches the description." },
+    { t: "list", ordered: true, items: [
+      "<strong>Worker pool.</strong> Three goroutines read integers from a jobs channel, square them, and send the squares on a results channel. Close the jobs channel after the numbers are sent. <code>main</code> prints every square. The results channel is closed only after the workers finish, so <code>main</code> does not exit early.",
+      "<strong>Cancel the work.</strong> <code>work(ctx context.Context) error</code> loops until <code>ctx</code> is done, then returns <code>ctx.Err()</code>. Call it with a context that times out after a short time, and print the error. The function stops because the context ended.",
+      "<strong>Generic smallest.</strong> <code>func Min[T cmp.Ordered](a, b T) T</code>. Call it with two ints and two strings and print both answers. Both calls use that one function.",
+      "<strong>Hello service.</strong> An <code>http.Server</code> with <code>ReadHeaderTimeout</code> set. <code>GET /hello</code> writes the <code>name</code> query, or <code>world</code> when the query is empty. Any other path returns <code>404</code>. Request both URLs and show the status and the body.",
+      "<strong>A table test.</strong> Put a pure function, such as <code>grade</code> or <code>divide</code>, in a package. <code>Test</code> it with a slice of cases: input, the wanted result, and whether an error is expected. A wrong row fails with the case index. <code>go test</code> passes."
+    ]}
   ],
   summary: [
     "Names: short lowercase packages, no stutter (`user.New`, not `user.NewUser`), `-er` interfaces, short receivers, initialisms keep their case.",
