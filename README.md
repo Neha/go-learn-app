@@ -141,6 +141,7 @@ and one sheet per page break; "Print sheets" opens a clean print view containing
 | `#/playground` | Index of every runnable program *(behind the `playground` feature flag — off by default)* |
 | `#/how-to-use` | The intended path, every feature, suggested schedules |
 | `#/about` | What this is, what it isn't, accuracy, credits, the author |
+| `#/releases` | Version and release notes |
 | `#/privacy` | Privacy policy, data stored, copyright and licence terms |
 
 Every page ends with a site footer carrying those links, the copyright line and a one-line privacy
@@ -202,6 +203,7 @@ resources/data/diagrams.js              animated SVG figures (keyed by id)
 resources/data/glossary.js              glossary terms, definitions and cross-links
 resources/data/runnable.js              complete programs for the Run button, keyed "<module>|<title>"
 resources/data/pages.js                 About / How to use / Privacy & copyright
+resources/data/release.js               version and release notes (bump when stage is promoted to main)
 resources/data/flags.js                 feature flags (playground: false)
 ```
 

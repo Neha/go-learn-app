@@ -154,7 +154,17 @@ srv := NewServer("localhost", WithPort(9000), WithTimeout(time.Minute))
 fmt.Println(srv.host, srv.port, srv.timeout)`,
       out: `localhost 9000 1m0s`
     },
-    { t: "note", kind: "tip", title: "One name, one function", html: "A package cannot have two functions named <code>Print</code>. <code>Print</code>, <code>Printf</code>, and <code>Println</code> are three different names. That is how Go avoids guessing which version you meant." }
+    { t: "note", kind: "tip", title: "One name, one function", html: "A package cannot have two functions named <code>Print</code>. <code>Print</code>, <code>Printf</code>, and <code>Println</code> are three different names. That is how Go avoids guessing which version you meant." },
+
+    { t: "h", text: "Write these five programs" },
+    { t: "p", html: "These use the beginner lessons: variables, types, strings, printing, <code>if</code>, <code>for</code>, <code>switch</code>, <code>defer</code>, and functions. Each one is a small <code>package main</code>. You are done when the program prints what the description says." },
+    { t: "list", ordered: true, items: [
+      "<strong>Temperature table.</strong> Constants for the freezing and boiling points of water in Celsius, <code>0</code> and <code>100</code>. A function <code>cToF(c float64) float64</code>. Print a line for <code>-40</code>, <code>0</code>, <code>37</code>, and <code>100</code>, each showing Celsius and Fahrenheit. <code>-40</code> must print the same number on both sides.",
+      "<strong>Rune walk.</strong> Start from a string that contains a non-ASCII letter, such as <code>Héllo</code>. Print <code>len</code>, the rune count, then one line per rune: the byte offset and the character. The offsets must jump over the two-byte letter.",
+      "<strong>Grade.</strong> <code>grade(score int) (string, bool)</code> uses a <code>switch</code> with no value after it. <code>90</code> and above is <code>A</code>, <code>80</code> is <code>B</code>, <code>70</code> is <code>C</code>, and anything else is <code>F</code>. The bool is true when the letter is not <code>F</code>. Print the result for <code>95</code>, <code>80</code>, and <code>50</code>.",
+      "<strong>Safe divide.</strong> <code>divide(a, b int) (int, error)</code>. When <code>b</code> is <code>0</code>, return <code>0</code> and an error. Print <code>10/2</code> and <code>10/0</code>, including the error text.",
+      "<strong>Two counters.</strong> <code>counter()</code> returns a function. That function adds <code>1</code> to its own count and returns the new count. Create two counters. Call the first three times and the second once. The prints are <code>1</code>, <code>2</code>, <code>3</code>, then <code>1</code>."
+    ]}
   ],
   summary: [
     "Multiple return values make `(value, error)` the universal idiom — error last, always checked.",
@@ -1181,7 +1191,17 @@ case errors.Is(err, ErrNotFound):   w.WriteHeader(404)
 case errors.As(err, &ve):           w.WriteHeader(400)
 default:                            w.WriteHeader(500)
 }`
-    }
+    },
+
+    { t: "h", text: "Write these five programs" },
+    { t: "p", html: "These use the intermediate lessons: slices, maps, structs, pointers, methods, interfaces, and errors. Each one is a small <code>package main</code>. You are done when the behaviour below holds." },
+    { t: "list", ordered: true, items: [
+      "<strong>Shopping basket.</strong> A struct <code>Item</code> with <code>Name string</code> and <code>Price int</code>, the price in cents. Start with a slice of three items. <code>total(items []Item) int</code> adds the prices. Append a fourth item and print the new total.",
+      "<strong>Word count.</strong> Split a sentence on spaces into a <code>map[string]int</code>. Print each word and its count. Look up one word that is present and one that is missing, using <code>v, ok := m[word]</code>, so a stored <code>0</code> is separate from a missing key.",
+      "<strong>Point.</strong> A struct <code>Point</code> with <code>X</code> and <code>Y</code> as <code>float64</code>. <code>Move</code> has a pointer receiver and changes the point. <code>Distance</code> has a value receiver and returns the distance from the origin. Print the point before <code>Move</code>, after <code>Move</code>, and the distance.",
+      "<strong>Shapes.</strong> An interface <code>Shape</code> with <code>Area() float64</code>. <code>Circle</code> and <code>Rectangle</code> each have that method, and neither declaration mentions <code>Shape</code>. <code>describe(s Shape)</code> prints the area. Pass one circle and one rectangle.",
+      "<strong>Lookup error.</strong> <code>var ErrNotFound = errors.New(\"not found\")</code>. <code>find(name string) (string, error)</code> looks in a map. On a miss it returns <code>fmt.Errorf(\"find %s: %w\", name, ErrNotFound)</code>. The caller prints the error and uses <code>errors.Is</code> so only that sentinel prints <code>missing</code>."
+    ]}
   ],
   summary: [
     "`error` is a one-method interface; failures are ordinary values returned last and checked immediately.",

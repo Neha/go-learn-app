@@ -12,6 +12,7 @@ window.CURRICULUM_PARTS.push([
   blurb: "Compiled or interpreted? Where does the runtime fit? Why Go feels fast.",
   blocks: [
     { t: "p", html: "Go (often <em>Golang</em>, because <code>golang.org</code> was the old domain) is a statically typed, <strong>compiled</strong> language created at Google in 2007 by Robert Griesemer, Rob Pike and Ken Thompson. It was designed to solve a very human problem: large codebases that take too long to build and too long to understand." },
+    { t: "note", kind: "tip", title: "Latest stable release: Go 1.27.1", html: "The current stable release is <strong>Go 1.27.1</strong>, published on 28 August 2026 (language version 1.27, August 2026). Installers for every OS are on <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. <code>go version</code> prints the release you actually have." },
 
     { t: "h", text: "Is Go compiled or interpreted?" },
     { t: "p", html: "<strong>Compiled — ahead of time, straight to machine code.</strong> There is no JVM, no bytecode interpreter, no JIT. <code>go build</code> produces a native executable for a specific OS and CPU architecture. You can copy that single file onto a matching machine and run it with nothing else installed." },
@@ -207,7 +208,7 @@ go get github.com/...      # FAILS: needs a module
 go test ./...              # FAILS: needs a module
 
 # PROJECT MODE — one command, and everything works.
-go mod init example.com/try
+go mod init try                   # the path is just a name; GitHub is not required
 go run .                   # fine
 go build ./...  go test ./...  go vet ./...   # all fine
 go get github.com/google/uuid                # now allowed`
@@ -216,16 +217,16 @@ go get github.com/google/uuid                # now allowed`
     { t: "note", kind: "deep", title: "A different question: when to create a NEW module inside an existing project?", html: "Much rarer, and people over-do it. A new module means a <strong>separately versioned, separately released unit</strong> — so create one only when another repository must depend on part of your code at its own version, or when a sub-tree needs genuinely different dependencies. Everything else should be a <em>package</em> (just a new directory) inside the existing module: one <code>go.mod</code>, one version, atomic refactors across the whole tree. A dozen modules in one repo means a dozen dependency bumps every time you change a shared type." },
 
     { t: "h", text: "Create a module" },
-    { t: "p", html: "A module is one project: the folder Go versions and downloads as a unit. <code>go mod init</code> writes <code>go.mod</code>, which records the module path and the Go version. The path looks like a URL because that is the name other code uses to import you." },
+    { t: "p", html: "A module is one project: the folder Go versions and downloads as a unit. <code>go mod init</code> writes <code>go.mod</code>. The word after it is the module path, the name other code uses if it imports you. For a program that only runs on your machine, that name can be anything. You do not need a GitHub account, and the folder does not have to live on GitHub." },
     { t: "code", title: "A new project", code:
 `mkdir hello && cd hello
-go mod init github.com/you/hello   # creates go.mod
+go mod init hello              # creates go.mod
 
 # go.mod now reads:
-#   module github.com/you/hello
-#   go 1.23`
+#   module hello
+#   go 1.27                    # the language version of the Go you installed`
     },
-    { t: "p", html: "A <strong>module</strong> is a versioned collection of packages — the unit you publish and depend on. A <strong>package</strong> is a directory of <code>.go</code> files sharing a namespace. The module path doubles as the import prefix, which is why it looks like a URL: it's how <code>go get</code> finds your code." },
+    { t: "p", html: "Use a site path only when other people will import the module. <code>go mod init github.com/you/hello</code> means <code>go get</code> should download that repository from GitHub. <code>you</code> stands for a username. A <strong>module</strong> is the versioned unit you publish. A <strong>package</strong> is one directory of <code>.go</code> files inside it. The module path is the prefix of every import from that module." },
 
     { t: "h", text: "Hello, line by line" },
     { t: "p", html: "<code>package main</code> means this folder builds a program, not a library. <code>import \"fmt\"</code> brings in the printing package. <code>func main</code> is where that program starts, and <code>Println</code> writes the text plus a newline." },
