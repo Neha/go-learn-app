@@ -747,7 +747,7 @@ function modulePage(id) {
       '<p class="lead">' + esc(m.blurb) + "</p>" +
       '<div class="mod-meta"><span class="pill ' + m.level + '">' + m.level + "</span>" +
       "<span>⏱ " + m.minutes + " min</span><span>❓ " + m.quiz.length + " questions</span>" +
-      (state.done[m.id] ? '<span style="color:var(--ok)">✓ completed</span>' : "") + "</div>" +
+      (state.done[m.id] ? '<span class="done-chip" style="color:var(--ok)">✓ completed</span>' : "") + "</div>" +
     "</header>" +
 
     m.blocks.map(renderBlock).join("") +
