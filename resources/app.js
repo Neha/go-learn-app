@@ -1346,16 +1346,49 @@ function searchPage(raw, hits) {
 }
 
 let searchTimer = null;
-function runSearch(raw) {
+let searching = false;
+let popRestoring = false;
+
+function urlWithQuery(q) {
+  const params = new URLSearchParams(location.search);
+  if (q) params.set("q", q); else params.delete("q");
+  const s = params.toString();
+  return location.pathname + (s ? "?" + s : "") + location.hash;
+}
+
+function runSearch(raw, opts) {
+  opts = opts || {};
   const q = (raw || "").trim();
   applyNavFilter(q);
-  if (q.length < 2) { if (searching) { searching = false; route(); } return; }
+  if (q.length < 2) {
+    if (searching) {
+      searching = false;
+      const remembered = (history.state && history.state.search) || new URLSearchParams(location.search).get("q");
+      if (!opts.fromHistory && remembered) { history.back(); return; }
+      route();
+    }
+    return;
+  }
+  if (!opts.fromHistory) {
+    const url = urlWithQuery(q);
+    const st = { search: q };
+    if (searching) history.replaceState(st, "", url);
+    else history.pushState(st, "", url);
+  }
   searching = true;
-  const hits = searchDocs(q);
-  $("#main").innerHTML = searchPage(q, hits);
+  $("#main").innerHTML = searchPage(q, searchDocs(q));
   window.scrollTo(0, 0);
 }
-let searching = false;
+
+function restoreSearchFromHistory() {
+  const q = ((history.state && history.state.search) || new URLSearchParams(location.search).get("q") || "").trim();
+  if (q.length >= 2) {
+    $("#search").value = q;
+    runSearch(q, { fromHistory: true });
+    return true;
+  }
+  return false;
+}
 
 function applyNavFilter(q) {
   const lc = q.toLowerCase();
@@ -1423,9 +1456,25 @@ function init() {
 
   /* shareable (and testable) search links: ?q=printf */
   const q0 = new URLSearchParams(location.search).get("q");
-  if (q0) { $("#search").value = q0; runSearch(q0); }
+  if (q0) { $("#search").value = q0; runSearch(q0, { fromHistory: true }); }
 
-  addEventListener("hashchange", () => { searching = false; $("#search").value = ""; route(); trackVisit(); });
+  addEventListener("popstate", () => {
+    popRestoring = true;
+    setTimeout(() => { popRestoring = false; }, 0);
+    if (restoreSearchFromHistory()) return;
+    searching = false;
+    if ($("#search")) $("#search").value = "";
+    route();
+    trackVisit();
+  });
+  addEventListener("hashchange", () => {
+    if (popRestoring) return;
+    searching = false;
+    $("#search").value = "";
+    if (new URLSearchParams(location.search).get("q")) history.replaceState(null, "", urlWithQuery(""));
+    route();
+    trackVisit();
+  });
   $("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
   $("#navToggle").addEventListener("click", () => $("#sidebar").classList.contains("open") ? closeDrawer() : openDrawer());
   $("#scrim").addEventListener("click", closeDrawer);
