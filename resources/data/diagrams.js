@@ -17,14 +17,14 @@ pipeline: {
       <text class="dg-t sm"      x="67"  y="106" text-anchor="middle">source text</text></g>
     <g class="dg-seq" style="--i:1"><rect class="dg-box dg-lit" style="--i:1" x="146" y="58" width="118" height="70" rx="9"/>
       <text class="dg-t"    x="205" y="86"  text-anchor="middle">Parse</text>
-      <text class="dg-t sm" x="205" y="106" text-anchor="middle">tokens → AST</text></g>
+      <text class="dg-t sm" x="205" y="106" text-anchor="middle">text → a tree</text></g>
     <g class="dg-seq" style="--i:2"><rect class="dg-box dg-lit" style="--i:2" x="284" y="58" width="118" height="70" rx="9"/>
       <text class="dg-t"    x="343" y="86"  text-anchor="middle">Type check</text>
       <text class="dg-t sm" x="343" y="106" text-anchor="middle">most bugs die here</text></g>
     <g class="dg-seq" style="--i:3"><rect class="dg-box accent dg-lit" style="--i:3" x="422" y="58" width="118" height="70" rx="9"/>
-      <text class="dg-t"    x="481" y="82"  text-anchor="middle">SSA + optimise</text>
-      <text class="dg-t sm" x="481" y="100" text-anchor="middle">inline, dead code,</text>
-      <text class="dg-t sm" x="481" y="115" text-anchor="middle">escape analysis</text></g>
+      <text class="dg-t"    x="481" y="82"  text-anchor="middle">Tidy</text>
+      <text class="dg-t sm" x="481" y="100" text-anchor="middle">drop unused code,</text>
+      <text class="dg-t sm" x="481" y="115" text-anchor="middle">stack or heap</text></g>
     <g class="dg-seq" style="--i:4"><rect class="dg-box dg-lit" style="--i:4" x="560" y="58" width="118" height="70" rx="9"/>
       <text class="dg-t"    x="619" y="86"  text-anchor="middle">Machine code</text>
       <text class="dg-t sm" x="619" y="106" text-anchor="middle">amd64 / arm64</text></g>
@@ -111,7 +111,7 @@ pipeline: {
 /* ─────────────── variables & zero values ─────────────── */
 variable: {
   title: "A variable is a named, typed box",
-  caption: "Four ways to declare the same thing — and a guarantee that the box is never full of garbage.",
+  caption: "age is one slot in this function's stack memory. age = 40 overwrites that same slot. The garbage collector is not involved until a value has to outlive the function and moves to the heap.",
   svg: `<svg viewBox="0 0 940 320" role="img" aria-label="Variable declaration forms writing into a named typed memory cell, and a table of zero values">
     <defs><marker id="dgArrV" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -150,8 +150,8 @@ variable: {
     <g class="dg-seq" style="--i:9"><rect class="dg-box bad" x="754" y="186" width="176" height="58" rx="8"/>
       <text class="dg-t sm mono dim" x="842" y="206" text-anchor="middle">map (nil)</text><text class="dg-t sm bad" x="842" y="230" text-anchor="middle">write → panic</text></g>
 
-    <text class="dg-t sm dim" x="10" y="282">:= only inside a function, and at least one variable on the left must be new.</text>
-    <text class="dg-t sm dim" x="10" y="304">Unused local variable → compile error, not a warning.</text>
+    <text class="dg-t sm dim" x="10" y="282">age = 40 writes over 30 in the same bytes. Nothing new is allocated, so nothing is collected.</text>
+    <text class="dg-t sm dim" x="10" y="304">Return from the function and this stack slot is reused. A heap value is collected only when nothing still points at it.</text>
   </svg>`
 },
 
@@ -715,8 +715,8 @@ middleware: {
 
 /* ─────────────── closures ─────────────── */
 closure: {
-  title: "A closure captures the variable, not a copy",
-  caption: "The captured variable escapes to the heap and lives as long as the closure does — which is what makes independent stateful functions possible.",
+  title: "The inner function keeps the variable, not a copy",
+  caption: "c() keeps adding to the same count, so three calls give 1, then 2, then 3. c2 is a second call to counter, so it has its own count and starts again at 1.",
   svg: `<svg viewBox="0 0 940 300" role="img" aria-label="Two closures returned from the same function, each owning an independent captured counter on the heap">
     <defs><marker id="dgArrC2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>

@@ -14,6 +14,7 @@ about: {
     { t: "p", html: "This course tries to be that path. It is opinionated on purpose: when there are three ways to do something, it tells you which one to reach for and what the trade-off costs you." },
 
     { t: "h", text: "What's inside" },
+    { t: "p", html: "The course is modules, projects, diagrams, cheat sheets, and a glossary. This is the inventory." },
     { t: "list", items: [
       "<strong>24 modules</strong> across four levels — Beginner, Intermediate, Advanced and Production — each ending with a summary and five questions with explanations.",
       "<strong>13 end-to-end projects</strong> in four tracks (CLI tools, web apps, APIs &amp; services, systems &amp; data), each a full build guide with a tickable milestone plan and an honest definition of done.",
@@ -46,6 +47,7 @@ about: {
     { t: "p", html: "You can read this in any order — but there <em>is</em> an intended path, and following it means nothing is ever explained with something you haven't met yet." },
 
     { t: "h", text: "The path" },
+    { t: "p", html: "Each row is one level. The last column is what you can do when you finish it." },
     { t: "table", head: ["Level", "Modules", "What you can do afterwards"],
       rows: [
         ["<strong>Beginner</strong>", "1–8", "Read and write ordinary Go: types, variables, control flow, functions, printing, and a working editor setup"],
@@ -58,6 +60,7 @@ about: {
     { t: "note", kind: "tip", title: "Already know another language?", html: "Skim modules 1–8 for the Go-specific bits (zero values, <code>:=</code> rules, bytes vs runes, <code>defer</code>, the <code>fmt</code> verbs) and slow down from module 9 — slices, interfaces, errors and concurrency are where Go differs most from what you already know, and where experienced developers make the most mistakes." },
 
     { t: "h", text: "How to work through one module" },
+    { t: "p", html: "Do these in order. The quiz at the end passes only when every answer is right." },
     { t: "list", ordered: true, items: [
       "<strong>Read the prose, not just the code.</strong> The code blocks are compressed; the sentences around them carry the <em>why</em>.",
       "<strong>Watch the diagram.</strong> Where one exists, it is explaining the thing people most often get wrong. Use <strong>⏸ pause</strong> and <strong>↻ replay</strong> freely.",
@@ -70,6 +73,7 @@ about: {
     ]},
 
     { t: "h", text: "Everything on screen" },
+    { t: "p", html: "These are the controls on the page, and what each one does." },
     { t: "table", head: ["Feature", "What it does"],
       rows: [
         ["<strong>Search</strong> (or press <kbd>/</kbd>)", "Filters modules, projects and cheat sheets by title, summary and content"],
@@ -87,6 +91,7 @@ about: {
     },
 
     { t: "h", text: "Pick a schedule" },
+    { t: "p", html: "Pick one pace and stay with it. The times assume you also type the examples." },
     { t: "list", items: [
       "<strong>Two-week sprint</strong> (~2h/day) — 2–3 modules a day, then one project. Good if you need to be productive in Go at work very soon.",
       "<strong>Six weeks of evenings</strong> (~45m/day) — one module a session, a project each weekend. The most comfortable pace, and the one most likely to be finished.",
@@ -96,6 +101,7 @@ about: {
     { t: "note", kind: "warn", title: "The one mistake to avoid", html: "Reading all 24 modules without writing any code feels productive and teaches you very little. You will understand <code>append</code> the day a sub-slice mutation surprises you, not the day you read about it. <strong>Target ratio: one hour reading to two hours typing.</strong> Start project 1 (<em>gostat</em>) as soon as you finish the Beginner level — do not wait until you feel ready." },
 
     { t: "h", text: "What to keep nearby" },
+    { t: "p", html: "Keep these open in another tab while you work through a module." },
     { t: "list", items: [
       "<strong>The Playground</strong> (<a href=\"https://go.dev/play/\" target=\"_blank\" rel=\"noopener\">go.dev/play</a>) in a tab, for ten-second experiments.",
       "<strong>Two cheat sheets printed:</strong> <em>Syntax Quick Reference</em> while you're learning, and <em>Gotchas &amp; Review Checklist</em> once you're writing real code.",
@@ -130,6 +136,7 @@ privacy: {
     { t: "p", html: "The copy at <a href=\"https://go-learn-app-seven.vercel.app/\">go-learn-app-seven.vercel.app</a> loads <a href=\"https://vercel.com/docs/analytics\" target=\"_blank\" rel=\"noopener\">Vercel Web Analytics</a>. It sends a page view when you open the site and when you move between sections. Vercel identifies a visitor with a hash of the request that lasts for one day, not with a cookie. The fields are the page path, referrer, approximate location, device type, operating system and browser. Quiz answers, progress, search text and how long you stayed are not included. Vercel describes the collection in their <a href=\"https://vercel.com/docs/analytics/privacy-policy\" target=\"_blank\" rel=\"noopener\">Web Analytics privacy policy</a>. Opening the files locally, or serving them yourself off Vercel, does not load this script." },
 
     { t: "h", text: "What is NOT collected" },
+    { t: "p", html: "The site does not ask who you are. This is the list of things it does not store." },
     { t: "list", items: [
       "No name, email, account or login — there is nothing to sign up for.",
       "No cookies of any kind.",

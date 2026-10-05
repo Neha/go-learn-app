@@ -46,9 +46,10 @@ html[data-theme="light"]{
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+html{font-size:16px}
 body{
   margin:0;background:var(--bg);color:var(--fg);
-  font:16px/1.65 var(--sans);
+  font:1rem/1.65 var(--sans);
   -webkit-font-smoothing:antialiased;
   overflow-wrap:break-word;
 }
@@ -72,6 +73,10 @@ code{font-family:var(--mono);font-size:.885em}
 .brand:hover{text-decoration:none}
 .brand-mark{font-size:1.4rem;filter:drop-shadow(0 0 10px rgba(0,173,216,.5))}
 .brand-text span{color:var(--go)}
+.beta-flag{
+  flex:none;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  color:#03151b;background:var(--accent);border-radius:999px;padding:3px 8px;
+}
 .search-wrap{position:relative;flex:1;max-width:460px;margin:0 auto}
 .search-wrap .search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--fg-3);font-size:1.1rem}
 #search{
@@ -86,6 +91,9 @@ code{font-family:var(--mono);font-size:.885em}
   border:1px solid var(--line);border-radius:5px;padding:1px 6px;
 }
 .topbar-right{display:flex;align-items:center;gap:8px;flex:none}
+.text-size{display:flex;gap:4px;flex:none}
+.text-size .icon-btn{width:auto;min-width:36px;padding:0 8px;font:700 13px var(--sans)}
+.text-size .icon-btn:disabled{opacity:.35;cursor:default;transform:none}
 .icon-btn{
   width:36px;height:36px;display:grid;place-items:center;flex:none;
   background:var(--bg-3);border:1px solid var(--line);border-radius:10px;
@@ -266,6 +274,12 @@ tbody tr:hover{background:var(--bg-3)}
 .copy:hover{border-color:var(--go);color:var(--go)}
 .copy.copied{border-color:var(--ok);color:var(--ok)}
 pre{margin:0;padding:15px 16px;overflow-x:auto;font-family:var(--mono);font-size:.825rem;line-height:1.68;color:#d5e2f0;tab-size:4}
+.code-out{border-top:1px solid #243140;background:#070b10}
+.code-out span{
+  display:block;padding:10px 16px 0;
+  font:700 .68rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#6c7f93
+}
+.code-out pre{padding-top:6px;color:#9fe6c3}
 pre::-webkit-scrollbar{height:9px}
 pre::-webkit-scrollbar-thumb{background:#2b3a4a;border-radius:9px}
 .tok-kw{color:#ff79c6}
@@ -706,7 +720,6 @@ article.page h2{margin-top:32px}
   .grid{grid-template-columns:1fr}
 }
 @media (max-width:480px){
-  body{font-size:15px}
   pre{font-size:.76rem}
   .stats{gap:18px}
   .pager a{min-width:100%}

@@ -14,6 +14,7 @@ window.CURRICULUM_PARTS.push([
     { t: "p", html: "A Go binary that runs on your laptop is maybe 60% of the work. This module is the other 40%: how the program is <em>configured</em>, <em>built</em>, <em>shipped</em> and <em>upgraded</em> without waking anyone up." },
 
     { t: "h", text: "Configuration: environment in, validated once, immutable after" },
+    { t: "p", html: "Read configuration from the environment at startup, check it, and then do not change it. A missing required value should stop the process before it serves traffic. Do not scatter <code>os.Getenv</code> through the program." },
     { t: "code", title: "config/config.go — load, validate, fail fast", code:
 `type Config struct {
     Env         string        // dev | staging | prod
@@ -57,6 +58,7 @@ func main() {
     { t: "note", kind: "warn", title: "Secrets", html: "Environment variables are fine for <em>config</em>, acceptable for secrets, and <strong>never</strong> fine in source, in a committed <code>.env</code>, in a container image layer, or in your logs. Pull them from your platform's secret store (AWS Secrets Manager, Vault, Kubernetes Secrets mounted as files) at startup. Never log a whole config struct — give secret fields a <code>String()</code> method that returns <code>\"[REDACTED]\"</code>, or use a <code>type Secret string</code> wrapper so a stray <code>%v</code> can't leak it." },
 
     { t: "h", text: "Project layout that survives growth" },
+    { t: "p", html: "<code>cmd</code> is the programs. <code>internal</code> is the rest, and other modules cannot import it. Keep <code>main</code> thin: parse flags, build the dependencies, and call <code>Run</code>." },
     { t: "code", title: "A pragmatic structure", code:
 `myservice/
 ├── cmd/
@@ -110,6 +112,7 @@ func run() error {
     },
 
     { t: "h", text: "Builds: reproducible, stripped, static" },
+    { t: "p", html: "<code>-trimpath</code> removes your machine's paths from the binary. <code>-ldflags=\"-s -w\"</code> drops debug symbols and makes the file smaller. <code>CGO_ENABLED=0</code> keeps the binary from depending on a C library on the target machine." },
     { t: "code", title: "The release build", code:
 `VERSION := $(shell git describe --tags --always --dirty)
 COMMIT  := $(shell git rev-parse --short HEAD)
@@ -134,6 +137,7 @@ build:
     { t: "note", kind: "deep", title: "Why CGO_ENABLED=0 matters", html: "With cgo enabled, your binary dynamically links the host's libc and resolves DNS through it — so it may not run on a different distro, and it won't run in a <code>scratch</code> container at all. <code>CGO_ENABLED=0</code> gives a fully static binary using Go's own DNS resolver. The cost: no <code>sqlite3</code> C driver (use <code>modernc.org/sqlite</code>), and <code>os/user</code> lookups are limited." },
 
     { t: "h", text: "Containers: multi-stage, distroless, non-root" },
+    { t: "p", html: "Build in one image that has the Go toolchain, and copy only the binary into a small final image. Run as a user who is not root. The container then has nothing to attack except your program." },
     { t: "code", title: "Dockerfile — a ~15 MB image", code:
 `# ---- build stage ----
 FROM golang:1.23-alpine AS build
@@ -164,6 +168,7 @@ ENTRYPOINT ["/server"]
     { t: "note", kind: "warn", title: "GOMAXPROCS and GOMEMLIMIT in containers", html: "A container with a 1-CPU quota still reports the host's core count to older Go versions, so <code>GOMAXPROCS</code> could be 64 on a 1-CPU limit — causing heavy scheduler churn and CPU throttling. Go 1.25 made the runtime cgroup-aware; before that, use <code>go.uber.org/automaxprocs</code> (a single blank import). Independently, always set <strong><code>GOMEMLIMIT</code> to ~80% of the memory limit</strong> — the GC does not know about cgroup limits and will happily grow into an OOM kill." },
 
     { t: "h", text: "Database migrations" },
+    { t: "p", html: "A migration is a SQL change with a version, applied in order, and recorded so it is not applied twice. Commit the SQL next to the code. Do not edit a migration that has already run in production. Add a new one." },
     { t: "code", title: "Versioned, forward-only in practice, never ad-hoc", code:
 `# golang-migrate, goose and atlas are the common choices
 migrate create -ext sql -dir migrations -seq add_users_table
@@ -185,6 +190,7 @@ migrate -database "$DATABASE_URL" -path migrations down 1
     },
 
     { t: "h", text: "CI: the gates that actually catch things" },
+    { t: "p", html: "Run tests, <code>go vet</code>, and the race detector on every pull request. A green build should mean the program compiles, the tests pass, and the obvious mistakes are gone. Formatting and vulnerability checks belong in that same job." },
     { t: "code", title: ".github/workflows/ci.yaml", code:
 `name: ci
 on: [push, pull_request]
@@ -229,6 +235,7 @@ jobs:
     },
 
     { t: "h", text: "Versioning and releases" },
+    { t: "p", html: "Tag a release with a version such as <code>v1.4.0</code>. The module path and the tag must agree. A changelog says what changed for the people who depend on you. <code>goreleaser</code> can build the binaries for each OS from that tag." },
     { t: "code", title: "Semver, and the module major-version rule", code:
 `git tag v1.4.0 && git push origin v1.4.0     # that is a Go "release"
 
@@ -290,6 +297,7 @@ jobs:
     { t: "p", html: "Two questions decide whether a Go service is production-grade: <strong>what happens when a dependency is slow or down?</strong> and <strong>when it breaks at 3am, can you tell why in under five minutes?</strong>" },
 
     { t: "h", text: "Timeouts: the single highest-value habit" },
+    { t: "p", html: "Every network call needs a deadline. Without one, a stuck peer holds a goroutine and a connection forever. Set the timeout on the HTTP client and on the server, and pass a <code>context</code> that cancels." },
     { t: "code", title: "Every boundary gets a deadline", code:
 `// 1. SERVER — the zero-value http.Server has NO timeouts
 srv := &http.Server{
@@ -324,6 +332,7 @@ rows, err := db.QueryContext(ctx, q)        // the DB call inherits the deadline
     { t: "note", kind: "warn", title: "A missing timeout is a latent outage", html: "Without one, a slow dependency converts into unbounded goroutines, unbounded memory, and an exhausted connection pool — your service dies of something that never actually failed. Timeouts turn an availability problem into a <em>fast, visible</em> error you can handle." },
 
     { t: "h", text: "Retries: only when safe, always with backoff and jitter" },
+    { t: "p", html: "Retry a read that failed because of a network blip. Do not blindly retry a payment. Wait longer after each failure, and add a random jitter so every client does not retry at the same instant." },
     { t: "code", title: "Exponential backoff with full jitter", code:
 `func retry(ctx context.Context, attempts int, base time.Duration, f func() error) error {
     var err error
@@ -355,6 +364,7 @@ rows, err := db.QueryContext(ctx, q)        // the DB call inherits the deadline
     },
 
     { t: "h", text: "Shed load before you fall over" },
+    { t: "p", html: "When the process is out of capacity, refuse new work with a clear error instead of accepting it and missing every deadline. A limit on in-flight requests is the usual switch." },
     { t: "code", title: "Circuit breaker, bulkhead, rate limit", code:
 `// CIRCUIT BREAKER — stop hammering a dependency that is clearly down.
 // CLOSED (normal) -> too many failures -> OPEN (fail instantly, no call)
@@ -390,6 +400,7 @@ default:
     },
 
     { t: "h", text: "The three pillars — what each is actually for" },
+    { t: "p", html: "Logs, metrics, and traces answer different questions. A log is one event. A metric is a number you can graph. A trace is the path of one request across services. You want all three, and they are not substitutes for each other." },
     { t: "table", head: ["", "Answers", "Cardinality", "Cost"],
       rows: [
         ["<strong>Logs</strong>", "What exactly happened in <em>this</em> request?", "Unbounded", "High per event"],
@@ -478,6 +489,7 @@ if err != nil { span.RecordError(err); span.SetStatus(codes.Error, "create faile
     },
 
     { t: "h", text: "Health checks: liveness is not readiness" },
+    { t: "p", html: "Liveness means \"the process should be restarted\". Readiness means \"it can take traffic right now\". A database that is down should fail readiness, not liveness, or the orchestrator will restart a process that is fine." },
     { t: "code", title: "Two endpoints, two very different meanings", code:
 `// LIVENESS — "is this process wedged?" Must be CHEAP and DEPENDENCY-FREE.
 // Failing it RESTARTS the pod. If you check the database here, one database
@@ -569,6 +581,7 @@ tp.Shutdown(context.Background())            // 6. flush traces/metrics
     { t: "p", html: "Dependency management is where Go made its most unusual design choice, and misunderstanding it costs teams days. Go does <strong>not</strong> resolve \"the latest version that satisfies a range\". It uses <strong>Minimal Version Selection</strong>, and once that clicks, <code>go.mod</code> stops being mysterious." },
 
     { t: "h", text: "Minimal Version Selection, in one example" },
+    { t: "p", html: "Go picks the oldest version of a dependency that satisfies every requirement, not the newest. If A needs <code>v1.2.0</code> and B needs <code>v1.3.0</code>, the build uses <code>v1.3.0</code>. It does not float forward when <code>v1.4.0</code> is published." },
     { t: "code", title: "Go picks the OLDEST version that satisfies everyone", code:
 `your module requires:  A v1.2.0    and    B v1.0.0
              A v1.2.0 requires:  C v1.5.0
@@ -587,6 +600,7 @@ unless you ask. Consequences that matter:
     },
 
     { t: "h", text: "Every directive you'll meet in go.mod" },
+    { t: "p", html: "<code>module</code> is the path. <code>go</code> is the language version. <code>require</code> lists dependencies. <code>exclude</code> and <code>replace</code> override a version, usually for a local checkout or a broken release. <code>retract</code> tells other people not to use a version you already published." },
     { t: "code", title: "go.mod, annotated", code:
 `module github.com/you/app          // import prefix AND repo location
 
@@ -624,6 +638,7 @@ tool golang.org/x/tools/cmd/stringer   // Go 1.24+: replaces the tools.go hack
     { t: "note", kind: "deep", title: "The `go` line is a feature switch, not documentation", html: "<code>go 1.22</code> in <code>go.mod</code> is what gives that module per-iteration loop variables; <code>go 1.23</code> is what makes <code>range</code>-over-function compile. Each module in a build gets its own language version, so an old dependency keeps old semantics while your code gets new ones. Bumping that line is a real, behaviour-changing edit — do it deliberately, and re-run the tests." },
 
     { t: "h", text: "Versioning what you publish" },
+    { t: "p", html: "Starting at <code>v2</code>, the major version is part of the import path: <code>github.com/you/mod/v2</code>. <code>v0</code> and <code>v1</code> omit it. A breaking change needs a new major version. It is not a silent edit of <code>v1</code>." },
     { t: "code", title: "Semver, /v2, and pseudo-versions", code:
 `git tag v1.4.2 && git push origin v1.4.2    # publishing IS tagging
 
@@ -646,6 +661,7 @@ tool golang.org/x/tools/cmd/stringer   // Go 1.24+: replaces the tools.go hack
     },
 
     { t: "h", text: "The commands that actually come up" },
+    { t: "p", html: "<code>go get</code> changes a dependency. <code>go mod tidy</code> makes <code>go.mod</code> match the imports. <code>go list -m</code> shows versions. <code>go mod why</code> says why a module is in the build. You do not edit version numbers by hand unless you mean to." },
     { t: "code", title: "Day-to-day and when things go wrong", code:
 `go get example.com/pkg@latest     # add or upgrade one dependency
 go get example.com/pkg@v1.4.2     # pin exactly
@@ -671,6 +687,7 @@ go clean -modcache                # the nuclear option for a corrupt cache
     },
 
     { t: "h", text: "Workspaces: local multi-module development" },
+    { t: "p", html: "A <code>go.work</code> file lets one checkout use several local modules instead of the versions published online. It is for development. Do not commit it as the way your users build." },
     { t: "code", title: "go.work replaces a pile of replace directives", code:
 `go work init ./api ./worker ./shared
 go work use ./newservice          # add another
@@ -690,6 +707,7 @@ GOWORK=off go build ./...          # temporarily ignore the workspace`
     },
 
     { t: "h", text: "Proxies, checksums and private code" },
+    { t: "p", html: "By default <code>go get</code> downloads through a public proxy and checks the hash in the checksum database. A private module must be listed in <code>GOPRIVATE</code> so Go fetches it directly and does not send its path to the public servers." },
     { t: "code", title: "What happens when you `go get`", code:
 `# By default the toolchain fetches through a CDN and verifies against a
 # transparency log — not straight from GitHub:
@@ -714,6 +732,7 @@ go mod vendor && go build ./...   # -mod=vendor becomes automatic when vendor/ e
     },
 
     { t: "h", text: "Supply-chain hygiene" },
+    { t: "p", html: "Commit <code>go.sum</code>. Run <code>govulncheck</code> so you hear about vulnerabilities your code can reach. Prefer a module you can read over one that appeared last week. A <code>replace</code> that points at a random fork should not land on <code>main</code>." },
     { t: "list", items: [
       "<strong>Prefer the standard library.</strong> \"A little copying is better than a little dependency\" is cheaper than it sounds — <code>net/http</code> plus 40 lines of middleware beats a framework you'll fight in two years.",
       "<strong>Audit before adding:</strong> maintenance activity, release cadence, its <em>own</em> dependency count, and whether it pulls in cgo.",
@@ -770,6 +789,7 @@ go mod vendor && go build ./...   # -mod=vendor becomes automatic when vendor/ e
     { t: "p", html: "Go gives you strong crypto and a safe memory model for free, which means almost every real vulnerability in a Go service comes from the <em>application</em> layer: trusting input, comparing secrets carelessly, or forgetting a limit. This module is the list, with the Go-specific detail each one needs." },
 
     { t: "h", text: "Randomness: the one import you must get right" },
+    { t: "p", html: "Tokens, passwords, and keys come from <code>crypto/rand</code>. <code>math/rand</code> is a predictable sequence, fine for a game and useless for security. <code>math/rand/v2</code> is still not cryptographic." },
     { t: "code", title: "crypto/rand for anything a user must not guess", code:
 `// WRONG for secrets — math/rand is a deterministic PRNG.
 // (math/rand/v2 at least auto-seeds, which hid this bug for a while.)
@@ -811,6 +831,7 @@ if !hmac.Equal(mac.Sum(nil), provided) { return ErrBadSignature }  // constant t
     },
 
     { t: "h", text: "Injection: three different problems" },
+    { t: "p", html: "SQL injection is user text pasted into a query. Use placeholders. Command injection is user text pasted into a shell. Do not use a shell. Path traversal is a <code>..</code> in a filename. Clean the path and check it stays inside the directory you intended." },
     { t: "code", title: "SQL, shell, and path", code:
 `// 1. SQL — placeholders, always. The driver sends values out of band.
 db.QueryContext(ctx, "SELECT * FROM users WHERE email = $1", email)   // SAFE
@@ -841,6 +862,7 @@ f, err := root.Open(userInput)           // CANNOT escape baseDir, ever`
     { t: "note", kind: "warn", title: "Zip slip and decompression bombs", html: "Extracting an archive is path traversal with extra steps: an entry named <code>../../etc/cron.d/x</code> will happily escape unless you validate every name (use <code>os.Root</code>). And always bound the <em>output</em>: a 1 MB zip can expand to 100 GB. Wrap each entry reader in <code>io.LimitReader</code>, cap the entry count, and reject absolute paths, <code>..</code> segments and symlink entries." },
 
     { t: "h", text: "Output: XSS and the template rules" },
+    { t: "p", html: "<code>html/template</code> escapes data you insert, so a name cannot become a script. <code>text/template</code> does not. Do not mark a string as trusted HTML unless you built it yourself." },
     { t: "code", title: "html/template is contextual — use it, and don't opt out", code:
 `// html/template knows WHERE a value lands and escapes accordingly: body text,
 // an attribute, a URL, a JS string, CSS. text/template does none of this.
@@ -866,6 +888,7 @@ w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
     },
 
     { t: "h", text: "TLS and transport" },
+    { t: "p", html: "Serve HTTPS with a real certificate, and turn off old protocol versions. Inside a cluster, still authenticate the other service. A private network is not the same as an authenticated caller." },
     { t: "code", title: "Sane defaults, and the flag never to set", code:
 `// Go's defaults are already good: TLS 1.3 preferred, modern cipher suites,
 // certificate verification ON. Mostly you just set a floor:
@@ -898,6 +921,7 @@ srvCfg := &tls.Config{
     },
 
     { t: "h", text: "SSRF: the one people forget" },
+    { t: "p", html: "If your server fetches a URL the user supplied, the user can point it at your internal network. Allow only the hosts you expect, and refuse link-local and metadata addresses." },
     { t: "code", title: "Any user-supplied URL you fetch is an attack surface", code:
 `// Webhooks, link previews, avatar-by-URL, PDF renderers, URL shorteners —
 // if your server fetches a URL the user chose, it can be pointed at your
@@ -934,6 +958,7 @@ func safeClient() *http.Client {
     },
 
     { t: "h", text: "Authentication and authorisation mistakes" },
+    { t: "p", html: "Authentication is who the caller is. Authorisation is what they may do. A valid token is not permission to read every record. Compare secrets with <code>subtle.ConstantTimeCompare</code> so the time taken does not leak the answer. Store passwords with a slow hash, not SHA-256 alone." },
     { t: "list", items: [
       "<strong>IDOR is the most common real breach.</strong> A valid token is not permission for a specific row: every handler must check <em>this</em> user may touch <em>this</em> resource. Make it a query predicate (<code>WHERE id = $1 AND owner_id = $2</code>) so it cannot be forgotten.",
       "<strong>Verify JWTs properly:</strong> pin the expected algorithm (reject <code>alg: none</code> and the HS/RS confusion attack by never letting the token choose the key type), and check <code>exp</code>, <code>nbf</code>, <code>iss</code> and <code>aud</code>. Many CVEs are libraries that skipped one of these.",
@@ -945,6 +970,7 @@ func safeClient() *http.Client {
     ]},
 
     { t: "h", text: "Denial of service: it's all about limits" },
+    { t: "p", html: "Put a limit on body size, header time, and how many requests run at once. An unlimited queue will run you out of memory. Go's regular expressions do not suffer the classic catastrophic-backtracking attack, but a huge body still will." },
     { t: "code", title: "Every unbounded thing is a vulnerability", code:
 `r.Body = http.MaxBytesReader(w, r.Body, 1<<20)   // request bodies
 dec := json.NewDecoder(r.Body); dec.DisallowUnknownFields()
