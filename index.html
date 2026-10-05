@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go From Zero — Learn Golang, Beginner to Internals</title>
+<meta name="description" content="An interactive course covering Go from variables and data types through the scheduler, garbage collector and memory allocator — 24 modules, 13 projects, animated diagrams and printable cheat sheets. By Neha Sharma.">
+<meta name="author" content="Neha Sharma">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐹</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button id="navToggle" class="icon-btn only-mobile" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+
+  <a class="brand" href="#/">
+    <span class="brand-mark" aria-hidden="true">🐹</span>
+    <span class="brand-text">Go<span>From</span>Zero</span>
+  </a>
+
+  <div class="search-wrap">
+    <span class="search-ico" aria-hidden="true">⌕</span>
+    <input id="search" type="search" placeholder="Search topics…  (press /)" autocomplete="off" aria-label="Search topics">
+    <kbd class="only-desktop">/</kbd>
+  </div>
+
+  <div class="topbar-right">
+    <div class="progress-chip" id="progressChip" title="Modules completed">
+      <svg viewBox="0 0 36 36" class="ring" aria-hidden="true">
+        <circle class="ring-bg" cx="18" cy="18" r="15.9"></circle>
+        <circle class="ring-fg" id="ringFg" cx="18" cy="18" r="15.9"></circle>
+      </svg>
+      <span id="progressText">0%</span>
+    </div>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle colour theme">🌙</button>
+  </div>
+  <div class="scroll-progress" id="scrollProgress"></div>
+</header>
+
+<div class="shell">
+  <aside id="sidebar" class="sidebar" aria-label="Course navigation">
+    <div class="side-prog-top" id="sideProg">
+      <div class="spt-row"><b>Your progress</b><span id="sideProgPct">0%</span></div>
+      <div class="side-prog-bar"><i id="sideProgBar"></i></div>
+      <span class="spt-sub" id="sideProgText">0 of 0 modules complete</span>
+      <div class="spt-tools">
+        <button class="link-btn" type="button" id="collapseAll">Collapse all</button>
+        <button class="link-btn" type="button" id="expandAll">Expand all</button>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <button id="resetProgress" class="link-btn">Reset progress</button>
+      <a class="side-author" href="https://x.com/hellonehha" target="_blank" rel="noopener me">by Neha Sharma ↗</a>
+    </div>
+  </aside>
+  <div id="scrim" class="scrim" hidden></div>
+
+  <main id="main" class="main" tabindex="-1"></main>
+</div>
+
+<script src="data/flags.js"></script>
+<script src="data/content-1-foundations.js"></script>
+<script src="data/content-2-core.js"></script>
+<script src="data/content-3-advanced.js"></script>
+<script src="data/content-4-practice.js"></script>
+<script src="data/content-5-production.js"></script>
+<script src="data/projects.js"></script>
+<script src="data/projects-2.js"></script>
+<script src="data/sheets.js"></script>
+<script src="data/diagrams.js"></script>
+<script src="data/glossary.js"></script>
+<script src="data/runnable.js"></script>
+<script src="data/pages.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
