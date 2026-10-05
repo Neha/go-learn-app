@@ -83,10 +83,11 @@ about: {
         ["<strong>⏸ pause</strong> on a diagram", "Freezes every animation on the site and remembers it; <strong>↻ replay</strong> restarts one figure"],
         ["{{playground}}<strong>▶ Run</strong> on a code block", "Copies a complete, compiling program and opens the Go Playground"],
         ["<strong>Copy</strong> on a code block", "Copies the snippet exactly as shown"],
+        ["<strong>Highlight</strong>", "Select a passage and choose Highlight. It stays in this browser. Click a highlight to remove it."],
         ["<strong>Milestone checkboxes</strong> in a project", "Tick them as you build; progress is saved per project"],
         ["<strong>Cheat sheets</strong>", "Download each as PDF, .txt or .md, or get all twelve as one PDF"],
         ["<strong>Theme toggle</strong>", "Dark and light; it follows your system preference on the first visit"],
-        ["<strong>Reset progress</strong> (sidebar)", "Clears completions, quiz scores and milestones from this browser"]
+        ["<strong>Reset progress</strong> (sidebar)", "Clears completions, quiz scores, milestones and highlights from this browser"]
       ]
     },
 
@@ -127,6 +128,7 @@ privacy: {
       "which modules you have completed,",
       "your quiz scores per module,",
       "which project milestones you have ticked,",
+      "the passages you have highlighted,",
       "your theme choice (dark or light),",
       "whether you have paused animations."
     ]},
