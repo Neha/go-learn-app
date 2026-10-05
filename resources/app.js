@@ -394,10 +394,46 @@ function glossaryPage() {
     ).join("") + "</div>";
 }
 
-function renderBlock(b) {
+function slugHeading(text) {
+  const s = String(text).toLowerCase()
+    .replace(/[`'"’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return (s || "section").slice(0, 72);
+}
+
+/* Headings become a "what this covers" list. Links use data-jump because the
+   URL hash is the page router, so a plain #id would leave the lesson. */
+function renderBlocks(blocks) {
+  const used = new Set();
+  const items = [];
+  const html = blocks.map(b => {
+    if (!b || b.t !== "h" || (b.flag && !flagOn(b.flag))) return renderBlock(b);
+    let id = slugHeading(b.text);
+    const base = id;
+    let n = 2;
+    while (used.has(id)) id = base + "-" + n++;
+    used.add(id);
+    items.push({ id, text: b.text });
+    return renderBlock(b, id);
+  }).join("");
+  return { html, items };
+}
+
+function tocHTML(items) {
+  if (!items.length) return "";
+  return '<nav class="toc" aria-label="In this section">' +
+    '<p class="toc-title">In this section</p>' +
+    "<ol>" + items.map(it =>
+      '<li><button type="button" data-jump="' + it.id + '">' + esc(it.text) + "</button></li>"
+    ).join("") +
+    "</ol></nav>";
+}
+
+function renderBlock(b, id) {
   if (b.flag && !flagOn(b.flag)) return "";
   switch (b.t) {
-    case "h":    return "<h2>" + esc(b.text) + "</h2>";
+    case "h":    return "<h2" + (id ? ' id="' + esc(id) + '"' : "") + ">" + esc(b.text) + "</h2>";
     case "p":    return "<p>" + b.html + "</p>";
     case "code": return codeBlock(b);
     case "diagram": return diagramBlock(b);
@@ -529,6 +565,7 @@ function renderNav() {
     : "") +
   navItem("#/how-to-use", "__how", "🧭", "How to use", "how to use guide path schedule shortcuts", false) +
   navItem("#/about", "__about", "🐹", "About", "about author neha sharma credits", false) +
+  navItem("#/releases", "__releases", "📋", "Release notes", "release notes version changelog what changed", false) +
   navItem("#/privacy", "__privacy", "🔒", "Privacy & copyright", "privacy policy copyright licence data", false));
   markActive();
 }
@@ -559,6 +596,7 @@ function markActive() {
   else if (h === "#/about") id = "__about";
   else if (h === "#/how-to-use") id = "__how";
   else if (h === "#/privacy") id = "__privacy";
+  else if (h === "#/releases") id = "__releases";
   $$("#nav .nav-item").forEach(a => {
     const on = a.dataset.id === id;
     a.classList.toggle("active", on);
@@ -691,6 +729,7 @@ function projectPage(id) {
   }).join("");
 
   CUR_MOD = p.id;
+  const body = renderBlocks(p.blocks);
   return '<div class="wrap"><article data-project="' + p.id + '">' +
     '<header class="mod-head">' +
       '<div class="crumbs"><a href="#/">Home</a> / <a href="#/projects">Projects</a> / ' +
@@ -706,7 +745,8 @@ function projectPage(id) {
       (covers ? '<div class="tags" style="margin-top:10px"><span class="tag" style="background:transparent;border:none;color:var(--fg-3)">Applies:</span>' + covers + "</div>" : "") +
     "</header>" +
 
-    p.blocks.map(renderBlock).join("") +
+    tocHTML(body.items) +
+    body.html +
 
     '<section class="milestones">' +
       '<div class="quiz-head"><h2>✅ Milestone plan</h2>' +
@@ -758,6 +798,7 @@ function modulePage(id) {
   const m = MODULES[i], prev = MODULES[i - 1], nxt = MODULES[i + 1];
 
   CUR_MOD = m.id;
+  const body = renderBlocks(m.blocks);
   return '<div class="wrap"><article data-module="' + m.id + '">' +
     '<header class="mod-head">' +
       '<div class="crumbs"><a href="#/">Home</a> / ' + m.level + " / module " + (i + 1) + " of " + MODULES.length + "</div>" +
@@ -768,7 +809,8 @@ function modulePage(id) {
       (state.done[m.id] ? '<span class="done-chip" style="color:var(--ok)">✓ completed</span>' : "") + "</div>" +
     "</header>" +
 
-    m.blocks.map(renderBlock).join("") +
+    tocHTML(body.items) +
+    body.html +
 
     '<section class="summary"><h2>📌 Summary</h2><ul>' +
       m.summary.map(s => "<li><span>" + md(s) + "</span></li>").join("") +
@@ -864,27 +906,48 @@ function staticPage(id) {
   const p = PAGES[id];
   if (!p) return notFound();
   CUR_MOD = "page-" + id;
+  const body = renderBlocks(p.blocks);
   return '<div class="wrap"><article class="page">' +
     '<header class="mod-head">' +
       '<div class="crumbs"><a href="#/">Home</a> / ' + esc(p.title) + "</div>" +
       "<h1><span>" + p.icon + "</span>" + esc(p.title) + "</h1>" +
       '<p class="lead">' + esc(p.blurb) + "</p>" +
     "</header>" +
-    p.blocks.map(renderBlock).join("") +
+    tocHTML(body.items) +
+    body.html +
     "</article></div>";
+}
+
+function releasesPage() {
+  const rel = window.RELEASE || { version: "", notes: [] };
+  const notes = (rel.notes || []).map(n =>
+    '<section class="release">' +
+      "<h2>v" + esc(n.version) + "</h2>" +
+      '<p class="lead">' + esc(n.date) + "</p>" +
+      "<ul>" + (n.items || []).map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>" +
+    "</section>").join("");
+  return '<div class="wrap"><article class="page">' +
+    '<header class="mod-head">' +
+      '<div class="crumbs"><a href="#/">Home</a> / Release notes</div>' +
+      "<h1><span>📋</span>Release notes</h1>" +
+      '<p class="lead">Version ' + esc(rel.version) + ". What changed for readers.</p>" +
+    "</header>" + notes + "</article></div>";
 }
 
 function siteFooter() {
   const year = new Date().getFullYear();
+  const ver = (window.RELEASE && RELEASE.version) ? RELEASE.version : "";
   return '<footer class="site-foot"><div class="wrap">' +
     '<div class="sf-row">' +
       '<div class="sf-brand"><span aria-hidden="true">🐹</span><b>Go<span>From</span>Zero</b>' +
         "<span class='sf-sub'>" + MODULES.length + " modules · " + PROJECTS.length +
-        " projects · " + SHEETS.length + " cheat sheets</span></div>" +
+        " projects · " + SHEETS.length + " cheat sheets" +
+        (ver ? ' · <a href="#/releases">v' + esc(ver) + "</a>" : "") + "</span></div>" +
       '<nav class="sf-links" aria-label="Site information">' +
         '<a href="#/about">About</a>' +
         '<a href="#/how-to-use">How to use</a>' +
         '<a href="#/glossary">Glossary</a>' +
+        '<a href="#/releases">Release notes</a>' +
         (flagOn("playground") ? '<a href="#/playground">Playground</a>' : "") +
         '<a href="#/privacy">Privacy &amp; copyright</a>' +
         '<a href="' + AUTHOR.github + '" target="_blank" rel="noopener">GitHub ↗</a>' +
@@ -917,6 +980,7 @@ function route() {
   else if (h === "#/about")      main.innerHTML = staticPage("about");
   else if (h === "#/how-to-use") main.innerHTML = staticPage("how-to-use");
   else if (h === "#/privacy")    main.innerHTML = staticPage("privacy");
+  else if (h === "#/releases")   main.innerHTML = releasesPage();
   else if (h === "#/" || h === "#") main.innerHTML = home();
   else                           main.innerHTML = notFound();
   main.insertAdjacentHTML("beforeend", siteFooter());
@@ -937,7 +1001,9 @@ function route() {
           : h.startsWith("#/m/") && INDEX.has(h.slice(4)) ? MODULES[INDEX.get(h.slice(4))].title
           : h.startsWith("#/p/") && PINDEX.has(h.slice(4)) ? PROJECTS[PINDEX.get(h.slice(4))].name
           : null;
-  document.title = t ? t + " — Go From Zero" : "Go From Zero — Learn Golang, Beginner to Internals";
+  document.title = t ? t + " — Go From Zero"
+    : h === "#/releases" ? "Release notes — Go From Zero"
+    : "Go From Zero — Learn Golang, Beginner to Internals";
 }
 
 /* #/sheets/<id> and #/glossary/<term> land on that card, not the top of the page. */
