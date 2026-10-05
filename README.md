@@ -7,6 +7,8 @@ data types all the way into the scheduler, the garbage collector and the memory 
 
 No build step, no dependencies, no network calls. Plain HTML, CSS and vanilla JavaScript.
 
+![Homepage of Go From Zero, with the course sidebar, the opening pitch, and the first two modules](docs/preview.png)
+
 ## Run it
 
 ```bash
@@ -151,7 +153,7 @@ summary.
   auto-linked the first time they appear in prose. Hover or focus shows a popover on desktop; on mobile
   (≤820px) a tap opens a bottom sheet. "See also" chips jump between related terms, and `#/glossary`
   is a searchable A–Z reference
-- **Feature flags** (`data/flags.js`) — flip a boolean and reload; anything gated disappears
+- **Feature flags** (`resources/data/flags.js`) — flip a boolean and reload; anything gated disappears
   completely: its nav entry, buttons, route, footer link, and the sentences in About / How to use /
   Privacy that describe it. Override per session with `?ff=playground` / `?ff=-playground`.
   Content gates a whole block with `{ flag: "name" }`, or one list item / table row by prefixing it
@@ -179,27 +181,27 @@ summary.
 ## File layout
 
 ```
-index.html                        shell: topbar, sidebar, main
-styles.css                        theming, layout, print styles
-app.js                            router, renderers, quiz logic, highlighter, downloads
-data/content-1-foundations.js     modules 1–5
-data/content-2-core.js            modules 6–10
-data/content-3-advanced.js        modules 11–13
-data/content-4-practice.js        modules 14–16
-data/content-5-production.js      modules 17–18
-data/projects.js                  build guides: CLI, systems, first API/web
-data/projects-2.js                build guides: web apps, APIs & services
-data/sheets.js                    cheat sheet text
-data/diagrams.js                  animated SVG figures (keyed by id)
-data/glossary.js                  glossary terms, definitions and cross-links
-data/runnable.js                  complete programs for the Run button, keyed "<module>|<title>"
-data/pages.js                     About / How to use / Privacy & copyright
-data/flags.js                     feature flags (playground: false)
+index.html                              shell: topbar, sidebar, main
+resources/styles.css                    theming, layout, print styles
+resources/app.js                        router, renderers, quiz logic, highlighter, downloads
+resources/data/content-1-foundations.js modules 1–5
+resources/data/content-2-core.js        modules 6–10
+resources/data/content-3-advanced.js    modules 11–13
+resources/data/content-4-practice.js    modules 14–16
+resources/data/content-5-production.js  modules 17–18
+resources/data/projects.js              build guides: CLI, systems, first API/web
+resources/data/projects-2.js            build guides: web apps, APIs & services
+resources/data/sheets.js                cheat sheet text
+resources/data/diagrams.js              animated SVG figures (keyed by id)
+resources/data/glossary.js              glossary terms, definitions and cross-links
+resources/data/runnable.js              complete programs for the Run button, keyed "<module>|<title>"
+resources/data/pages.js                 About / How to use / Privacy & copyright
+resources/data/flags.js                 feature flags (playground: false)
 ```
 
 ## Adding or editing content
 
-Each module is one object in a `data/content-*.js` array:
+Each module is one object in a `resources/data/content-*.js` array:
 
 ```js
 {
@@ -213,14 +215,14 @@ Each module is one object in a `data/content-*.js` array:
     { t: "note", kind: "tip|warn|deep", title: "…", html: "…" },
     { t: "list", ordered: false, items: ["…"] },
     { t: "table", head: ["A","B"], rows: [["1","2"]] },
-    { t: "diagram", id: "pipeline" }       // key from data/diagrams.js
+    { t: "diagram", id: "pipeline" }       // key from resources/data/diagrams.js
   ],
   summary: ["…"],            // bullet points; `backticks` and **bold** work
   quiz: [{ q: "…", options: ["…","…","…","…"], answer: 0, explain: "…" }]
 }
 ```
 
-A project (in `data/projects.js` or `data/projects-2.js`) follows the same `blocks` format, plus
+A project (in `resources/data/projects.js` or `resources/data/projects-2.js`) follows the same `blocks` format, plus
 `category` (the track it appears under — add a new one and the nav, home page and overview pick it
 up automatically), `milestones`, `done`, `stretch`, `stack`, `level`, `time`, and `covers` (module
 ids it applies, rendered as links).
