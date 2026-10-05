@@ -571,6 +571,8 @@ function home() {
       "<p>" + MODULES.length + " modules that start with “is Go compiled?” and run through the scheduler, the GC and the " +
       "memory allocator to testing, deployment and on-call. Every module closes with a summary and five questions, " +
       "plus " + PROJECTS.length + " end-to-end projects and " + SHEETS.length + " printable cheat sheets.</p>" +
+      '<p class="go-latest">Latest stable Go is <a href="https://go.dev/dl/" target="_blank" rel="noopener">1.27.1</a> ' +
+      '<span>(August 2026 · <a href="https://go.dev/doc/go1.27" target="_blank" rel="noopener">release notes</a>)</span></p>' +
       '<div class="hero-actions">' +
         '<a class="btn btn-primary" href="#/m/' + next.id + '">' + (doneN ? "Continue → " + esc(next.title) : "Start module 1 →") + "</a>" +
         '<a class="btn btn-ghost" href="#/projects">🛠 Build projects</a>' +

@@ -185,6 +185,8 @@ code{font-family:var(--mono);font-size:.885em}
 .btn-primary:hover{background:var(--go-light);text-decoration:none;transform:translateY(-1px)}
 .btn-ghost{background:transparent;border-color:var(--line);color:var(--fg)}
 .btn-ghost:hover{border-color:var(--go);text-decoration:none;transform:translateY(-1px)}
+.go-latest{margin:16px 0 0;font-size:.95rem;color:var(--fg-2)}
+.go-latest span,.go-latest span a{color:var(--fg-3)}
 .stats{display:flex;flex-wrap:wrap;gap:26px;margin-top:30px;padding-top:24px;border-top:1px solid var(--line)}
 .stat b{display:block;font-size:1.5rem;color:var(--go);font-family:var(--mono)}
 .stat span{font-size:.78rem;color:var(--fg-3);text-transform:uppercase;letter-spacing:.07em}
