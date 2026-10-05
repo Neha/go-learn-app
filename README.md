@@ -188,11 +188,11 @@ summary.
 index.html                              shell: topbar, sidebar, main
 resources/styles.css                    theming, layout, print styles
 resources/app.js                        router, renderers, quiz logic, highlighter, downloads
-resources/data/content-1-foundations.js modules 1–5
-resources/data/content-2-core.js        modules 6–10
-resources/data/content-3-advanced.js    modules 11–13
-resources/data/content-4-practice.js    modules 14–16
-resources/data/content-5-production.js  modules 17–18
+resources/data/content-1-foundations.js modules 1–7
+resources/data/content-2-core.js        modules 8–13
+resources/data/content-3-advanced.js    modules 14–17
+resources/data/content-4-practice.js    modules 18–20
+resources/data/content-5-production.js  modules 21–24
 resources/data/projects.js              build guides: CLI, systems, first API/web
 resources/data/projects-2.js            build guides: web apps, APIs & services
 resources/data/sheets.js                cheat sheet text

@@ -1,4 +1,4 @@
-/* Modules 6–10 : Core Go */
+/* Modules 8–13 : Core Go */
 window.CURRICULUM_PARTS = window.CURRICULUM_PARTS || [];
 window.CURRICULUM_PARTS.push([
 
