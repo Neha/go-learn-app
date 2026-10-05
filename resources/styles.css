@@ -463,6 +463,7 @@ button.gloss:hover,button.gloss.active,button.gloss:focus-visible{
 .score{font:700 .8rem var(--mono);color:var(--fg-2);background:var(--bg-3);border:1px solid var(--line);padding:4px 11px;border-radius:999px}
 .quiz > p.hint{color:var(--fg-3);font-size:.84rem;margin:0 0 18px}
 .q{padding:16px 0;border-top:1px solid var(--line)}
+.q.missed{margin:8px 0;padding:12px 14px;border:1px solid color-mix(in srgb,var(--bad) 45%,var(--line));border-radius:var(--radius-sm);background:color-mix(in srgb,var(--bad) 7%,transparent)}
 .q:first-of-type{border-top:none}
 .q-text{display:flex;gap:10px;font-weight:600;margin-bottom:12px;font-size:.96rem}
 .q-text .num{color:var(--go);font-family:var(--mono);flex:none}
