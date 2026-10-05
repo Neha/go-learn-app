@@ -245,7 +245,7 @@ permission — see `#/privacy`. Go, the Go logo and the Playground belong to the
 the gopher was designed by Renée French. This is an independent educational project with no
 affiliation to Google or any company named in it.
 
-Content targets **Go 1.25** and names the release behind every modern feature, so it is useful whatever
+The latest stable Go release is **1.27.1** (August 2026). Lessons name the release each feature arrived in and were checked through **Go 1.25**, so it is useful whatever
 version you are pinned to: generics (1.18), `GOMEMLIMIT` + typed atomics (1.19), `errors.Join` (1.20),
 PGO + `slog`/`slices`/`maps`/`cmp` + `sync.OnceValue` (1.21), per-iteration loop variables + method
 routing + `math/rand/v2` (1.22), range-over-func iterators + timer overhaul (1.23), Swiss-table maps +
