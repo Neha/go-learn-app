@@ -168,16 +168,17 @@ go build -gcflags="-m" .`
   blurb: "Install Go, understand packages and modules, and read hello-world line by line.",
   blocks: [
     { t: "h", text: "Install" },
+    { t: "note", kind: "tip", title: "Latest stable release: Go 1.27.1", html: "The current stable release is <strong>Go 1.27.1</strong>, published on 28 August 2026 (language version 1.27, August 2026). Installers for every OS are on <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. <code>go version</code> prints the release you actually have." },
     { t: "code", title: "Install and verify", code:
 `# macOS
 brew install go
-# Linux (official tarball)
-curl -LO https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+# Linux (official tarball) — Go 1.27.1, the latest stable release
+curl -LO https://go.dev/dl/go1.27.1.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.27.1.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 # Windows: download the .msi from https://go.dev/dl
 
-go version      # go version go1.23.0 darwin/arm64
+go version      # go version go1.27.1 darwin/arm64
 go env GOPATH   # where downloaded modules and installed tools live`
     },
     { t: "note", kind: "tip", title: "GOPATH is no longer your workspace", html: "Pre-2018 Go forced all code under <code>$GOPATH/src</code>. With <strong>modules</strong>, your project lives anywhere you like. <code>GOPATH</code> now only holds the module cache (<code>pkg/mod</code>) and binaries from <code>go install</code> (<code>bin</code>). Add <code>$(go env GOPATH)/bin</code> to your <code>PATH</code>." },

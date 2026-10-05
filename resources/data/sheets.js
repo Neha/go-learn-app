@@ -1413,7 +1413,7 @@ gRPC (service-to-service)
   icon: "🗓️",
   name: "Version Timeline & Modern Idioms",
   desc: "What changed in every Go release since 1.18, and the old pattern each new feature replaces.",
-  tags: ["1.18", "1.21", "1.22", "1.23", "1.25"],
+  tags: ["1.18", "1.21", "1.22", "1.23", "1.25", "1.26", "1.27"],
   body:
 `GO VERSION TIMELINE & MODERN IDIOMS
 ==================================
@@ -1480,6 +1480,20 @@ Reading old Go is easy; writing old Go by habit is the thing to avoid.
     container-aware GOMAXPROCS (reads the cgroup CPU limit)
     GOEXPERIMENT=greenteagc    (new mark algorithm, opt-in)
     DWARF5, trace flight recorder
+
+1.26  (Feb 2026)
+    new(expr)                  <- new can take an expression, not only a type
+    self-referential generic types
+    Green Tea GC on by default (it was opt-in in 1.25)
+    cgo call overhead down about 30%
+    go fix rebuilt as safe modernizers
+    crypto/hpke; experimental simd/archsimd and runtime/secret
+
+1.27  (Aug 2026)  LATEST STABLE PATCH: 1.27.1 (28 Aug 2026)
+    generic methods            <- a method may declare its own type parameters
+    struct literal keys may be any valid field selector
+    go doc example.com/pkg@v1.2.3
+    go test runs the stdversion vet check by default
 
 OLD PATTERN -> MODERN PATTERN
   i := i inside a loop                 -> nothing needed (1.22+)
