@@ -146,7 +146,7 @@ go build -gcflags="-m" .`
     { q: "Which statement about Go's garbage collector is true?",
       options: ["It's generational and compacting", "It's concurrent mark-and-sweep, non-generational, tuned for short pauses", "It uses reference counting like CPython", "There is no GC; Go uses ownership rules"],
       answer: 1,
-      explain: "Tri-colour concurrent mark-and-sweep. It does not move objects, so it neither compacts nor needs generations." },
+      explain: "The second statement is the true one. Go frees unused memory for you. While your program keeps running, the collector finds the objects you can still reach and throws the rest away — that is mark-and-sweep — and it is tuned so those pauses stay very short. It does not sort objects into young and old (so it is not generational) and it does not slide them together to close gaps (so it is not compacting). It also does not count references the way CPython does, and Go does have a collector: there are no ownership rules." },
     { q: "You're on macOS/arm64 and need a Linux/amd64 binary. Minimum effort?",
       options: ["Install a cross-compiler toolchain", "Build inside a Linux VM or container", "`GOOS=linux GOARCH=amd64 go build`", "Impossible without cgo"],
       answer: 2,
