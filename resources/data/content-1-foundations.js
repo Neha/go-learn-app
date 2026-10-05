@@ -1,4 +1,4 @@
-/* Modules 1–5 : Foundations */
+/* Modules 1–7 : Foundations */
 window.CURRICULUM_PARTS = window.CURRICULUM_PARTS || [];
 window.CURRICULUM_PARTS.push([
 

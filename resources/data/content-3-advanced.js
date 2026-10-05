@@ -1,4 +1,4 @@
-/* Modules 11–13 : Concurrency, Runtime Internals, Generics */
+/* Modules 14–17 : Concurrency, Runtime, Generics, Iterators */
 window.CURRICULUM_PARTS = window.CURRICULUM_PARTS || [];
 window.CURRICULUM_PARTS.push([
 
