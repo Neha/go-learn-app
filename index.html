@@ -8,6 +8,34 @@
 <meta name="author" content="Neha Sharma">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐹</text></svg>">
 <link rel="stylesheet" href="resources/styles.css">
+<script>
+  /* Vercel Web Analytics on the hosted site only. Local and file:// copies stay offline. */
+  (function () {
+    var host = location.hostname;
+    if (location.protocol === "file:" || host === "localhost" || host === "127.0.0.1" || host === "") return;
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    window.va("beforeSend", function (event) {
+      if (!event || !event.url) return event;
+      try {
+        var u = new URL(event.url, location.origin);
+        var hashPath = (u.hash || "").replace(/^#/, "");
+        if (hashPath) {
+          if (hashPath.charAt(0) !== "/") hashPath = "/" + hashPath;
+          u.pathname = hashPath.split("?")[0];
+        }
+        u.hash = "";
+        u.search = "";
+        event.url = u.toString();
+      } catch (e) {}
+      return event;
+    });
+    var s = document.createElement("script");
+    s.defer = true;
+    s.src = "/_vercel/insights/script.js";
+    s.setAttribute("data-disable-auto-track", "1");
+    document.head.appendChild(s);
+  })();
+</script>
 </head>
 <body>
 

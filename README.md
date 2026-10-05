@@ -5,7 +5,11 @@ By **[Neha Sharma](https://x.com/hellonehha)** ([@hellonehha](https://x.com/hell
 A responsive, interactive web app for learning Go — from "is Go compiled?" through variables and
 data types all the way into the scheduler, the garbage collector and the memory allocator.
 
-No build step, no dependencies, no network calls. Plain HTML, CSS and vanilla JavaScript.
+No build step, no dependencies. Plain HTML, CSS and vanilla JavaScript. A local copy makes no network calls.
+
+**Live site:** [go-learn-app-seven.vercel.app](https://go-learn-app-seven.vercel.app/)
+
+The hosted site records anonymous visits with [Vercel Web Analytics](https://vercel.com/docs/analytics): visitors, page views, bounce rate, referrers, country and device. Numbers are in the Vercel project’s **Analytics** tab. A local copy does not send them.
 
 ![Homepage of Go From Zero, with the course sidebar, the opening pitch, and the first two modules](docs/preview.png)
 

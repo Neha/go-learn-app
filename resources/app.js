@@ -867,7 +867,7 @@ function siteFooter() {
       "<span>© " + year + " <a href='" + AUTHOR.x + "' target='_blank' rel='noopener me'><strong>" +
       AUTHOR.name + "</strong></a> — course text, diagrams and quizzes all rights reserved; " +
       "<strong>the Go code samples are free to use</strong></span>" +
-      '<span class="sf-note">No cookies · no analytics · no backend — progress is stored only in this browser</span>' +
+      '<span class="sf-note">No cookies · progress stays in this browser · the hosted site counts anonymous visits</span>' +
     "</div></div></footer>";
 }
 
@@ -906,6 +906,15 @@ function route() {
           : h.startsWith("#/p/") && PINDEX.has(h.slice(4)) ? PROJECTS[PINDEX.get(h.slice(4))].name
           : null;
   document.title = t ? t + " — Go From Zero" : "Go From Zero — Learn Golang, Beginner to Internals";
+}
+
+/* One page view per hash route. The insights script ignores hash changes on its own. */
+function trackVisit() {
+  if (typeof window.va !== "function") return;
+  let path = (location.hash || "#/").replace(/^#/, "") || "/";
+  if (path.charAt(0) !== "/") path = "/" + path;
+  path = path.split("?")[0];
+  window.va("pageview", { path: path, route: path });
 }
 
 /* ---------- quiz interaction ---------- */
@@ -1374,13 +1383,14 @@ function init() {
   renderNav();
   paintProgress();
   route();
+  trackVisit();
   if (!storageWorks()) warnNoStorage();
 
   /* shareable (and testable) search links: ?q=printf */
   const q0 = new URLSearchParams(location.search).get("q");
   if (q0) { $("#search").value = q0; runSearch(q0); }
 
-  addEventListener("hashchange", () => { searching = false; $("#search").value = ""; route(); });
+  addEventListener("hashchange", () => { searching = false; $("#search").value = ""; route(); trackVisit(); });
   $("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
   $("#navToggle").addEventListener("click", () => $("#sidebar").classList.contains("open") ? closeDrawer() : openDrawer());
   $("#scrim").addEventListener("click", closeDrawer);
