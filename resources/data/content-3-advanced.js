@@ -14,6 +14,7 @@ window.CURRICULUM_PARTS.push([
     { t: "p", html: "<strong>Concurrency is not parallelism.</strong> Concurrency is <em>structuring</em> a program as independently progressing tasks; parallelism is <em>executing</em> things at the same instant on multiple cores. Go gives you concurrency as a language feature, and the runtime turns it into parallelism when cores are available." },
 
     { t: "h", text: "Goroutines" },
+    { t: "p", html: "Putting <code>go</code> in front of a call runs that function at the same time as the caller, and the caller does not wait. A goroutine is not an operating-system thread. It starts with a small stack, about 2 KB, and the runtime parks it when it blocks. When <code>main</code> returns, every goroutine is killed." },
     { t: "code", title: "A function call with `go` in front of it", code:
 `go doWork()                       // runs concurrently; the caller does not wait
 go func(id int) {                 // pass data in as arguments, don't capture loosely
@@ -32,6 +33,7 @@ fmt.Println(runtime.NumCPU())        // cores available
     { t: "note", kind: "warn", title: "Two rules you learn the hard way", html: "<strong>(1)</strong> When <code>main</code> returns the process exits, killing every goroutine mid-flight. <strong>(2)</strong> A goroutine that blocks forever is a <em>goroutine leak</em> — memory the GC can never reclaim. Always know how each goroutine terminates <em>before</em> you start it." },
 
     { t: "h", text: "Channels: typed pipes with synchronisation built in" },
+    { t: "p", html: "A channel passes a value from one goroutine to another. An unbuffered send waits until someone receives. A buffered send waits only when the buffer is full. Closing a channel tells receivers there will be no more values. Only the sender should close it." },
     { t: "code", title: "Unbuffered vs buffered", code:
 `ch := make(chan int)        // UNBUFFERED: send blocks until a receiver is ready
                             // — a synchronisation point, a rendezvous
@@ -60,6 +62,7 @@ func consume(in <-chan int)   { for v := range in { _ = v } }  // receive-only`
     { t: "note", kind: "tip", title: "Memorise this table", html: "Most channel bugs — <em>send on closed channel</em>, <em>all goroutines are asleep: deadlock</em>, <em>close of closed channel</em> — are just a cell from this table. A <code>nil</code> channel blocking forever is also a <em>feature</em>: set a channel variable to nil to disable its case inside a <code>select</code>." },
 
     { t: "h", text: "select: wait on whichever is ready first" },
+    { t: "p", html: "<code>select</code> waits on several channel operations and runs the one that is ready. If several are ready, it picks one at random, so you cannot rely on case order. A <code>default</code> case makes it return immediately instead of waiting." },
     { t: "diagram", id: "select" },
     { t: "code", title: "The concurrency switch statement", code:
 `select {
@@ -86,6 +89,7 @@ default:
     },
 
     { t: "h", text: "Patterns that cover 90% of real code" },
+    { t: "p", html: "Most concurrent Go is one of a few shapes: a worker pool, a pipeline of channels, or <code>errgroup</code> to run functions and collect the first error. Start the goroutine with a way for it to stop, usually a <code>context</code> or a closed channel." },
     { t: "code", title: "WaitGroup: wait for N goroutines", code:
 `var wg sync.WaitGroup
 for _, url := range urls {
@@ -159,6 +163,7 @@ if err := g.Wait(); err != nil {        // first non-nil error
     },
 
     { t: "h", text: "Mutexes and the race detector" },
+    { t: "p", html: "A mutex lets one goroutine at a time touch a piece of shared data. Use a channel to hand data off. Use a mutex to guard data many goroutines read and write. <code>go test -race</code> reports unsynchronised accesses. Never copy a mutex." },
     { t: "code", title: "When shared state is genuinely simpler than a channel", code:
 `type SafeCounter struct {
     mu sync.Mutex                       // guards counts; zero value is ready
@@ -194,6 +199,7 @@ fmt.Println(hits.Load())`
     { t: "note", kind: "warn", title: "Run the race detector", html: "<code>go test -race ./...</code> and <code>go run -race .</code> instrument every memory access and report unsynchronised concurrent access with both stack traces. It's ~10× slower and finds only races that actually occur during the run — so use it in CI and under load tests. A data race in Go is <strong>undefined behaviour</strong>, not just a stale read." },
 
     { t: "h", text: "context: cancellation, deadlines, and request scope" },
+    { t: "p", html: "<code>context.Context</code> carries a cancel signal and a deadline down a call chain. Pass it as the first argument. Always call the cancel function, usually with <code>defer</code>, or the timer and the child context leak. A function that blocks should stop when <code>ctx.Done()</code> fires." },
     { t: "code", title: "The first parameter of every blocking function you write", code:
 `// Creating contexts
 ctx := context.Background()                              // root, in main
@@ -337,6 +343,7 @@ GODEBUG=scheddetail=1,schedtrace=1000 ./app   # per-P, per-M breakdown
  one. GC *throughput* cost scales with the number of live POINTERS, not bytes.`
     },
     { t: "h", text: "When does it run? The pacer." },
+    { t: "p", html: "The garbage collector does not run on a timer. It starts when the heap has grown by a fraction of the live data. <code>GOGC=100</code> means \"collect after the heap has doubled\". <code>GOMEMLIMIT</code> gives it a memory budget so it collects harder instead of using more RAM than the container allows." },
     { t: "code", title: "GOGC and GOMEMLIMIT", code:
 `# GOGC (default 100) = grow the heap by this % of live data before collecting.
 # Live heap 100 MB, GOGC=100 -> next GC at ~200 MB.
@@ -369,6 +376,7 @@ debug.FreeOSMemory()                // return freed pages to the OS now`
     },
 
     { t: "h", text: "The allocator: TCMalloc, adapted" },
+    { t: "p", html: "The allocator hands out memory in fixed size classes so a small object does not search a general heap. Each processor has a private cache, so the common path takes no lock. You do not call <code>malloc</code>. Making a value that escapes the function is what asks the allocator for memory." },
     { t: "code", title: "Three tiers, no lock on the fast path", code:
 `  mcache   per-P, LOCK-FREE. The fast path: nearly every small allocation
      │     is served here in a few nanoseconds, no atomics at all.
@@ -468,6 +476,7 @@ go tool pprof -http=:8080 http://host:6060/debug/pprof/profile?seconds=30
     { t: "p", html: "Generics arrived in <strong>Go 1.18</strong> (2022) after a decade of debate. They let you write one implementation that works across types <em>without</em> losing type safety or paying for runtime boxing." },
 
     { t: "h", text: "Type parameters" },
+    { t: "p", html: "A type parameter lets one function work for many types without giving up the compiler's checks. <code>func Min[T cmp.Ordered](a, b T) T</code> means <code>T</code> can be any type that can be ordered, and both arguments must be that same type. The compiler fills in <code>T</code> from the call." },
     { t: "code", title: "Square brackets before the arguments", code:
 `// T is a type parameter constrained by "any"
 func Map[T, U any](in []T, f func(T) U) []U {
@@ -495,6 +504,7 @@ s := &Stack[int]{}                      // instantiate with a concrete type`
     },
 
     { t: "h", text: "Constraints: interfaces, extended" },
+    { t: "p", html: "A constraint is the interface that says which types are allowed. <code>~int</code> also allows a named type whose underlying type is <code>int</code>, such as <code>type Celsius int</code>. Without the <code>~</code>, only plain <code>int</code> matches." },
     { t: "code", title: "Type sets, not just method sets", code:
 `// A constraint may list TYPES (a "type set"), using | for union and ~ for
 // "any type whose underlying type is this"
@@ -529,6 +539,7 @@ type Stringish interface { ~string; String() string }`
     },
 
     { t: "h", text: "The generic stdlib you get for free (Go 1.21+)" },
+    { t: "p", html: "<code>slices</code> and <code>maps</code> are generic functions for the operations people used to copy by hand: sort, contains, clone, delete. Prefer them over a one-off loop when they say what you mean." },
     { t: "code", title: "slices, maps, cmp — delete your utility package", code:
 `import ("slices"; "maps"; "cmp")
 
@@ -552,6 +563,7 @@ cmp.Or(userVal, envVal, "default")        // first non-zero value`
     },
 
     { t: "h", text: "The limits (and they are real)" },
+    { t: "p", html: "A method cannot introduce its own type parameters. If you need that, write a function that takes the value as an argument. Generics are for one algorithm over many types. Interfaces are for many types with different behaviour." },
     { t: "code", title: "What you cannot do", code:
 `// 1. NO generic methods. Type parameters belong to the type or the function,
 //    so you cannot add a new one on a method:
@@ -618,6 +630,7 @@ cmp.Or(userVal, envVal, "default")        // first non-zero value`
     { t: "p", html: "Before Go 1.23 there was no standard way to iterate over something you wrote. Everyone invented their own: return a slice (allocates everything), expose a <code>Next()/Scan()</code> cursor (stateful and easy to misuse), or take a callback (can't <code>break</code>). <strong>Go 1.23 made functions rangeable</strong>, so a custom collection iterates with the same <code>for … range</code> you already use — lazily, with working <code>break</code>, <code>continue</code> and <code>return</code>." },
 
     { t: "h", text: "The two signatures `range` accepts" },
+    { t: "p", html: "Since Go 1.23, <code>range</code> can loop over a function, not only a slice or a map. The function is called with a <code>yield</code> callback. Returning false from <code>yield</code> means the caller stopped, so the iterator should return." },
     { t: "code", title: "That's the whole language change", code:
 `// Package iter just names these shapes; they are ordinary function types.
 type Seq[V any]     func(yield func(V) bool)
@@ -653,6 +666,7 @@ for i, v := range Enumerate(names) { fmt.Println(i, v) }
     { t: "note", kind: "warn", title: "The one rule that matters", html: "<strong>Always check <code>yield</code>'s return value and stop when it's false.</strong> It returns false when the consumer did <code>break</code>, <code>return</code>, <code>goto</code>, or panicked. Ignoring it and calling <code>yield</code> again panics with \"range function continued iteration after loop body returned false\" — the runtime protects the consumer from your bug, but only after the fact. Also never call <code>yield</code> concurrently from multiple goroutines." },
 
     { t: "h", text: "Why this is better than the alternatives" },
+    { t: "p", html: "An iterator produces one value at a time, so a caller can stop early and you do not build a whole slice first. This table compares that with the older ways of walking a collection." },
     { t: "table", head: ["Approach", "Lazy?", "`break` works?", "Allocates", "Composable"],
       rows: [
         ["Return <code>[]T</code>", "no — builds everything", "n/a", "the whole slice", "no"],
@@ -693,6 +707,7 @@ if err := errFn(); err != nil { return err }
     },
 
     { t: "h", text: "The stdlib went iterator-shaped in 1.23" },
+    { t: "p", html: "<code>slices.Values</code>, <code>maps.Keys</code>, and similar functions return an iterator instead of a new slice. You range over them. <code>slices.Collect</code> pulls an iterator back into a slice when you need one." },
     { t: "code", title: "slices, maps, strings, sql — all of it", code:
 `import ("iter"; "slices"; "maps"; "strings")
 
@@ -754,6 +769,7 @@ names := slices.Collect(Take(Map(Filter(users, isActive), User.DisplayName), 10)
     },
 
     { t: "h", text: "Push vs pull" },
+    { t: "p", html: "A push iterator calls you for each value. <code>iter.Pull</code> turns that around so you call <code>next</code> when you want the next value. Always <code>defer stop()</code> on a pull iterator, or the goroutine behind it stays alive." },
     { t: "code", title: "iter.Pull when you need to drive the iteration yourself", code:
 `// A Seq is a PUSH iterator: it calls you. Some algorithms need to PULL —
 // merging two sorted streams, or peeking one element ahead.
