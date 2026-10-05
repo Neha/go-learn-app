@@ -1587,10 +1587,12 @@ function init() {
 
   /* keyboard shortcuts */
   addEventListener("keydown", e => {
-    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    const el = document.activeElement;
+    const typing = !!(el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+    const inControl = !!(el && (el.isContentEditable || el.closest("button, a, summary, [role='button'], [role='link']")));
     if (e.key === "/" && !typing) { e.preventDefault(); $("#search").focus(); return; }
     if (e.key === "Escape") { closeGloss(); $("#search").blur(); closeDrawer(); return; }
-    if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (typing || inControl || e.metaKey || e.ctrlKey || e.altKey) return;
     const h = location.hash;
     const list = h.startsWith("#/m/") ? MODULES : h.startsWith("#/p/") ? PORDER : null;
     if (!list) return;
