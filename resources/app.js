@@ -912,6 +912,8 @@ function route() {
   closeDrawer();
   window.scrollTo(0, 0);
   revealDeepLink(h);
+  measurePageLength();
+  updateReadingRail();
   applySearch($("#search").value);
   applyNavFilter($("#search").value);
   const t = PAGES[h.slice(2)] ? PAGES[h.slice(2)].title
@@ -946,6 +948,44 @@ function trackVisit() {
   if (path.charAt(0) !== "/") path = "/" + path;
   path = path.split("?")[0];
   window.va("pageview", { path: path, route: path });
+}
+
+/* Reading length of the page currently on screen. Modules use their stated
+   minutes; everything else is estimated at about 200 words a minute. */
+let pageLen = { label: "1 min", minutes: 1 };
+
+function measurePageLength() {
+  const h = location.hash || "#/";
+  if (h.startsWith("#/m/") && INDEX.has(h.slice(4))) {
+    const m = MODULES[INDEX.get(h.slice(4))];
+    if (m && m.minutes) {
+      pageLen = { label: m.minutes + " min", minutes: m.minutes };
+      return;
+    }
+  }
+  const text = ($("#main") && $("#main").innerText || "").trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const minutes = Math.max(1, Math.round(words / 200));
+  pageLen = { label: "~" + minutes + " min", minutes };
+}
+
+function updateReadingRail() {
+  const rail = $("#readRail");
+  const top = $("#scrollProgress");
+  if (!rail) return;
+  const scrollable = document.documentElement.scrollHeight - innerHeight;
+  const pct = scrollable > 0 ? Math.min(100, Math.max(0, scrollY / scrollable * 100)) : 0;
+  const rounded = Math.round(pct);
+  const left = Math.max(0, Math.ceil(pageLen.minutes * (1 - pct / 100)));
+  $("#readRailLen").textContent = pageLen.label;
+  $("#readRailFill").style.height = pct + "%";
+  $("#readRailPct").textContent = rounded + "%";
+  $("#readRailLeft").textContent = rounded >= 100 ? "done" : left + " min left";
+  const bar = $("#readRailBar");
+  bar.setAttribute("aria-valuenow", String(rounded));
+  bar.setAttribute("aria-valuetext", rounded + "% of " + pageLen.label + (rounded >= 100 ? "" : ", " + left + " min left"));
+  rail.hidden = scrollable <= 24;
+  if (top) top.style.width = pct + "%";
 }
 
 /* ---------- quiz interaction ---------- */
@@ -1682,15 +1722,10 @@ function init() {
     if (e.key === "ArrowRight" && list[i + 1]) location.hash = pre + list[i + 1].id;
   });
 
-  /* reading progress bar */
-  const bar = $("#scrollProgress");
-  const onScroll = () => {
-    const h = document.documentElement.scrollHeight - innerHeight;
-    bar.style.width = (h > 0 ? Math.min(100, scrollY / h * 100) : 0) + "%";
-  };
-  addEventListener("scroll", onScroll, { passive: true });
-  addEventListener("resize", onScroll);
-  onScroll();
+  /* reading length and progress: header bar and the right-hand rail */
+  addEventListener("scroll", updateReadingRail, { passive: true });
+  addEventListener("resize", updateReadingRail);
+  updateReadingRail();
 }
 
 document.readyState === "loading" ? addEventListener("DOMContentLoaded", init) : init();
