@@ -349,6 +349,8 @@ function openGloss(btn, keyOverride) {
   }
 }
 
+function glossDomId(key) { return "gterm-" + encodeURIComponent(key); }
+
 function glossaryPage() {
   const groups = {};
   Object.entries(GLOSSARY).forEach(([k, g]) => {
@@ -368,7 +370,7 @@ function glossaryPage() {
     letters.map(l =>
       '<div class="section-head" id="gl-' + l + '"><h2>' + l + "</h2></div>" +
       '<div class="grid">' + groups[l].sort((a, b) => a[1].term.localeCompare(b[1].term)).map(([k, g]) =>
-        '<div class="card gloss-card" data-search="' + esc((g.term + " " + g.def).toLowerCase().replace(/<[^>]+>/g, "")) + '">' +
+        '<div class="card gloss-card" id="' + glossDomId(k) + '" data-search="' + esc((g.term + " " + g.def).toLowerCase().replace(/<[^>]+>/g, "")) + '">' +
         '<h3 class="no-gloss">' + esc(g.term) + "</h3>" +
         '<p class="no-gloss">' + g.def + "</p>" +
         ((g.see || []).filter(x => GLOSSARY[x]).length ?
@@ -536,9 +538,9 @@ function markActive() {
   let id = "";
   if (h.startsWith("#/m/")) id = h.slice(4);
   else if (h.startsWith("#/p/")) id = h.slice(4);
-  else if (h === "#/sheets") id = "__sheets";
+  else if (h === "#/sheets" || h.startsWith("#/sheets/")) id = "__sheets";
   else if (h === "#/projects") id = "__projects";
-  else if (h === "#/glossary") id = "__glossary";
+  else if (h === "#/glossary" || h.startsWith("#/glossary/")) id = "__glossary";
   else if (h === "#/playground") id = "__playground";
   else if (h === "#/about") id = "__about";
   else if (h === "#/how-to-use") id = "__how";
@@ -892,8 +894,8 @@ function route() {
   if (h.startsWith("#/m/"))      main.innerHTML = modulePage(h.slice(4));
   else if (h.startsWith("#/p/")) main.innerHTML = projectPage(h.slice(4));
   else if (h === "#/projects")   main.innerHTML = projectsPage();
-  else if (h === "#/sheets")     main.innerHTML = sheetsPage();
-  else if (h === "#/glossary")   main.innerHTML = glossaryPage();
+  else if (h === "#/sheets" || h.startsWith("#/sheets/")) main.innerHTML = sheetsPage();
+  else if (h === "#/glossary" || h.startsWith("#/glossary/")) main.innerHTML = glossaryPage();
   else if (h === "#/playground") main.innerHTML = flagOn("playground") ? playgroundPage() : notFound();
   else if (h === "#/about")      main.innerHTML = staticPage("about");
   else if (h === "#/how-to-use") main.innerHTML = staticPage("how-to-use");
@@ -908,6 +910,7 @@ function route() {
   markActive();
   closeDrawer();
   window.scrollTo(0, 0);
+  revealDeepLink(h);
   applySearch($("#search").value);
   applyNavFilter($("#search").value);
   const t = PAGES[h.slice(2)] ? PAGES[h.slice(2)].title
@@ -915,6 +918,24 @@ function route() {
           : h.startsWith("#/p/") && PINDEX.has(h.slice(4)) ? PROJECTS[PINDEX.get(h.slice(4))].name
           : null;
   document.title = t ? t + " — Go From Zero" : "Go From Zero — Learn Golang, Beginner to Internals";
+}
+
+/* #/sheets/<id> and #/glossary/<term> land on that card, not the top of the page. */
+function revealDeepLink(h) {
+  let el = null;
+  if (h.startsWith("#/sheets/")) {
+    const id = decodeURIComponent(h.slice("#/sheets/".length));
+    el = document.querySelector('[data-sheet="' + CSS.escape(id) + '"]');
+    if (el) {
+      const box = $(".preview", el);
+      const pv = $("[data-pv]", el);
+      if (box) box.classList.add("show");
+      if (pv) pv.textContent = "✕ Hide";
+    }
+  } else if (h.startsWith("#/glossary/")) {
+    el = document.getElementById(glossDomId(decodeURIComponent(h.slice("#/glossary/".length))));
+  }
+  if (el) el.scrollIntoView({ block: "start" });
 }
 
 /* One page view per hash route. The insights script ignores hash changes on its own. */
@@ -1242,13 +1263,13 @@ function buildSearchIndex() {
   }));
   SHEETS.forEach(sh => docs.push({
     kind: "Cheat sheet", icon: sh.icon, title: sh.name, sub: "downloadable reference",
-    href: "#/sheets", navId: "__sheets",
+    href: "#/sheets/" + encodeURIComponent(sh.id), navId: "__sheets",
     strong: sh.name + " " + sh.desc + " " + sh.tags.join(" "),
     text: [sh.name, sh.desc, sh.tags.join(" "), sh.body].join("\n")
   }));
   Object.entries(GLOSSARY).forEach(([k, g]) => docs.push({
     kind: "Glossary", icon: "📖", title: g.term, sub: "definition",
-    href: "#/glossary", navId: "__glossary", gloss: k,
+    href: "#/glossary/" + encodeURIComponent(k), navId: "__glossary", gloss: k,
     strong: g.term + " " + k, text: g.term + " " + stripTags(g.def)
   }));
   Object.entries(PAGES).forEach(([k, p]) => docs.push({
@@ -1309,11 +1330,12 @@ function searchPage(raw, hits) {
   const groups = {};
   hits.forEach(h => (groups[h.d.kind] = groups[h.d.kind] || []).push(h));
   const order = ["Module", "Glossary", "Cheat sheet", "Project", "Page"];
+  const labels = { Module: "Modules", Glossary: "Glossary", "Cheat sheet": "Cheat sheets", Project: "Projects", Page: "Pages" };
   return '<div class="wrap"><div class="section-head"><h2>' + hits.length +
     " result" + (hits.length === 1 ? "" : "s") + " for “" + esc(raw) + "”</h2>" +
     '<span><button class="mini" type="button" data-clearq>clear</button></span></div>' +
     order.filter(k => groups[k]).map(k =>
-      '<div class="search-group"><h3>' + k + "s<span>" + groups[k].length + "</span></h3>" +
+      '<div class="search-group"><h3>' + labels[k] + "<span>" + groups[k].length + "</span></h3>" +
       groups[k].map(h =>
         '<a class="sr" href="' + h.d.href + '">' +
           '<span class="sr-ico">' + h.d.icon + "</span>" +
