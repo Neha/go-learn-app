@@ -6,998 +6,877 @@ window.DIAGRAMS = {
 
 /* ─────────────── the compile pipeline ─────────────── */
 pipeline: {
-  title: "From source to a single binary",
-  caption: "One ahead-of-time pass. No bytecode, no VM, no JIT at run time, the Go runtime is linked in as ordinary code.",
-  svg: `<svg viewBox="0 0 980 360" role="img" aria-label="Source text becomes a tree, is type-checked and tidied, turns into CPU instructions, then links with imports and the runtime into one file">
-    <defs><marker id="dgArrP" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
-      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+  title: "Source becomes one file",
+  caption: "Go compiles ahead of time. Your code, the packages you import, and the runtime link into one file.",
+  svg: `<svg viewBox="0 0 960 500" role="img" aria-label="Source text becomes a tree, is type-checked and tidied, turns into a stack of CPU instructions, then links with imports and the runtime into one file">
+    <defs><marker id="dgArrP" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. The program changes shape</text>
 
-    <text class="dg-t sm" x="20" y="22">The program changes shape. Then three pieces become one file.</text>
+    <rect class="dg-box dg-step" style="--i:0" x="24" y="52" width="152" height="220" rx="16"/>
+    <rect class="dg-ink fill" x="48" y="100" width="104" height="10" rx="3"/>
+    <rect class="dg-ink fill" x="48" y="122" width="78" height="10" rx="3"/>
+    <rect class="dg-ink fill" x="48" y="144" width="96" height="10" rx="3"/>
+    <rect class="dg-ink fill" x="48" y="166" width="60" height="10" rx="3"/>
+    <text class="dg-t lg" x="100" y="244" text-anchor="middle">source</text>
+    <path class="dg-arrow" d="M184 150 L204 150" marker-end="url(#dgArrP)"/>
 
-    <g class="dg-seq" style="--i:0">
-      <rect class="dg-box dg-lit" style="--i:0" x="20" y="40" width="136" height="132" rx="12"/>
-      <text class="dg-t mono sm" x="88" y="64" text-anchor="middle">main.go</text>
-      <rect class="dg-ink fill" x="40" y="76" width="96" height="5" rx="2"/>
-      <rect class="dg-ink fill" x="40" y="90" width="72" height="5" rx="2"/>
-      <rect class="dg-ink fill" x="40" y="104" width="88" height="5" rx="2"/>
-      <rect class="dg-ink fill" x="40" y="118" width="56" height="5" rx="2"/>
-      <text class="dg-t sm" x="88" y="156" text-anchor="middle">source</text>
-    </g>
+    <rect class="dg-box dg-step" style="--i:1" x="212" y="52" width="152" height="220" rx="16"/>
+    <circle class="dg-g" cx="288" cy="108" r="14"/>
+    <path class="dg-ink" d="M288 122 L252 164 M288 122 L288 164 M288 122 L324 164"/>
+    <circle class="dg-g" cx="252" cy="176" r="12"/>
+    <circle class="dg-g" cx="288" cy="176" r="12"/>
+    <circle class="dg-g" cx="324" cy="176" r="12"/>
+    <text class="dg-t lg" x="288" y="244" text-anchor="middle">parse</text>
+    <path class="dg-arrow" d="M372 150 L392 150" marker-end="url(#dgArrP)"/>
 
-    <g class="dg-seq" style="--i:1">
-      <rect class="dg-box dg-lit" style="--i:1" x="200" y="40" width="136" height="132" rx="12"/>
-      <circle class="dg-g" cx="268" cy="70" r="9"/>
-      <path class="dg-ink" d="M268 80 L240 108 M268 80 L268 108 M268 80 L296 108"/>
-      <circle class="dg-g" cx="236" cy="118" r="8"/>
-      <circle class="dg-g" cx="268" cy="118" r="8"/>
-      <circle class="dg-g" cx="300" cy="118" r="8"/>
-      <text class="dg-t sm" x="268" y="156" text-anchor="middle">parse</text>
-    </g>
+    <rect class="dg-box dg-step" style="--i:2" x="400" y="52" width="152" height="220" rx="16"/>
+    <circle class="dg-badge" cx="520" cy="92" r="16"/>
+    <path class="dg-mark" d="M512 92 l5 6 l11 -12"/>
+    <circle class="dg-g" cx="476" cy="108" r="14"/>
+    <path class="dg-ink" d="M476 122 L440 164 M476 122 L476 164 M476 122 L512 164"/>
+    <circle class="dg-g" cx="440" cy="176" r="12"/>
+    <circle class="dg-g" cx="476" cy="176" r="12"/>
+    <circle class="dg-g" cx="512" cy="176" r="12"/>
+    <text class="dg-t lg" x="476" y="244" text-anchor="middle">types</text>
+    <path class="dg-arrow" d="M560 150 L580 150" marker-end="url(#dgArrP)"/>
 
-    <g class="dg-seq" style="--i:2">
-      <rect class="dg-box dg-lit" style="--i:2" x="380" y="40" width="136" height="132" rx="12"/>
-      <circle class="dg-badge" cx="490" cy="66" r="11"/>
-      <path class="dg-mark" d="M484 66 l4 4 l8 -9"/>
-      <circle class="dg-g" cx="448" cy="78" r="9"/>
-      <path class="dg-ink" d="M448 88 L424 112 M448 88 L448 112 M448 88 L472 112"/>
-      <circle class="dg-g" cx="420" cy="122" r="8"/>
-      <circle class="dg-g" cx="448" cy="122" r="8"/>
-      <circle class="dg-g" cx="476" cy="122" r="8"/>
-      <text class="dg-t sm" x="448" y="156" text-anchor="middle">type check</text>
-    </g>
+    <rect class="dg-box dg-step" style="--i:3" x="588" y="52" width="152" height="220" rx="16"/>
+    <circle class="dg-g" cx="664" cy="108" r="14"/>
+    <path class="dg-ink" d="M664 122 L628 164 M664 122 L664 164"/>
+    <path class="dg-ink soft" d="M664 122 L700 164"/>
+    <circle class="dg-g" cx="628" cy="176" r="12"/>
+    <circle class="dg-g" cx="664" cy="176" r="12"/>
+    <circle class="dg-g dg-ink soft" cx="700" cy="176" r="12"/>
+    <path class="dg-ink" d="M692 168 L708 184 M708 168 L692 184"/>
+    <text class="dg-t lg" x="664" y="244" text-anchor="middle">tidy</text>
+    <path class="dg-arrow" d="M748 150 L768 150" marker-end="url(#dgArrP)"/>
 
-    <g class="dg-seq" style="--i:3">
-      <rect class="dg-box accent dg-lit" style="--i:3" x="560" y="40" width="136" height="132" rx="12"/>
-      <circle class="dg-g" cx="628" cy="70" r="9"/>
-      <path class="dg-ink" d="M628 80 L600 108 M628 80 L628 108"/>
-      <path class="dg-ink soft" d="M628 80 L656 108"/>
-      <circle class="dg-g" cx="596" cy="118" r="8"/>
-      <circle class="dg-g" cx="628" cy="118" r="8"/>
-      <circle class="dg-g dg-ink soft" cx="660" cy="118" r="8"/>
-      <path class="dg-ink" d="M654 112 L666 124 M666 112 L654 124"/>
-      <text class="dg-t sm" x="628" y="156" text-anchor="middle">tidy</text>
-    </g>
+    <rect class="dg-box accent dg-step" style="--i:4" x="776" y="52" width="152" height="220" rx="16"/>
+    <rect class="dg-ink fill" x="796" y="104" width="112" height="12" rx="3"/>
+    <rect class="dg-ink fill" x="796" y="128" width="78" height="12" rx="3"/>
+    <rect class="dg-ink fill" x="796" y="152" width="100" height="12" rx="3"/>
+    <rect class="dg-ink fill" x="796" y="176" width="56" height="12" rx="3"/>
+    <text class="dg-t lg" x="852" y="244" text-anchor="middle">CPU</text>
 
-    <g class="dg-seq" style="--i:4">
-      <rect class="dg-box dg-lit" style="--i:4" x="740" y="40" width="136" height="132" rx="12"/>
-      <rect class="dg-ink fill" x="762" y="64" width="92" height="6" rx="2"/>
-      <rect class="dg-ink fill" x="762" y="80" width="64" height="6" rx="2"/>
-      <rect class="dg-ink fill" x="762" y="96" width="84" height="6" rx="2"/>
-      <rect class="dg-ink fill" x="762" y="112" width="48" height="6" rx="2"/>
-      <text class="dg-t sm" x="808" y="156" text-anchor="middle">CPU code</text>
-    </g>
-
-    <g class="dg-arrow dg-ants mid" marker-end="url(#dgArrP)">
-      <line x1="164" y1="96" x2="192" y2="96"/>
-      <line x1="344" y1="96" x2="372" y2="96"/>
-      <line x1="524" y1="96" x2="552" y2="96"/>
-      <line x1="704" y1="96" x2="732" y2="96"/>
-    </g>
-
-    <text class="dg-t sm" x="20" y="204">link, your code, the packages you import, and the runtime</text>
-
-    <g class="dg-seq" style="--i:5"><rect class="dg-box accent" x="20" y="230" width="156" height="50" rx="10"/>
-      <text class="dg-t" x="98" y="259" text-anchor="middle">your code</text></g>
-    <text class="dg-t sm dim" x="194" y="260" text-anchor="middle">+</text>
-    <g class="dg-seq" style="--i:6"><rect class="dg-box" x="212" y="230" width="140" height="50" rx="10"/>
-      <text class="dg-t" x="282" y="259" text-anchor="middle">imports</text></g>
-    <text class="dg-t sm dim" x="370" y="260" text-anchor="middle">+</text>
-    <g class="dg-seq" style="--i:7"><rect class="dg-box" x="388" y="230" width="168" height="50" rx="10"/>
-      <text class="dg-t" x="472" y="259" text-anchor="middle">the runtime</text></g>
-
-    <path class="dg-arrow dg-ants slow" d="M572 255 L728 255" marker-end="url(#dgArrP)"/>
-
-    <g class="dg-seq" style="--i:8">
-      <rect class="dg-box ok dg-lit" style="--i:8" x="740" y="214" width="210" height="82" rx="14"/>
-      <text class="dg-t mono" x="845" y="248" text-anchor="middle">./app</text>
-      <text class="dg-t sm" x="845" y="272" text-anchor="middle">one file</text>
-    </g>
-
-    <text class="dg-t sm dim" x="20" y="336">go run is this same path, into a temp file that is run and then deleted.</text>
+    <text class="dg-t lg" x="24" y="312">2. Three pieces, one file</text>
+    <rect class="dg-box accent" x="24" y="332" width="190" height="120" rx="16"/>
+    <text class="dg-t lg" x="119" y="400" text-anchor="middle">your code</text>
+    <text class="dg-t xl" x="236" y="404" text-anchor="middle">+</text>
+    <rect class="dg-box" x="258" y="332" width="170" height="120" rx="16"/>
+    <text class="dg-t lg" x="343" y="400" text-anchor="middle">imports</text>
+    <text class="dg-t xl" x="450" y="404" text-anchor="middle">+</text>
+    <rect class="dg-box" x="472" y="332" width="180" height="120" rx="16"/>
+    <text class="dg-t lg" x="562" y="400" text-anchor="middle">runtime</text>
+    <path class="dg-arrow" d="M668 392 L748 392" marker-end="url(#dgArrP)"/>
+    <rect class="dg-box ok dg-beat" x="756" y="332" width="180" height="120" rx="16"/>
+    <text class="dg-t mono lg" x="846" y="384" text-anchor="middle">./app</text>
+    <text class="dg-t lg" x="846" y="420" text-anchor="middle">one file</text>
   </svg>`
 },
 
 /* ─────────────── compiled vs interpreted vs JIT ─────────────── */
 "exec-models": {
-  title: "Compiled vs interpreted vs JIT",
-  caption: "Three ways source becomes CPU instructions. Go sits firmly in the first row.",
-  svg: `<svg viewBox="0 0 940 400" role="img" aria-label="Comparison of ahead-of-time compilation, interpretation and just-in-time compilation">
-    <defs><marker id="dgArrE" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Three ways to run",
+  caption: "Go is compiled. The program is machine code before it starts, so the first run is already fast.",
+  svg: `<svg viewBox="0 0 960 660" role="img" aria-label="Compiled Go goes from source to machine code to the CPU. An interpreter re-reads source. A JIT starts slow, then compiles hot code.">
+    <defs><marker id="dgArrE" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="dg-laneBg" x="12" y="12" width="936" height="204" rx="16"/>
+    <text class="dg-t lg" x="28" y="48">1. Compiled</text>
+    <text class="dg-t lg" x="220" y="48">Go, Rust, C</text>
+    <text class="dg-t lg" x="620" y="48">fast from the start</text>
+    <rect class="dg-box" x="28" y="80" width="180" height="108" rx="16"/>
+    <text class="dg-t lg" x="118" y="142" text-anchor="middle">source</text>
+    <path class="dg-arrow" d="M216 134 L252 134" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box" x="260" y="80" width="200" height="108" rx="16"/>
+    <text class="dg-t lg" x="360" y="142" text-anchor="middle">compiler</text>
+    <path class="dg-arrow" d="M468 134 L504 134" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box ok" x="512" y="80" width="240" height="108" rx="16"/>
+    <text class="dg-t lg" x="632" y="142" text-anchor="middle">machine code</text>
+    <path class="dg-arrow" d="M760 134 L796 134" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box accent dg-beat" x="804" y="80" width="124" height="108" rx="16"/>
+    <text class="dg-t lg" x="866" y="142" text-anchor="middle">CPU</text>
 
-    <g class="dg-lane accent">
-      <rect class="dg-laneBg" x="4" y="8" width="932" height="112" rx="10"/>
-      <text class="dg-t" x="18" y="40">AOT compiled</text>
-      <text class="dg-t sm" x="18" y="62">Go, Rust, C</text>
-      <text class="dg-t sm ok" x="18" y="84">fast immediately</text>
-      <rect class="dg-box" x="200" y="34" width="120" height="56" rx="8"/><text class="dg-t mono" x="260" y="68" text-anchor="middle">source</text>
-      <rect class="dg-box" x="380" y="34" width="140" height="56" rx="8"/><text class="dg-t" x="450" y="68" text-anchor="middle">compiler</text>
-      <rect class="dg-box ok" x="580" y="34" width="160" height="56" rx="8"/><text class="dg-t" x="660" y="68" text-anchor="middle">machine code</text>
-      <rect class="dg-box" x="800" y="34" width="110" height="56" rx="8"/><text class="dg-t" x="855" y="68" text-anchor="middle">CPU</text>
-      <g class="dg-arrow dg-ants fast" marker-end="url(#dgArrE)"><line x1="324" y1="62" x2="374" y2="62"/><line x1="524" y1="62" x2="574" y2="62"/><line x1="744" y1="62" x2="794" y2="62"/></g>
-    </g>
+    <rect class="dg-laneBg" x="12" y="232" width="936" height="204" rx="16"/>
+    <text class="dg-t lg" x="28" y="268">2. Interpreted</text>
+    <text class="dg-t lg" x="240" y="268">Python, Ruby</text>
+    <text class="dg-t lg" x="620" y="268">read again each run</text>
+    <rect class="dg-box" x="28" y="300" width="200" height="108" rx="16"/>
+    <text class="dg-t lg" x="128" y="362" text-anchor="middle">source</text>
+    <path class="dg-arrow" d="M236 354 L292 354" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box" x="300" y="300" width="360" height="108" rx="16"/>
+    <text class="dg-t lg" x="480" y="362" text-anchor="middle">one line at a time</text>
+    <path class="dg-arrow" d="M668 354 L796 354" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box" x="804" y="300" width="124" height="108" rx="16"/>
+    <text class="dg-t lg" x="866" y="362" text-anchor="middle">CPU</text>
 
-    <g class="dg-lane">
-      <rect class="dg-laneBg" x="4" y="136" width="932" height="112" rx="10"/>
-      <text class="dg-t" x="18" y="168">Interpreted</text>
-      <text class="dg-t sm" x="18" y="190">Python, Ruby, PHP</text>
-      <text class="dg-t sm warn" x="18" y="212">re-read every run</text>
-      <rect class="dg-box" x="200" y="162" width="120" height="56" rx="8"/><text class="dg-t mono" x="260" y="196" text-anchor="middle">source</text>
-      <rect class="dg-box" x="380" y="154" width="330" height="72" rx="8"/>
-      <text class="dg-t" x="545" y="182" text-anchor="middle">interpreter reads and runs</text>
-      <text class="dg-t sm" x="545" y="204" text-anchor="middle">one statement at a time</text>
-      <rect class="dg-box" x="800" y="162" width="110" height="56" rx="8"/><text class="dg-t" x="855" y="196" text-anchor="middle">CPU</text>
-      <g class="dg-arrow dg-ants slow" marker-end="url(#dgArrE)"><line x1="324" y1="190" x2="374" y2="190"/><line x1="714" y1="190" x2="794" y2="190"/></g>
-    </g>
-
-    <g class="dg-lane">
-      <rect class="dg-laneBg" x="4" y="264" width="932" height="124" rx="10"/>
-      <text class="dg-t" x="18" y="296">JIT compiled</text>
-      <text class="dg-t sm" x="18" y="318">Java, C#, JavaScript</text>
-      <text class="dg-t sm" x="18" y="340">slow, then fast</text>
-      <rect class="dg-box" x="188" y="292" width="96" height="56" rx="8"/><text class="dg-t mono" x="236" y="326" text-anchor="middle">source</text>
-      <rect class="dg-box" x="316" y="284" width="112" height="72" rx="8"/><text class="dg-t sm" x="372" y="312" text-anchor="middle">bytecode</text>
-      <text class="dg-t sm dim" x="372" y="332" text-anchor="middle">portable</text>
-      <rect class="dg-box" x="460" y="284" width="168" height="72" rx="8"/><text class="dg-t sm" x="544" y="312" text-anchor="middle">VM interprets</text>
-      <text class="dg-t sm dim" x="544" y="332" text-anchor="middle">profiles hot code</text>
-      <rect class="dg-box accent" x="660" y="284" width="140" height="72" rx="8"/>
-      <text class="dg-t sm" x="730" y="312" text-anchor="middle">JIT compiles</text>
-      <text class="dg-t sm dim" x="730" y="332" text-anchor="middle">hot paths only</text>
-      <rect class="dg-box" x="832" y="292" width="88" height="56" rx="8"/><text class="dg-t" x="876" y="326" text-anchor="middle">CPU</text>
-      <g class="dg-arrow dg-ants mid" marker-end="url(#dgArrE)"><line x1="288" y1="320" x2="310" y2="320"/><line x1="432" y1="320" x2="454" y2="320"/><line x1="632" y1="320" x2="654" y2="320"/><line x1="804" y1="320" x2="826" y2="320"/></g>
-      <path class="dg-arrow dashed" d="M544 362 Q640 384 730 362" marker-end="url(#dgArrE)"/>
-    </g>
+    <rect class="dg-laneBg" x="12" y="448" width="936" height="196" rx="16"/>
+    <text class="dg-t lg" x="28" y="484">3. JIT</text>
+    <text class="dg-t lg" x="160" y="484">Java, C#, JS</text>
+    <text class="dg-t lg" x="680" y="484">slow, then fast</text>
+    <rect class="dg-box" x="28" y="516" width="160" height="100" rx="16"/>
+    <text class="dg-t lg" x="108" y="574" text-anchor="middle">source</text>
+    <path class="dg-arrow" d="M196 566 L228 566" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box" x="236" y="516" width="180" height="100" rx="16"/>
+    <text class="dg-t lg" x="326" y="574" text-anchor="middle">bytecode</text>
+    <path class="dg-arrow" d="M424 566 L456 566" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box accent" x="464" y="516" width="200" height="100" rx="16"/>
+    <text class="dg-t lg" x="564" y="574" text-anchor="middle">hot paths</text>
+    <path class="dg-arrow" d="M672 566 L796 566" marker-end="url(#dgArrE)"/>
+    <rect class="dg-box" x="804" y="516" width="124" height="100" rx="16"/>
+    <text class="dg-t lg" x="866" y="574" text-anchor="middle">CPU</text>
   </svg>`
 },
 
 /* ─────────────── variables & zero values ─────────────── */
 variable: {
-  title: "A variable is a named, typed box",
-  caption: "age is one slot in this function's stack memory. age = 40 overwrites that same slot. The garbage collector is not involved until a value has to outlive the function and moves to the heap.",
-  svg: `<svg viewBox="0 0 940 320" role="img" aria-label="Variable declaration forms writing into a named typed memory cell, and a table of zero values">
-    <defs><marker id="dgArrV" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "age",
+  caption: "One name, one type, one slot. The number 30 lives in that slot.",
+  svg: `<svg viewBox="0 0 960 240" role="img" aria-label="The variable age has type int and holds the value 30">
+    <text class="dg-t lg" x="48" y="40">name</text>
+    <text class="dg-t mono xl" x="48" y="130">age</text>
 
-    <text class="dg-t mono dg-seq" style="--i:0" x="10" y="36">var age int = 30</text>
-    <text class="dg-t mono dg-seq" style="--i:1" x="10" y="62">var age     = 30</text>
-    <text class="dg-t mono dg-seq" style="--i:2" x="10" y="88">age := 30</text>
-    <text class="dg-t mono dg-seq dim" style="--i:3" x="10" y="114">var age int</text>
-    <text class="dg-t sm dim" x="150" y="114">← no value given</text>
+    <text class="dg-t lg" x="280" y="40">type</text>
+    <rect class="dg-box accent" x="280" y="60" width="200" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="380" y="136" text-anchor="middle">int</text>
 
-    <path class="dg-arrow" d="M300 60 L392 60" marker-end="url(#dgArrV)"/>
-    <text class="dg-t sm" x="312" y="48">stores</text>
+    <text class="dg-t lg" x="540" y="40">value</text>
+    <rect class="dg-box ok" x="540" y="60" width="372" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="726" y="152" text-anchor="middle">30</text>
+  </svg>`
+},
 
-    <g>
-      <rect class="dg-box accent" x="400" y="26" width="200" height="86" rx="10"/>
-      <text class="dg-t sm" x="408" y="18">age</text>
-      <text class="dg-t big mono dg-pop" x="500" y="80" text-anchor="middle">30</text>
-      <rect class="dg-chip" x="604" y="34" width="52" height="24" rx="12"/>
-      <text class="dg-t sm mono" x="630" y="50" text-anchor="middle">int</text>
-      <text class="dg-t sm dim" x="604" y="86">8 bytes</text>
-      <text class="dg-t sm dim" x="604" y="104">on the stack</text>
-    </g>
+"assign-stack": {
+  title: "Same slot",
+  caption: "age = 40 writes 40 over 30. The slot does not move, and nothing new is allocated.",
+  svg: `<svg viewBox="0 0 960 280" role="img" aria-label="age starts as 30 on the stack, then age equals 40 overwrites that same slot">
+    <defs><marker id="dgArrAS" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <text class="dg-t" x="10" y="166">No value? You still get a usable one, the ZERO VALUE. Go has no &quot;undefined&quot;.</text>
+    <text class="dg-t lg" x="40" y="36">stack</text>
 
-    <g class="dg-seq" style="--i:4"><rect class="dg-box" x="10"  y="186" width="128" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="74"  y="206" text-anchor="middle">int, float64</text><text class="dg-t mono" x="74"  y="232" text-anchor="middle">0</text></g>
-    <g class="dg-seq" style="--i:5"><rect class="dg-box" x="152" y="186" width="118" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="211" y="206" text-anchor="middle">bool</text><text class="dg-t mono" x="211" y="232" text-anchor="middle">false</text></g>
-    <g class="dg-seq" style="--i:6"><rect class="dg-box" x="284" y="186" width="118" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="343" y="206" text-anchor="middle">string</text><text class="dg-t mono" x="343" y="232" text-anchor="middle">&quot;&quot;</text></g>
-    <g class="dg-seq" style="--i:7"><rect class="dg-box" x="416" y="186" width="150" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="491" y="206" text-anchor="middle">ptr, func, chan</text><text class="dg-t mono" x="491" y="232" text-anchor="middle">nil</text></g>
-    <g class="dg-seq" style="--i:8"><rect class="dg-box ok" x="580" y="186" width="160" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="660" y="206" text-anchor="middle">slice (nil)</text><text class="dg-t sm ok" x="660" y="230" text-anchor="middle">append works</text></g>
-    <g class="dg-seq" style="--i:9"><rect class="dg-box bad" x="754" y="186" width="176" height="72" rx="8"/>
-      <text class="dg-t sm mono dim" x="842" y="206" text-anchor="middle">map (nil)</text><text class="dg-t sm bad" x="842" y="230" text-anchor="middle">write → panic</text></g>
+    <text class="dg-t lg" x="40" y="84">age := 30</text>
+    <rect class="dg-box accent" x="40" y="100" width="300" height="140" rx="16"/>
+    <text class="dg-t lg" x="190" y="148" text-anchor="middle">age</text>
+    <text class="dg-t mono xl" x="190" y="204" text-anchor="middle">30</text>
 
-    <text class="dg-t sm dim" x="10" y="282">age = 40 writes over 30 in the same bytes. Nothing new is allocated, so nothing is collected.</text>
-    <text class="dg-t sm dim" x="10" y="304">Return from the function and this stack slot is reused. A heap value is collected only when nothing still points at it.</text>
+    <path class="dg-arrow" d="M360 170 L470 170" marker-end="url(#dgArrAS)"/>
+    <text class="dg-t lg" x="415" y="150" text-anchor="middle">same slot</text>
+
+    <text class="dg-t lg" x="500" y="84">age = 40</text>
+    <rect class="dg-box ok" x="500" y="100" width="300" height="140" rx="16"/>
+    <text class="dg-t lg" x="650" y="148" text-anchor="middle">age</text>
+    <text class="dg-t mono xl" x="650" y="204" text-anchor="middle">40</text>
+  </svg>`
+},
+
+"assign-heap": {
+  title: "The letters live on the heap",
+  caption: "name is a small slot on the stack. The letters sit on the heap. After name = Grace, nothing points at Ada, so the collector can free Ada.",
+  svg: `<svg viewBox="0 0 960 420" role="img" aria-label="name points at Ada on the heap, then points at Grace, and Ada is swept because nothing points at it">
+    <defs><marker id="dgArrAH" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+    <text class="dg-t lg" x="24" y="36">1. name := &quot;Ada&quot;</text>
+    <rect class="dg-box accent" x="24" y="52" width="240" height="110" rx="16"/>
+    <text class="dg-t lg" x="144" y="96" text-anchor="middle">name</text>
+    <text class="dg-t" x="144" y="128" text-anchor="middle">stack</text>
+    <path class="dg-arrow" d="M280 107 L390 107" marker-end="url(#dgArrAH)"/>
+    <rect class="dg-box" x="404" y="52" width="240" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="524" y="122" text-anchor="middle">Ada</text>
+
+    <text class="dg-t lg" x="24" y="214">2. name = &quot;Grace&quot;</text>
+    <rect class="dg-box accent" x="24" y="230" width="240" height="110" rx="16"/>
+    <text class="dg-t lg" x="144" y="274" text-anchor="middle">name</text>
+    <text class="dg-t" x="144" y="306" text-anchor="middle">stack</text>
+    <path class="dg-arrow" d="M280 285 L390 285" marker-end="url(#dgArrAH)"/>
+    <rect class="dg-box ok dg-arrive" x="404" y="230" width="240" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="524" y="300" text-anchor="middle">Grace</text>
+
+    <rect class="dg-box bad" x="688" y="230" width="240" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="808" y="286" text-anchor="middle">Ada</text>
+    <text class="dg-t" x="808" y="318" text-anchor="middle">no pointer</text>
   </svg>`
 },
 
 /* ─────────────── bytes vs runes ─────────────── */
 "string-runes": {
-  title: "A string is bytes; range gives you runes",
-  caption: "len() counts bytes. Indexing returns one byte. Ranging decodes UTF-8 into code points.",
-  svg: `<svg viewBox="0 0 940 280" role="img" aria-label="The string Héllo shown as six UTF-8 bytes grouping into five runes">
-    <text class="dg-t mono" x="10" y="28">s := &quot;Héllo&quot;</text>
+  title: "Bytes, then runes",
+  caption: "Héllo is 6 bytes and 5 runes. é is the two bytes C3 and A9, so range jumps from index 1 to index 3.",
+  svg: `<svg viewBox="0 0 960 500" role="img" aria-label="The string Héllo is six bytes. The two bytes of é are one rune, so ranging visits five runes at indexes 0, 1, 3, 4 and 5.">
+    <text class="dg-t lg" x="24" y="40">1. Six bytes. len is 6.</text>
+    <rect class="dg-box" x="24" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="88" y="132" text-anchor="middle">H</text>
+    <rect class="dg-box accent" x="168" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono lg" x="232" y="128" text-anchor="middle">C3</text>
+    <rect class="dg-box accent" x="312" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono lg" x="376" y="128" text-anchor="middle">A9</text>
+    <rect class="dg-box" x="456" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="520" y="132" text-anchor="middle">l</text>
+    <rect class="dg-box" x="600" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="664" y="132" text-anchor="middle">l</text>
+    <rect class="dg-box" x="744" y="60" width="128" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="808" y="132" text-anchor="middle">o</text>
+    <text class="dg-t lg" x="88" y="204" text-anchor="middle">0</text>
+    <text class="dg-t lg" x="232" y="204" text-anchor="middle">1</text>
+    <text class="dg-t lg" x="376" y="204" text-anchor="middle">2</text>
+    <text class="dg-t lg" x="520" y="204" text-anchor="middle">3</text>
+    <text class="dg-t lg" x="664" y="204" text-anchor="middle">4</text>
+    <text class="dg-t lg" x="808" y="204" text-anchor="middle">5</text>
+    <path class="dg-brace2" d="M168 220 L168 236 L440 236 L440 220"/>
+    <text class="dg-t lg" x="304" y="268" text-anchor="middle">one rune, é</text>
 
-    <text class="dg-t sm dim" x="10" y="64">bytes, what len(s) and s[i] see</text>
-    <g class="dg-seq" style="--i:0"><rect class="dg-cell" x="10"  y="76" width="80" height="54" rx="7"/><text class="dg-t mono" x="50"  y="108" text-anchor="middle">H</text><text class="dg-t sm dim" x="50"  y="146" text-anchor="middle">0</text></g>
-    <g class="dg-seq pair" style="--i:1"><rect class="dg-cell hot" x="98" y="76" width="80" height="54" rx="7"/><text class="dg-t mono sm" x="138" y="108" text-anchor="middle">0xC3</text><text class="dg-t sm dim" x="138" y="146" text-anchor="middle">1</text></g>
-    <g class="dg-seq pair" style="--i:2"><rect class="dg-cell hot" x="186" y="76" width="80" height="54" rx="7"/><text class="dg-t mono sm" x="226" y="108" text-anchor="middle">0xA9</text><text class="dg-t sm dim" x="226" y="146" text-anchor="middle">2</text></g>
-    <g class="dg-seq" style="--i:3"><rect class="dg-cell" x="274" y="76" width="80" height="54" rx="7"/><text class="dg-t mono" x="314" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="314" y="146" text-anchor="middle">3</text></g>
-    <g class="dg-seq" style="--i:4"><rect class="dg-cell" x="362" y="76" width="80" height="54" rx="7"/><text class="dg-t mono" x="402" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="402" y="146" text-anchor="middle">4</text></g>
-    <g class="dg-seq" style="--i:5"><rect class="dg-cell" x="450" y="76" width="80" height="54" rx="7"/><text class="dg-t mono" x="490" y="108" text-anchor="middle">o</text><text class="dg-t sm dim" x="490" y="146" text-anchor="middle">5</text></g>
-
-    <path class="dg-brace2 dg-glow" d="M102 160 L102 172 L262 172 L262 160"/>
-    <text class="dg-t sm accentT dg-glow" x="182" y="192" text-anchor="middle">these two bytes are ONE rune: é</text>
-
-    <text class="dg-t sm dim" x="600" y="64">runes, what for i, r := range s sees</text>
-    <g class="dg-seq" style="--i:6"><rect class="dg-cell ok" x="600" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="628" y="108" text-anchor="middle">H</text><text class="dg-t sm dim" x="628" y="146" text-anchor="middle">i=0</text></g>
-    <g class="dg-seq" style="--i:7"><rect class="dg-cell ok" x="664" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="692" y="108" text-anchor="middle">é</text><text class="dg-t sm dim" x="692" y="146" text-anchor="middle">i=1</text></g>
-    <g class="dg-seq" style="--i:8"><rect class="dg-cell ok" x="728" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="756" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="756" y="146" text-anchor="middle">i=3</text></g>
-    <g class="dg-seq" style="--i:9"><rect class="dg-cell ok" x="792" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="820" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="820" y="146" text-anchor="middle">i=4</text></g>
-    <g class="dg-seq" style="--i:10"><rect class="dg-cell ok" x="856" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="884" y="108" text-anchor="middle">o</text><text class="dg-t sm dim" x="884" y="146" text-anchor="middle">i=5</text></g>
-    <text class="dg-t sm dim" x="600" y="192">byte offsets jump, they are not 0,1,2,3,4</text>
-
-    <text class="dg-t mono sm" x="10"  y="232">len(s) = 6</text>
-    <text class="dg-t mono sm" x="150" y="232">utf8.RuneCountInString(s) = 5</text>
-    <text class="dg-t mono sm" x="430" y="232">s[1] = 195</text>
-    <text class="dg-t mono sm" x="580" y="232">[]rune(s)[1] = 'é'</text>
-    <text class="dg-t sm dim" x="10" y="262">Strings are immutable: build with strings.Builder, never += in a loop.</text>
+    <text class="dg-t lg" x="24" y="320">2. range sees five. Indexes jump.</text>
+    <rect class="dg-box" x="24" y="340" width="168" height="130" rx="16"/>
+    <text class="dg-t mono xl" x="108" y="400" text-anchor="middle">H</text>
+    <text class="dg-t lg" x="108" y="444" text-anchor="middle">0</text>
+    <rect class="dg-box ok dg-beat" x="208" y="340" width="168" height="130" rx="16"/>
+    <text class="dg-t mono xl" x="292" y="400" text-anchor="middle">é</text>
+    <text class="dg-t lg" x="292" y="444" text-anchor="middle">1</text>
+    <rect class="dg-box" x="392" y="340" width="168" height="130" rx="16"/>
+    <text class="dg-t mono xl" x="476" y="400" text-anchor="middle">l</text>
+    <text class="dg-t lg" x="476" y="444" text-anchor="middle">3</text>
+    <rect class="dg-box" x="576" y="340" width="168" height="130" rx="16"/>
+    <text class="dg-t mono xl" x="660" y="400" text-anchor="middle">l</text>
+    <text class="dg-t lg" x="660" y="444" text-anchor="middle">4</text>
+    <rect class="dg-box" x="760" y="340" width="168" height="130" rx="16"/>
+    <text class="dg-t mono xl" x="844" y="400" text-anchor="middle">o</text>
+    <text class="dg-t lg" x="844" y="444" text-anchor="middle">5</text>
   </svg>`
 },
 
 /* ─────────────── slice header & append ─────────────── */
 "slice-header": {
-  title: "The slice header, and what append really does",
-  caption: "A slice is three words pointing at an array. Whether append writes in place or reallocates is the whole story behind aliasing bugs.",
-  svg: `<svg viewBox="0 0 940 390" role="img" aria-label="Slice header with pointer length and capacity, append writing in place while capacity remains, then reallocating and copying when full">
-    <defs><marker id="dgArrS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Same array, or a new one",
+  caption: "While length is under capacity, append writes into the same array. When it is full, append copies into a new array. Keep the slice append returns.",
+  svg: `<svg viewBox="0 0 960 520" role="img" aria-label="Append writes 4 into the spare slot of an array with room. When the array is full, append copies 1 2 3 4 into a new array and adds 5.">
+    <defs><marker id="dgArrSL" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="40">1. Room left. Same array.</text>
+    <rect class="dg-box accent" x="24" y="60" width="200" height="150" rx="16"/>
+    <text class="dg-t lg" x="124" y="112" text-anchor="middle">len 3</text>
+    <text class="dg-t lg" x="124" y="164" text-anchor="middle">cap 4</text>
+    <path class="dg-arrow" d="M240 135 L300 135" marker-end="url(#dgArrSL)"/>
+    <rect class="dg-box" x="312" y="76" width="120" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="372" y="152" text-anchor="middle">1</text>
+    <rect class="dg-box" x="448" y="76" width="120" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="508" y="152" text-anchor="middle">2</text>
+    <rect class="dg-box" x="584" y="76" width="120" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="644" y="152" text-anchor="middle">3</text>
+    <rect class="dg-box ok dg-beat" x="720" y="76" width="120" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="780" y="152" text-anchor="middle">4</text>
+    <text class="dg-t lg" x="780" y="230" text-anchor="middle">written</text>
 
-    <text class="dg-t" x="10" y="22">① len &lt; cap → append writes IN PLACE and the backing array is shared</text>
+    <text class="dg-t lg" x="24" y="290">2. Full. A new array.</text>
+    <rect class="dg-box" x="24" y="310" width="150" height="80" rx="16"/>
+    <text class="dg-t lg" x="99" y="358" text-anchor="middle">old</text>
+    <rect class="dg-box" x="190" y="310" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="230" y="358" text-anchor="middle">1</text>
+    <rect class="dg-box" x="282" y="310" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="322" y="358" text-anchor="middle">2</text>
+    <rect class="dg-box" x="374" y="310" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="414" y="358" text-anchor="middle">3</text>
+    <rect class="dg-box" x="466" y="310" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="506" y="358" text-anchor="middle">4</text>
+    <path class="dg-arrow" d="M570 350 L640 350" marker-end="url(#dgArrSL)"/>
+    <text class="dg-t lg" x="605" y="334" text-anchor="middle">copy</text>
 
-    <rect class="dg-box accent" x="10" y="38" width="150" height="104" rx="9"/>
-    <text class="dg-t sm mono" x="22" y="62">array ●</text>
-    <text class="dg-t sm mono" x="22" y="88">len   3</text>
-    <text class="dg-t sm mono" x="22" y="114">cap   4</text>
-    <text class="dg-t sm dim" x="22" y="160">24 bytes, on the stack</text>
-
-    <path class="dg-arrow" d="M100 62 C 200 62 200 82 268 82" marker-end="url(#dgArrS)"/>
-
-    <rect class="dg-cell" x="270" y="58" width="70" height="48" rx="6"/><text class="dg-t mono" x="305" y="88" text-anchor="middle">1</text>
-    <rect class="dg-cell" x="344" y="58" width="70" height="48" rx="6"/><text class="dg-t mono" x="379" y="88" text-anchor="middle">2</text>
-    <rect class="dg-cell" x="418" y="58" width="70" height="48" rx="6"/><text class="dg-t mono" x="453" y="88" text-anchor="middle">3</text>
-    <rect class="dg-cell dashed dg-fill" x="492" y="58" width="70" height="48" rx="6"/>
-    <text class="dg-t mono dg-pop" x="527" y="88" text-anchor="middle">4</text>
-    <text class="dg-t sm accentT dg-pop" x="580" y="88">← append(s, 4)</text>
-
-    <path class="dg-brace2" d="M272 116 L272 126 L486 126 L486 116"/><text class="dg-t sm dim" x="379" y="142" text-anchor="middle">len = 3</text>
-    <path class="dg-brace2" d="M272 150 L272 160 L560 160 L560 150"/><text class="dg-t sm dim" x="416" y="176" text-anchor="middle">cap = 4 (room to grow)</text>
-
-    <line class="dg-rule" x1="10" y1="196" x2="930" y2="196"/>
-
-    <text class="dg-t" x="10" y="226">② len == cap → append ALLOCATES a bigger array, copies, and returns a new header</text>
-
-    <rect class="dg-box dim" x="10" y="244" width="150" height="70" rx="9"/>
-    <text class="dg-t sm mono dim" x="22" y="268">array ●</text>
-    <text class="dg-t sm mono dim" x="22" y="292">len 4  cap 4</text>
-    <text class="dg-t sm dim" x="22" y="332">old header still points</text>
-    <text class="dg-t sm dim" x="22" y="350">at the OLD array</text>
-
-    <rect class="dg-cell dim" x="200" y="244" width="48" height="40" rx="5"/><text class="dg-t mono sm dim" x="224" y="270" text-anchor="middle">1</text>
-    <rect class="dg-cell dim" x="252" y="244" width="48" height="40" rx="5"/><text class="dg-t mono sm dim" x="276" y="270" text-anchor="middle">2</text>
-    <rect class="dg-cell dim" x="304" y="244" width="48" height="40" rx="5"/><text class="dg-t mono sm dim" x="328" y="270" text-anchor="middle">3</text>
-    <rect class="dg-cell dim" x="356" y="244" width="48" height="40" rx="5"/><text class="dg-t mono sm dim" x="380" y="270" text-anchor="middle">4</text>
-    <text class="dg-t sm dim" x="200" y="302">orphaned → collected later</text>
-
-    <g class="dg-copy">
-      <path class="dg-arrow dashed" d="M224 292 L560 338" marker-end="url(#dgArrS)"/>
-      <path class="dg-arrow dashed" d="M276 292 L612 338" marker-end="url(#dgArrS)"/>
-      <path class="dg-arrow dashed" d="M328 292 L664 338" marker-end="url(#dgArrS)"/>
-      <path class="dg-arrow dashed" d="M380 292 L716 338" marker-end="url(#dgArrS)"/>
-    </g>
-    <text class="dg-t sm accentT" x="430" y="320">copy</text>
-
-    <rect class="dg-cell ok" x="536" y="340" width="48" height="40" rx="5"/><text class="dg-t mono sm" x="560" y="366" text-anchor="middle">1</text>
-    <rect class="dg-cell ok" x="588" y="340" width="48" height="40" rx="5"/><text class="dg-t mono sm" x="612" y="366" text-anchor="middle">2</text>
-    <rect class="dg-cell ok" x="640" y="340" width="48" height="40" rx="5"/><text class="dg-t mono sm" x="664" y="366" text-anchor="middle">3</text>
-    <rect class="dg-cell ok" x="692" y="340" width="48" height="40" rx="5"/><text class="dg-t mono sm" x="716" y="366" text-anchor="middle">4</text>
-    <rect class="dg-cell ok dg-fill" x="744" y="340" width="48" height="40" rx="5"/><text class="dg-t mono sm dg-pop" x="768" y="366" text-anchor="middle">5</text>
-    <rect class="dg-cell dashed" x="796" y="340" width="40" height="40" rx="5"/>
-    <rect class="dg-cell dashed" x="840" y="340" width="40" height="40" rx="5"/>
-    <rect class="dg-cell dashed" x="884" y="340" width="40" height="40" rx="5"/>
-    <text class="dg-t sm dim" x="536" y="332">new array: cap 8, doubles under 256 elements, then ~1.25×</text>
-
-    <text class="dg-t sm bad" x="200" y="330">this is why you MUST write s = append(s, …)</text>
+    <rect class="dg-box ok" x="24" y="410" width="150" height="80" rx="16"/>
+    <text class="dg-t lg" x="99" y="458" text-anchor="middle">new</text>
+    <rect class="dg-box ok" x="190" y="410" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="230" y="458" text-anchor="middle">1</text>
+    <rect class="dg-box ok" x="282" y="410" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="322" y="458" text-anchor="middle">2</text>
+    <rect class="dg-box ok" x="374" y="410" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="414" y="458" text-anchor="middle">3</text>
+    <rect class="dg-box ok" x="466" y="410" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="506" y="458" text-anchor="middle">4</text>
+    <rect class="dg-box ok dg-beat" x="558" y="410" width="80" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="598" y="458" text-anchor="middle">5</text>
+    <rect class="dg-box dashed" x="650" y="410" width="80" height="80" rx="16"/>
+    <rect class="dg-box" x="746" y="410" width="190" height="80" rx="16"/>
+    <text class="dg-t lg" x="841" y="458" text-anchor="middle">append</text>
   </svg>`
 },
 
 /* ─────────────── a call pushes a frame ─────────────── */
 "call-stack": {
-  title: "A call pushes a frame. Return pops it.",
-  caption: "Each goroutine has its own stack. The frame on top is the function running now. Its locals die with the return, and the next call reuses those bytes.",
-  svg: `<svg viewBox="0 0 960 380" role="img" aria-label="main stays on the stack while score is pushed on top with a local n, then popped on return">
-    <defs><marker id="dgArrCS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Call pushes. Return pops.",
+  caption: "score sits on top of main. n = 10 is a slot in that frame. Return removes score. main stays.",
+  svg: `<svg viewBox="0 0 960 320" role="img" aria-label="main stays on the stack while score is pushed on top with n equals 10, then popped on return">
+    <defs><marker id="dgArrCS" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <text class="dg-t sm dim" x="24" y="28">this goroutine's stack, top is the function running now</text>
+    <text class="dg-t lg" x="40" y="36">stack</text>
 
     <g class="dg-pushpop">
-      <rect class="dg-box accent" x="24" y="48" width="280" height="96" rx="10"/>
-      <text class="dg-t" x="40" y="78">score</text>
-      <text class="dg-t mono" x="40" y="106">n = 10</text>
-      <text class="dg-t sm dim" x="40" y="128">locals live here</text>
-      <path class="dg-arrow dg-ants slow" d="M312 96 L392 96" marker-end="url(#dgArrCS)"/>
-      <text class="dg-t sm" x="318" y="84">return</text>
+      <rect class="dg-box accent" x="40" y="56" width="420" height="110" rx="16"/>
+      <text class="dg-t lg" x="64" y="100">score</text>
+      <text class="dg-t mono xl" x="250" y="128">n = 10</text>
     </g>
 
-    <rect class="dg-box" x="24" y="164" width="280" height="88" rx="10"/>
-    <text class="dg-t" x="40" y="198">main</text>
-    <text class="dg-t sm dim" x="40" y="226">still here after score returns</text>
+    <rect class="dg-box" x="40" y="182" width="420" height="100" rx="16"/>
+    <text class="dg-t lg" x="64" y="242">main</text>
 
-    <text class="dg-t sm dim" x="24" y="278">older frames sit underneath</text>
-
-    <g class="dg-beat" style="--i:0">
-      <rect class="dg-box" x="430" y="48" width="500" height="72" rx="9"/>
-      <text class="dg-t sm" x="448" y="76">1. Call pushes a frame</text>
-      <text class="dg-t sm dim" x="448" y="100">score is laid on top of main</text>
-    </g>
-    <g class="dg-beat" style="--i:1">
-      <rect class="dg-box" x="430" y="136" width="500" height="72" rx="9"/>
-      <text class="dg-t sm" x="448" y="164">2. Locals are slots in that frame</text>
-      <text class="dg-t sm dim" x="448" y="188">n = 10 writes into the slot n already has</text>
-    </g>
-    <g class="dg-beat" style="--i:2">
-      <rect class="dg-box ok" x="430" y="224" width="500" height="72" rx="9"/>
-      <text class="dg-t sm" x="448" y="252">3. Return pops the frame</text>
-      <text class="dg-t sm dim" x="448" y="276">those bytes are reused by the next call</text>
-    </g>
-
-    <text class="dg-t sm dim" x="24" y="340">Moving the stack pointer is the whole allocation. The garbage collector is not involved.</text>
-    <text class="dg-t sm dim" x="24" y="362">A heap value is different: it can outlive this frame, so something has to free it later.</text>
+    <path class="dg-arrow" d="M500 120 L680 120" marker-end="url(#dgArrCS)"/>
+    <text class="dg-t lg" x="590" y="96" text-anchor="middle">return</text>
+    <text class="dg-t lg" x="700" y="242">main stays</text>
   </svg>`
 },
 
 /* ─────────────── stack vs heap ─────────────── */
 "stack-heap": {
-  title: "A copy stays. A pointer has to escape.",
-  caption: "Escape analysis asks one question: can this value outlive the function's frame? If the caller only receives a copy, the frame can die. If the caller receives the address, the value moves to the heap.",
-  svg: `<svg viewBox="0 0 960 300" role="img" aria-label="Two functions: one returning a value that stays on the stack, one returning a pointer that escapes to the heap">
-    <defs><marker id="dgArrH" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "A copy stays. A pointer leaves.",
+  caption: "return x copies 42 and the frame can die. return &x must keep 42 alive, so that 42 moves to the heap.",
+  svg: `<svg viewBox="0 0 960 300" role="img" aria-label="Returning x copies 42 off the stack. Returning the address of x puts 42 on the heap.">
+    <defs><marker id="dgArrH" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <rect class="dg-laneBg" x="4" y="10" width="460" height="280" rx="10"/>
-    <text class="dg-t mono" x="20" y="38">func stays() int {</text>
-    <text class="dg-t mono" x="20" y="60">    x := 42; return x</text>
-    <text class="dg-t mono" x="20" y="82">}</text>
-    <g class="dg-rest">
-      <rect class="dg-box" x="20" y="100" width="180" height="76" rx="9"/>
-      <text class="dg-t sm dim" x="30" y="120">stack frame</text>
-      <text class="dg-t mono" x="30" y="146">x = 42</text>
-      <text class="dg-t sm dim" x="30" y="166">popped on return</text>
-    </g>
-    <path class="dg-arrow dg-ants slow" d="M206 138 L286 138" marker-end="url(#dgArrH)"/>
-    <text class="dg-t sm" x="214" y="128">copy out</text>
-    <rect class="dg-box ok dg-arrive" x="290" y="114" width="150" height="48" rx="9"/>
-    <text class="dg-t mono" x="365" y="144" text-anchor="middle">42</text>
-    <text class="dg-t sm ok" x="20" y="214">STACK: allocation is a pointer bump,</text>
-    <text class="dg-t sm ok" x="20" y="234">reclaimed instantly, zero GC work</text>
-    <text class="dg-t sm mono dim" x="20" y="266">./main.go:4: x does not escape</text>
+    <rect class="dg-laneBg" x="16" y="16" width="452" height="268" rx="16"/>
+    <text class="dg-t lg" x="36" y="52">return x</text>
+    <rect class="dg-box dg-rest" x="36" y="72" width="180" height="120" rx="14"/>
+    <text class="dg-t" x="126" y="112" text-anchor="middle">stack</text>
+    <text class="dg-t mono xl" x="126" y="164" text-anchor="middle">42</text>
+    <path class="dg-arrow" d="M230 132 L300 132" marker-end="url(#dgArrH)"/>
+    <text class="dg-t" x="265" y="118" text-anchor="middle">copy</text>
+    <rect class="dg-box ok dg-arrive" x="312" y="84" width="130" height="96" rx="14"/>
+    <text class="dg-t mono xl" x="377" y="146" text-anchor="middle">42</text>
 
-    <rect class="dg-laneBg" x="476" y="10" width="460" height="280" rx="10"/>
-    <text class="dg-t mono" x="492" y="38">func escapes() *int {</text>
-    <text class="dg-t mono" x="492" y="60">    x := 42; return &amp;x</text>
-    <text class="dg-t mono" x="492" y="82">}</text>
-    <g class="dg-rest">
-      <rect class="dg-box" x="492" y="100" width="170" height="76" rx="9"/>
-      <text class="dg-t sm dim" x="502" y="120">stack frame</text>
-      <text class="dg-t mono sm" x="502" y="146">&amp;x ●</text>
-      <text class="dg-t sm dim" x="502" y="166">frame still pops…</text>
-    </g>
-    <path class="dg-arrow dg-ants slow" d="M600 146 C 700 146 700 138 772 138" marker-end="url(#dgArrH)"/>
-    <rect class="dg-box accent dg-arrive go" x="776" y="108" width="148" height="60" rx="9"/>
-    <text class="dg-t sm dim" x="786" y="128">HEAP</text>
-    <text class="dg-t mono" x="850" y="156" text-anchor="middle">42</text>
-    <text class="dg-t sm warn" x="492" y="214">HEAP: the value must outlive the frame,</text>
-    <text class="dg-t sm warn" x="492" y="234">so the GC owns it from now on</text>
-    <text class="dg-t sm mono dim" x="492" y="266">./main.go:4: moved to heap: x</text>
+    <rect class="dg-laneBg" x="492" y="16" width="452" height="268" rx="16"/>
+    <text class="dg-t lg" x="512" y="52">return &amp;x</text>
+    <rect class="dg-box dg-rest" x="512" y="72" width="160" height="120" rx="14"/>
+    <text class="dg-t" x="592" y="112" text-anchor="middle">stack</text>
+    <text class="dg-t lg" x="592" y="156" text-anchor="middle">&amp;x</text>
+    <path class="dg-arrow" d="M688 132 L760 132" marker-end="url(#dgArrH)"/>
+    <rect class="dg-box accent dg-arrive go" x="772" y="72" width="150" height="120" rx="14"/>
+    <text class="dg-t" x="847" y="112" text-anchor="middle">heap</text>
+    <text class="dg-t mono xl" x="847" y="164" text-anchor="middle">42</text>
   </svg>`
 },
 
 /* ─────────────── interface value ─────────────── */
 "iface-value": {
-  title: "An interface value is two words",
-  caption: "A type word and a data word, which is exactly why a nil pointer inside an interface is not nil.",
-  svg: `<svg viewBox="0 0 940 300" role="img" aria-label="Interface value holding a type pointer and a data pointer, and the typed-nil trap">
-    <defs><marker id="dgArrI" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Two words",
+  caption: "An interface holds a type and a value. It is nil only when both are empty. A nil pointer still has a type, so the interface is not nil.",
+  svg: `<svg viewBox="0 0 960 460" role="img" aria-label="An interface holding a Rect has both words set. An interface holding a nil pointer has a type, so it is not nil. Both words empty is nil.">
+    <text class="dg-t lg" x="24" y="40">1. A real value</text>
+    <rect class="dg-box accent" x="24" y="56" width="440" height="180" rx="16"/>
+    <text class="dg-t lg" x="134" y="120" text-anchor="middle">type</text>
+    <text class="dg-t mono lg" x="134" y="172" text-anchor="middle">*Rect</text>
+    <line class="dg-rule" x1="244" y1="72" x2="244" y2="220"/>
+    <text class="dg-t lg" x="354" y="120" text-anchor="middle">data</text>
+    <text class="dg-t mono xl" x="354" y="180" text-anchor="middle">3, 4</text>
 
-    <text class="dg-t mono" x="10" y="26">var s Shape = &amp;Rect{3, 4}</text>
+    <text class="dg-t lg" x="500" y="40">2. A nil pointer</text>
+    <rect class="dg-box bad" x="500" y="56" width="436" height="180" rx="16"/>
+    <text class="dg-t lg" x="610" y="110" text-anchor="middle">type</text>
+    <text class="dg-t mono lg" x="610" y="156" text-anchor="middle">*MyErr</text>
+    <line class="dg-rule" x1="718" y1="72" x2="718" y2="220"/>
+    <text class="dg-t lg" x="828" y="110" text-anchor="middle">data</text>
+    <text class="dg-t mono xl" x="828" y="170" text-anchor="middle">nil</text>
+    <text class="dg-t lg" x="718" y="270" text-anchor="middle">err != nil</text>
 
-    <rect class="dg-box accent" x="10" y="42" width="300" height="96" rx="9"/>
-    <line class="dg-rule" x1="160" y1="42" x2="160" y2="138"/>
-    <text class="dg-t sm dim" x="22" y="64">type word</text>
-    <text class="dg-t mono sm" x="22" y="90">*Rect itab</text>
-    <text class="dg-t sm dim" x="172" y="64">data word</text>
-    <text class="dg-t mono sm" x="172" y="90">●</text>
-    <text class="dg-t sm dim" x="22" y="124">8 bytes</text>
-    <text class="dg-t sm dim" x="172" y="124">8 bytes</text>
-
-    <path class="dg-arrow" d="M70 100 C 70 170 180 170 236 170" marker-end="url(#dgArrI)"/>
-    <rect class="dg-box" x="240" y="146" width="200" height="74" rx="9"/>
-    <text class="dg-t sm dim" x="250" y="166">itab: method table</text>
-    <text class="dg-t mono sm" x="250" y="188">Area      → Rect.Area</text>
-    <text class="dg-t mono sm" x="250" y="208">Perim → Rect.Perim</text>
-
-    <path class="dg-arrow" d="M200 100 C 320 100 420 100 472 100" marker-end="url(#dgArrI)"/>
-    <rect class="dg-box ok" x="476" y="72" width="150" height="56" rx="9"/>
-    <text class="dg-t mono sm" x="551" y="96" text-anchor="middle">Rect{W:3, H:4}</text>
-    <text class="dg-t sm dim" x="551" y="118" text-anchor="middle">the actual value</text>
-
-    <line class="dg-rule" x1="660" y1="20" x2="660" y2="280"/>
-    <text class="dg-t bad" x="680" y="30">the classic trap</text>
-    <text class="dg-t mono sm" x="680" y="58">var p *MyErr = nil</text>
-    <text class="dg-t mono sm" x="680" y="78">return p   // as error</text>
-
-    <rect class="dg-box bad dg-glow" x="680" y="96" width="246" height="72" rx="9"/>
-    <line class="dg-rule" x1="803" y1="96" x2="803" y2="168"/>
-    <text class="dg-t sm dim" x="690" y="118">type</text>
-    <text class="dg-t mono sm bad" x="690" y="140">*MyErr</text>
-    <text class="dg-t sm dim" x="690" y="158">SET</text>
-    <text class="dg-t sm dim" x="813" y="118">data</text>
-    <text class="dg-t mono sm" x="813" y="140">nil</text>
-    <text class="dg-t sm dim" x="813" y="158">empty</text>
-
-    <text class="dg-t sm bad" x="680" y="196">err != nil is TRUE, the type word is set</text>
-    <text class="dg-t sm dim" x="680" y="222">An interface is nil only when BOTH words are nil.</text>
-    <text class="dg-t sm ok" x="680" y="252">Fix: return a literal nil, never a typed nil pointer.</text>
+    <text class="dg-t lg" x="24" y="330">3. Both empty</text>
+    <rect class="dg-box ok" x="24" y="346" width="440" height="90" rx="16"/>
+    <text class="dg-t lg" x="134" y="400" text-anchor="middle">type empty</text>
+    <text class="dg-t lg" x="354" y="400" text-anchor="middle">data empty</text>
+    <rect class="dg-box ok" x="500" y="346" width="436" height="90" rx="16"/>
+    <text class="dg-t lg" x="718" y="400" text-anchor="middle">this is nil</text>
   </svg>`
 },
 
 /* ─────────────── channels ─────────────── */
 channel: {
-  title: "Unbuffered channels synchronise; buffered ones decouple",
-  caption: "An unbuffered send is a rendezvous: it does not complete until a receiver is ready.",
-  svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Unbuffered channel rendezvous between two goroutines, and a buffered channel with four slots">
-    <defs><marker id="dgArrC" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "They meet, or they queue",
+  caption: "With no buffer, a send waits until someone receives. With room for 4, the sender waits only when all 4 slots are full.",
+  svg: `<svg viewBox="0 0 960 510" role="img" aria-label="An unbuffered send and receive wait for each other, then both continue. A buffer of 4 lets the sender continue until every slot is full.">
+    <defs><marker id="dgArrCH" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="40">1. No buffer. They wait for each other.</text>
+    <rect class="dg-box" x="24" y="60" width="280" height="160" rx="16"/>
+    <text class="dg-t lg" x="164" y="112" text-anchor="middle">send</text>
+    <text class="dg-t mono xl" x="164" y="168" text-anchor="middle">42</text>
+    <path class="dg-arrow" d="M316 140 L360 140" marker-end="url(#dgArrCH)"/>
+    <rect class="dg-box ok dg-beat" x="372" y="72" width="216" height="136" rx="16"/>
+    <text class="dg-t lg" x="480" y="128" text-anchor="middle">they meet</text>
+    <text class="dg-t lg" x="480" y="168" text-anchor="middle">both go</text>
+    <path class="dg-arrow" d="M600 140 L656 140" marker-end="url(#dgArrCH)"/>
+    <rect class="dg-box" x="668" y="60" width="268" height="160" rx="16"/>
+    <text class="dg-t lg" x="802" y="112" text-anchor="middle">receive</text>
+    <text class="dg-t mono xl" x="802" y="168" text-anchor="middle">42</text>
 
-    <text class="dg-t" x="10" y="24">ch := make(chan int), unbuffered</text>
-
-    <rect class="dg-box" x="10" y="40" width="170" height="96" rx="9"/>
-    <text class="dg-t sm" x="24" y="66">goroutine A</text>
-    <text class="dg-t mono sm" x="24" y="92">ch &lt;- 42</text>
-    <text class="dg-t sm bad dg-blink" x="24" y="116">blocked…</text>
-
-    <rect class="dg-gate" x="420" y="50" width="100" height="60" rx="8"/>
-    <text class="dg-t sm dim" x="470" y="28" text-anchor="middle">ch</text>
-    <text class="dg-t sm dim" x="470" y="85" text-anchor="middle">no buffer</text>
-
-    <rect class="dg-box" x="760" y="40" width="170" height="96" rx="9"/>
-    <text class="dg-t sm" x="774" y="66">goroutine B</text>
-    <text class="dg-t mono sm" x="774" y="92">v := &lt;-ch</text>
-    <text class="dg-t sm bad dg-blink" x="774" y="116">blocked…</text>
-
-    <line class="dg-arrow dashed" x1="184" y1="80" x2="414" y2="80"/>
-    <line class="dg-arrow dashed" x1="526" y1="80" x2="756" y2="80"/>
-    <g class="dg-handoff"><circle class="dg-token" cx="0" cy="80" r="13"/><text class="dg-t mono sm tok" x="0" y="85" text-anchor="middle">42</text></g>
-
-    <text class="dg-t sm ok" x="300" y="158">both resume at the hand-off, that is the synchronisation</text>
-
-    <line class="dg-rule" x1="10" y1="172" x2="930" y2="172"/>
-
-    <text class="dg-t" x="10" y="204">ch := make(chan int, 4), buffered</text>
-
-    <rect class="dg-box" x="10" y="220" width="170" height="74" rx="9"/>
-    <text class="dg-t sm" x="24" y="244">sender</text>
-    <text class="dg-t sm ok" x="24" y="268">keeps going until full</text>
-
-    <rect class="dg-cell ok dg-fill" style="--i:0" x="300" y="226" width="60" height="52" rx="6"/><text class="dg-t mono sm" x="330" y="258" text-anchor="middle">1</text>
-    <rect class="dg-cell ok dg-fill" style="--i:1" x="368" y="226" width="60" height="52" rx="6"/><text class="dg-t mono sm" x="398" y="258" text-anchor="middle">2</text>
-    <rect class="dg-cell dashed" x="436" y="226" width="60" height="52" rx="6"/>
-    <rect class="dg-cell dashed" x="504" y="226" width="60" height="52" rx="6"/>
-    <text class="dg-t sm dim" x="300" y="296">len 2 / cap 4, a queue, in FIFO order</text>
-
-    <rect class="dg-box" x="760" y="220" width="170" height="74" rx="9"/>
-    <text class="dg-t sm" x="774" y="244">receiver</text>
-    <text class="dg-t sm dim" x="774" y="268">blocks only when empty</text>
-
-    <line class="dg-arrow" x1="184" y1="252" x2="294" y2="252" marker-end="url(#dgArrC)"/>
-    <line class="dg-arrow" x1="570" y1="252" x2="756" y2="252" marker-end="url(#dgArrC)"/>
+    <text class="dg-t lg" x="24" y="276">2. Buffer of 4. Two slots used.</text>
+    <rect class="dg-box ok" x="32" y="300" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="132" y="384" text-anchor="middle">1</text>
+    <rect class="dg-box ok" x="264" y="300" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="364" y="384" text-anchor="middle">2</text>
+    <rect class="dg-box dashed" x="496" y="300" width="200" height="140" rx="16"/>
+    <rect class="dg-box dashed" x="728" y="300" width="200" height="140" rx="16"/>
+    <text class="dg-t lg" x="24" y="480">sender waits if full</text>
+    <text class="dg-t lg" x="520" y="480">receiver waits if empty</text>
   </svg>`
 },
 
 /* ─────────────── GMP scheduler ─────────────── */
 gmp: {
-  title: "Scheduler",
-  caption: "Goroutines are queued per-P and run on OS threads. An idle P steals half of someone else's queue rather than sitting still.",
-  svg: `<svg viewBox="0 0 940 360" role="img" aria-label="Three processors with local run queues, OS threads beneath them, a global queue, and an idle processor stealing work">
-    <defs><marker id="dgArrG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "G runs on M, when a P allows it",
+  caption: "P0 and P1 have goroutines. P2 has none, so it takes half of P0. Each P sits on an OS thread. GOMAXPROCS is how many Ps exist.",
+  svg: `<svg viewBox="0 0 960 500" role="img" aria-label="P0 has a queue of goroutines, P1 has one parked on a channel, and idle P2 steals half of P0. Each P runs on an OS thread.">
+    <defs><marker id="dgArrGM" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="dg-box" x="24" y="16" width="912" height="80" rx="16"/>
+    <text class="dg-t lg" x="48" y="64">global queue</text>
+    <rect class="dg-box accent" x="280" y="32" width="72" height="48" rx="12"/>
+    <text class="dg-t lg" x="316" y="64" text-anchor="middle">G</text>
+    <rect class="dg-box accent" x="364" y="32" width="72" height="48" rx="12"/>
+    <text class="dg-t lg" x="400" y="64" text-anchor="middle">G</text>
+    <rect class="dg-box accent" x="448" y="32" width="72" height="48" rx="12"/>
+    <text class="dg-t lg" x="484" y="64" text-anchor="middle">G</text>
 
-    <rect class="dg-box" x="600" y="10" width="330" height="56" rx="9"/>
-    <text class="dg-t sm dim" x="614" y="32">global queue, overflow and new goroutines</text>
-    <circle class="dg-g" cx="640" cy="50" r="10"/><circle class="dg-g" cx="668" cy="50" r="10"/><circle class="dg-g" cx="696" cy="50" r="10"/>
+    <rect class="dg-box accent" x="24" y="116" width="296" height="220" rx="16"/>
+    <text class="dg-t lg" x="44" y="156">P0</text>
+    <rect class="dg-box" x="44" y="176" width="56" height="56" rx="12"/>
+    <text class="dg-t lg" x="72" y="212" text-anchor="middle">G</text>
+    <rect class="dg-box" x="112" y="176" width="56" height="56" rx="12"/>
+    <text class="dg-t lg" x="140" y="212" text-anchor="middle">G</text>
+    <rect class="dg-box" x="180" y="176" width="56" height="56" rx="12"/>
+    <text class="dg-t lg" x="208" y="212" text-anchor="middle">G</text>
+    <rect class="dg-box" x="248" y="176" width="56" height="56" rx="12"/>
+    <text class="dg-t lg" x="276" y="212" text-anchor="middle">G</text>
+    <text class="dg-t lg" x="44" y="280">busy</text>
 
-    <g>
-      <rect class="dg-box accent" x="10" y="90" width="290" height="104" rx="9"/>
-      <text class="dg-t sm" x="24" y="112">P0, local queue, 256 slots</text>
-      <circle class="dg-g" cx="40"  cy="146" r="12"/><text class="dg-t sm tok" x="40"  y="151" text-anchor="middle">G</text>
-      <circle class="dg-g" cx="74"  cy="146" r="12"/><text class="dg-t sm tok" x="74"  y="151" text-anchor="middle">G</text>
-      <circle class="dg-g steal" cx="108" cy="146" r="12"/><text class="dg-t sm tok" x="108" y="151" text-anchor="middle">G</text>
-      <circle class="dg-g steal" cx="142" cy="146" r="12"/><text class="dg-t sm tok" x="142" y="151" text-anchor="middle">G</text>
-      <circle class="dg-g" cx="176" cy="146" r="12"/><circle class="dg-g" cx="210" cy="146" r="12"/>
-      <text class="dg-t sm dim" x="24" y="180">runnext: 1-slot fast path</text>
-    </g>
+    <rect class="dg-box" x="336" y="116" width="296" height="220" rx="16"/>
+    <text class="dg-t lg" x="356" y="156">P1</text>
+    <rect class="dg-box" x="356" y="176" width="56" height="56" rx="12"/>
+    <text class="dg-t lg" x="384" y="212" text-anchor="middle">G</text>
+    <text class="dg-t lg" x="356" y="268">parked</text>
+    <text class="dg-t lg" x="356" y="304">on a channel</text>
 
-    <g>
-      <rect class="dg-box" x="324" y="90" width="270" height="104" rx="9"/>
-      <text class="dg-t sm" x="338" y="112">P1</text>
-      <circle class="dg-g" cx="354" cy="146" r="12"/><circle class="dg-g" cx="388" cy="146" r="12"/>
-      <text class="dg-t sm warn" x="420" y="140">a G blocked on a channel:</text>
-      <text class="dg-t sm warn" x="420" y="158">it parks; the thread keeps P</text>
-      <text class="dg-t sm dim" x="338" y="180">nothing blocks at the OS level</text>
-    </g>
+    <rect class="dg-box ok dg-beat" x="648" y="116" width="288" height="220" rx="16"/>
+    <text class="dg-t lg" x="668" y="156">P2</text>
+    <text class="dg-t lg" x="668" y="220">empty</text>
+    <text class="dg-t lg" x="668" y="268">steals half</text>
+    <text class="dg-t lg" x="668" y="304">of P0</text>
 
-    <g>
-      <rect class="dg-box dashed" x="618" y="90" width="312" height="104" rx="9"/>
-      <text class="dg-t sm" x="632" y="112">P2, queue empty</text>
-      <text class="dg-t sm accentT dg-blink" x="632" y="148">idle, then steal half a queue</text>
-      <text class="dg-t sm dim" x="632" y="180">never sits still while work exists</text>
-    </g>
-
-    <path class="dg-arrow dashed dg-steal-path" d="M125 200 C 300 266 560 266 740 200" marker-end="url(#dgArrG)"/>
-    <text class="dg-t sm accentT" x="430" y="262" text-anchor="middle">steals half of P0's queue</text>
-
-    <rect class="dg-box" x="10"  y="286" width="130" height="54" rx="9"/><text class="dg-t sm" x="75"  y="310" text-anchor="middle">M0</text><text class="dg-t sm dim" x="75"  y="328" text-anchor="middle">OS thread</text>
-    <rect class="dg-box" x="324" y="286" width="130" height="54" rx="9"/><text class="dg-t sm" x="389" y="310" text-anchor="middle">M1</text><text class="dg-t sm dim" x="389" y="328" text-anchor="middle">OS thread</text>
-    <rect class="dg-box" x="618" y="286" width="130" height="54" rx="9"/><text class="dg-t sm" x="683" y="310" text-anchor="middle">M2</text><text class="dg-t sm dim" x="683" y="328" text-anchor="middle">OS thread</text>
-    <text class="dg-t sm dim" x="770" y="312">GOMAXPROCS = how many</text>
-    <text class="dg-t sm dim" x="770" y="330">Ps exist (default: NumCPU)</text>
+    <rect class="dg-box" x="24" y="360" width="296" height="80" rx="16"/>
+    <text class="dg-t lg" x="172" y="408" text-anchor="middle">M0, OS thread</text>
+    <rect class="dg-box" x="336" y="360" width="296" height="80" rx="16"/>
+    <text class="dg-t lg" x="484" y="408" text-anchor="middle">M1, OS thread</text>
+    <rect class="dg-box" x="648" y="360" width="288" height="80" rx="16"/>
+    <text class="dg-t lg" x="792" y="408" text-anchor="middle">M2, OS thread</text>
   </svg>`
 },
 
 /* ─────────────── lesson 1: what the collector keeps ─────────────── */
 "gc-reach": {
-  title: "Keep what you can still reach",
-  caption: "Mark starts at the roots and follows pointers. Sweep throws away the objects that walk never visited. The program keeps running; the pause is the short stop around that search.",
-  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="Garbage collection starts at the stack and globals, follows pointers to objects still in use, and sweeps an object nothing points at">
-    <defs><marker id="dgArrGR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Keep what a name still holds",
+  caption: "order still holds dinner, so dinner stays. lunch has no name left, so Go throws lunch away.",
+  svg: `<svg viewBox="0 0 960 340" role="img" aria-label="The name order still holds dinner, which is kept. lunch has no name, so it is thrown away.">
+    <defs><marker id="dgArrGR" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <rect class="dg-box accent" x="16" y="24" width="176" height="140" rx="10"/>
-    <text class="dg-t" x="32" y="56">roots</text>
-    <text class="dg-t sm dim" x="32" y="82">the stack</text>
-    <text class="dg-t sm dim" x="32" y="106">globals</text>
-    <text class="dg-t sm dim" x="32" y="138">still named</text>
+    <text class="dg-t lg" x="24" y="36">still in use</text>
+    <rect class="dg-box accent" x="24" y="52" width="240" height="110" rx="16"/>
+    <text class="dg-t" x="144" y="96" text-anchor="middle">name</text>
+    <text class="dg-t mono xl" x="144" y="140" text-anchor="middle">order</text>
+    <path class="dg-arrow" d="M280 107 L390 107" marker-end="url(#dgArrGR)"/>
+    <text class="dg-t" x="335" y="92" text-anchor="middle">holds</text>
+    <rect class="dg-box ok" x="404" y="52" width="240" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="524" y="122" text-anchor="middle">dinner</text>
+    <text class="dg-t lg" x="720" y="118">kept</text>
 
-    <path class="dg-arrow dg-ants slow" d="M192 78 L268 78" marker-end="url(#dgArrGR)"/>
-
-    <g class="dg-marked" style="--i:0">
-      <rect class="dg-box ok" x="272" y="42" width="156" height="76" rx="9"/>
-      <text class="dg-t" x="350" y="76" text-anchor="middle">order</text>
-      <text class="dg-t sm dim" x="350" y="98" text-anchor="middle">still in use</text>
-    </g>
-    <path class="dg-arrow dg-ants slow" d="M428 80 L504 80" marker-end="url(#dgArrGR)"/>
-    <g class="dg-marked" style="--i:1">
-      <rect class="dg-box ok" x="508" y="42" width="156" height="76" rx="9"/>
-      <text class="dg-t" x="586" y="76" text-anchor="middle">user</text>
-      <text class="dg-t sm dim" x="586" y="98" text-anchor="middle">reached</text>
-    </g>
-
-    <g class="dg-reclaim">
-      <rect class="dg-box bad" x="508" y="160" width="156" height="76" rx="9"/>
-      <text class="dg-t" x="586" y="194" text-anchor="middle">temp</text>
-      <text class="dg-t sm dim" x="586" y="216" text-anchor="middle">no pointer</text>
-    </g>
-    <text class="dg-t sm bad dg-away" x="680" y="204">swept away</text>
-
-    <g class="dg-seq" style="--i:0">
-      <rect class="dg-box" x="16" y="268" width="292" height="68" rx="9"/>
-      <text class="dg-t sm" x="32" y="296">1. Mark from the roots</text>
-      <text class="dg-t sm dim" x="32" y="318">name what is still in use</text>
-    </g>
-    <g class="dg-seq" style="--i:3">
-      <rect class="dg-box" x="324" y="268" width="308" height="68" rx="9"/>
-      <text class="dg-t sm" x="340" y="296">2. Follow every pointer</text>
-      <text class="dg-t sm dim" x="340" y="318">order points at user, so user stays</text>
-    </g>
-    <g class="dg-seq" style="--i:6">
-      <rect class="dg-box" x="648" y="268" width="296" height="68" rx="9"/>
-      <text class="dg-t sm" x="664" y="296">3. Sweep the rest</text>
-      <text class="dg-t sm dim" x="664" y="318">temp is thrown away</text>
-    </g>
-
-    <text class="dg-t sm dim" x="16" y="360">Your code keeps running during the mark. The pause is usually under a millisecond.</text>
-    <text class="dg-t sm dim" x="16" y="382">Objects stay where they are. Nothing is slid together to close the gaps.</text>
+    <text class="dg-t lg" x="24" y="214">no longer used</text>
+    <rect class="dg-box bad" x="24" y="230" width="240" height="90" rx="16"/>
+    <text class="dg-t mono xl" x="144" y="286" text-anchor="middle">lunch</text>
+    <text class="dg-t lg" x="300" y="284">thrown away</text>
   </svg>`
 },
 
 /* ─────────────── tri-colour GC ─────────────── */
 gc: {
-  title: "Tri-colour concurrent mark and sweep",
-  caption: "Marking runs alongside your program. The write barrier is what makes that safe.",
-  svg: `<svg viewBox="0 0 940 340" role="img" aria-label="Tri-colour garbage collection: roots become grey, then black as children are greyed, unreachable white objects are swept">
-    <defs><marker id="dgArrGC" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "White, grey, black",
+  caption: "White is not checked yet. Grey is found, and its children are still to look at. Black is finished. Anything still white with no path is thrown away. A write into a black object marks the new one grey.",
+  svg: `<svg viewBox="0 0 960 620" role="img" aria-label="Roots reach A, B and C, which are finished. D and E are found but not finished. F is not checked yet. X and Y have no path and are thrown away.">
+    <defs><marker id="dgArrGC" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <g class="dg-node white"><circle cx="48" cy="40" r="22"/></g>
+    <text class="dg-t lg" x="84" y="46">white, not checked</text>
+    <g class="dg-node grey"><circle cx="360" cy="40" r="22"/></g>
+    <text class="dg-t lg" x="396" y="46">grey, look inside</text>
+    <g class="dg-node black"><circle cx="680" cy="40" r="22"/></g>
+    <text class="dg-t lg" x="716" y="46">black, finished</text>
 
-    <rect class="dg-box" x="10" y="14" width="150" height="76" rx="9"/>
-    <text class="dg-t sm" x="24" y="38">ROOTS</text>
-    <text class="dg-t sm dim" x="24" y="58">goroutine stacks</text>
-    <text class="dg-t sm dim" x="24" y="76">globals, registers</text>
+    <rect class="dg-box accent" x="24" y="178" width="140" height="80" rx="16"/>
+    <text class="dg-t lg" x="94" y="226" text-anchor="middle">roots</text>
+    <path class="dg-arrow" d="M172 218 L220 218" marker-end="url(#dgArrGC)"/>
 
-    <g class="dg-arrow" marker-end="url(#dgArrGC)">
-      <line x1="168" y1="52" x2="218" y2="52"/>
-      <line x1="294" y1="52" x2="338" y2="78"/>
-      <line x1="294" y1="52" x2="338" y2="26"/>
-      <line x1="414" y1="78" x2="458" y2="104"/>
-      <line x1="414" y1="26" x2="458" y2="26"/>
-      <line x1="534" y1="104" x2="578" y2="130"/>
-    </g>
+    <g class="dg-node black"><circle cx="270" cy="218" r="40"/><text class="dg-t lg" x="270" y="224" text-anchor="middle">A</text></g>
+    <path class="dg-arrow" d="M310 202 L380 170" marker-end="url(#dgArrGC)"/>
+    <path class="dg-arrow" d="M310 234 L380 266" marker-end="url(#dgArrGC)"/>
+    <g class="dg-node black"><circle cx="430" cy="162" r="40"/><text class="dg-t lg" x="430" y="168" text-anchor="middle">B</text></g>
+    <g class="dg-node black"><circle cx="430" cy="274" r="40"/><text class="dg-t lg" x="430" y="280" text-anchor="middle">C</text></g>
+    <path class="dg-arrow" d="M470 162 L540 162" marker-end="url(#dgArrGC)"/>
+    <path class="dg-arrow" d="M470 274 L540 274" marker-end="url(#dgArrGC)"/>
+    <g class="dg-node grey"><circle cx="590" cy="162" r="40"/><text class="dg-t lg" x="590" y="168" text-anchor="middle">D</text></g>
+    <g class="dg-node grey"><circle cx="590" cy="274" r="40"/><text class="dg-t lg" x="590" y="280" text-anchor="middle">E</text></g>
+    <path class="dg-arrow" d="M630 274 L700 310" marker-end="url(#dgArrGC)"/>
+    <g class="dg-node white"><circle cx="750" cy="326" r="40"/><text class="dg-t lg" x="750" y="332" text-anchor="middle">F</text></g>
 
-    <g class="dg-node black" style="--i:0"><circle cx="256" cy="52" r="30"/><text class="dg-t sm" x="256" y="57" text-anchor="middle">A</text></g>
-    <g class="dg-node black" style="--i:1"><circle cx="376" cy="26" r="30"/><text class="dg-t sm" x="376" y="31" text-anchor="middle">B</text></g>
-    <g class="dg-node black" style="--i:1"><circle cx="376" cy="78" r="30"/><text class="dg-t sm" x="376" y="83" text-anchor="middle">C</text></g>
-    <g class="dg-node grey"  style="--i:2"><circle cx="496" cy="26" r="30"/><text class="dg-t sm" x="496" y="31" text-anchor="middle">D</text></g>
-    <g class="dg-node grey"  style="--i:2"><circle cx="496" cy="104" r="30"/><text class="dg-t sm" x="496" y="109" text-anchor="middle">E</text></g>
-    <g class="dg-node white" style="--i:3"><circle cx="616" cy="130" r="30"/><text class="dg-t sm" x="616" y="135" text-anchor="middle">F</text></g>
+    <g class="dg-node white"><circle cx="860" cy="190" r="36"/><text class="dg-t lg" x="860" y="196" text-anchor="middle">X</text></g>
+    <g class="dg-node white"><circle cx="860" cy="280" r="36"/><text class="dg-t lg" x="860" y="286" text-anchor="middle">Y</text></g>
+    <text class="dg-t lg" x="860" y="350" text-anchor="middle">no path</text>
 
-    <g class="dg-node white dg-sweep"><circle cx="760" cy="40" r="30"/><text class="dg-t sm" x="760" y="45" text-anchor="middle">X</text></g>
-    <g class="dg-node white dg-sweep"><circle cx="848" cy="96" r="30"/><text class="dg-t sm" x="848" y="101" text-anchor="middle">Y</text></g>
-    <text class="dg-t sm bad" x="722" y="152">unreachable → swept</text>
-
-    <g class="dg-legend">
-      <circle class="lg white" cx="24" cy="196" r="11"/><text class="dg-t sm" x="44" y="201">WHITE, not yet proven reachable</text>
-      <circle class="lg grey"  cx="24" cy="226" r="11"/><text class="dg-t sm" x="44" y="231">GREY, reachable, children not scanned yet</text>
-      <circle class="lg black" cx="24" cy="256" r="11"/><text class="dg-t sm" x="44" y="261">BLACK, reachable and fully scanned</text>
-    </g>
-
-    <rect class="dg-box accent" x="470" y="178" width="460" height="92" rx="9"/>
-    <text class="dg-t sm accentT" x="484" y="200">WRITE BARRIER</text>
-    <text class="dg-t sm" x="484" y="222">Your code keeps running while marking. If it stores a pointer to a</text>
-    <text class="dg-t sm" x="484" y="240">WHITE object into a BLACK one, the barrier greys it, otherwise</text>
-    <text class="dg-t sm" x="484" y="258">live data would be collected.</text>
-
-    <text class="dg-t sm dim" x="10" y="300">STW ~10-100µs → concurrent mark (~25% of CPU) → STW ~10-100µs → concurrent lazy sweep</text>
-    <text class="dg-t sm dim" x="10" y="324">Pause time is independent of heap size. Cost scales with live POINTERS, not bytes. Non-moving, non-generational.</text>
+    <text class="dg-t lg" x="24" y="410">Write barrier</text>
+    <rect class="dg-box" x="24" y="430" width="280" height="150" rx="16"/>
+    <text class="dg-t lg" x="164" y="494" text-anchor="middle">black A</text>
+    <text class="dg-t lg" x="164" y="538" text-anchor="middle">stores F</text>
+    <path class="dg-arrow" d="M320 505 L400 505" marker-end="url(#dgArrGC)"/>
+    <text class="dg-t lg" x="360" y="486" text-anchor="middle">marks</text>
+    <rect class="dg-box ok dg-beat" x="412" y="430" width="280" height="150" rx="16"/>
+    <text class="dg-t lg" x="552" y="494" text-anchor="middle">F turns grey</text>
+    <text class="dg-t lg" x="552" y="538" text-anchor="middle">kept</text>
   </svg>`
 },
 
 /* ─────────────── module or just a file? ─────────────── */
 "module-or-file": {
-  title: "Module or a single file",
-  caption: "A single standard-library file can run on its own. Anything else starts with one init command.",
-  svg: `<svg viewBox="0 0 960 220" role="img" aria-label="One standard-library file uses go run. Anything else uses go mod init example/hello-world.">
-    <defs><marker id="dgArrM" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-
-    <rect class="dg-box" x="16" y="20" width="250" height="72" rx="10"/>
-    <text class="dg-t" x="32" y="50">One file?</text>
-    <text class="dg-t sm dim" x="32" y="74">Standard library only</text>
-
-    <path class="dg-arrow dg-ants slow" d="M274 44 L360 44" marker-end="url(#dgArrM)"/>
-    <text class="dg-t sm ok" x="292" y="34">yes</text>
-    <rect class="dg-box ok" x="368" y="24" width="250" height="52" rx="10"/>
-    <text class="dg-t mono sm" x="384" y="56">go run scratch.go</text>
-
-    <path class="dg-arrow dg-ants slow" d="M140 96 L140 132" marker-end="url(#dgArrM)"/>
-    <text class="dg-t sm" x="152" y="120">no</text>
-    <rect class="dg-box accent" x="16" y="140" width="430" height="56" rx="10"/>
-    <text class="dg-t mono sm" x="32" y="174">go mod init example/hello-world</text>
+  title: "One file, or a module",
+  caption: "A single file that only uses the standard library can run on its own. Anything else starts with go mod init.",
+  svg: `<svg viewBox="0 0 960 360" role="img" aria-label="One standard-library file uses go run scratch.go. Anything else uses go mod init example/hello-world.">
+    <defs><marker id="dgArrMF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="dg-box accent" x="24" y="24" width="420" height="120" rx="16"/>
+    <text class="dg-t lg" x="234" y="76" text-anchor="middle">One file?</text>
+    <text class="dg-t lg" x="234" y="112" text-anchor="middle">Standard library only</text>
+    <path class="dg-arrow" d="M460 84 L520 84" marker-end="url(#dgArrMF)"/>
+    <text class="dg-t lg" x="490" y="68" text-anchor="middle">yes</text>
+    <rect class="dg-box ok dg-beat" x="532" y="36" width="404" height="96" rx="16"/>
+    <text class="dg-t mono lg" x="734" y="92" text-anchor="middle">go run scratch.go</text>
+    <path class="dg-arrow" d="M234 152 L234 196" marker-end="url(#dgArrMF)"/>
+    <text class="dg-t lg" x="270" y="184">no</text>
+    <rect class="dg-box" x="24" y="208" width="912" height="120" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="278" text-anchor="middle">go mod init example/hello-world</text>
   </svg>`
 },
 
 /* ─────────────── middleware chain ─────────────── */
 middleware: {
-  title: "Middleware is just handlers wrapping handlers",
-  caption: "Each layer sees the request on the way in and the response on the way out, which is why logging and recovery belong at the edges.",
-  svg: `<svg viewBox="0 0 940 240" role="img" aria-label="An HTTP request passing inward through middleware layers to the handler and the response returning outward">
-    <defs><marker id="dgArrW" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
-
-    <text class="dg-t sm dim" x="10" y="24">request →</text>
-    <g class="dg-seq" style="--i:0"><rect class="dg-box" x="10"  y="40" width="150" height="104" rx="9"/><text class="dg-t sm" x="85"  y="70" text-anchor="middle">requestID</text><text class="dg-t sm dim" x="85" y="92" text-anchor="middle">adds a trace key</text></g>
-    <g class="dg-seq" style="--i:1"><rect class="dg-box" x="172" y="40" width="150" height="104" rx="9"/><text class="dg-t sm" x="247" y="70" text-anchor="middle">recover</text><text class="dg-t sm dim" x="247" y="92" text-anchor="middle">panic → 500</text></g>
-    <g class="dg-seq" style="--i:2"><rect class="dg-box" x="334" y="40" width="150" height="104" rx="9"/><text class="dg-t sm" x="409" y="70" text-anchor="middle">metrics</text><text class="dg-t sm dim" x="409" y="92" text-anchor="middle">rate, errors, duration</text></g>
-    <g class="dg-seq" style="--i:3"><rect class="dg-box" x="496" y="40" width="150" height="104" rx="9"/><text class="dg-t sm" x="571" y="70" text-anchor="middle">rate limit</text><text class="dg-t sm dim" x="571" y="92" text-anchor="middle">429 + Retry-After</text></g>
-    <g class="dg-seq" style="--i:4"><rect class="dg-box" x="658" y="40" width="130" height="104" rx="9"/><text class="dg-t sm" x="723" y="70" text-anchor="middle">auth</text><text class="dg-t sm dim" x="723" y="92" text-anchor="middle">401 / 403</text></g>
-    <g class="dg-seq" style="--i:5"><rect class="dg-box accent" x="800" y="40" width="130" height="104" rx="9"/><text class="dg-t sm" x="865" y="70" text-anchor="middle">handler</text><text class="dg-t sm dim" x="865" y="92" text-anchor="middle">your logic</text><text class="dg-t sm dim" x="865" y="112" text-anchor="middle">+ the database</text></g>
-
-    <path class="dg-arrow" d="M10 160 L924 160" marker-end="url(#dgArrW)"/>
-    <g class="dg-travel in"><rect class="dg-tokbox" x="-22" y="150" width="44" height="20" rx="10"/><text class="dg-t sm tok" x="0" y="164" text-anchor="middle">req</text></g>
-    <text class="dg-t sm dim" x="10" y="182">ServeHTTP inward: each layer may short-circuit and never call the next</text>
-
-    <path class="dg-arrow ret" d="M924 206 L10 206" marker-end="url(#dgArrW)"/>
-    <g class="dg-travel out"><rect class="dg-tokbox alt" x="-24" y="196" width="48" height="20" rx="10"/><text class="dg-t sm tok" x="0" y="210" text-anchor="middle">200</text></g>
-    <text class="dg-t sm dim" x="620" y="228">← response outward: status recorded, duration observed, panic caught</text>
+  title: "In on the way, out on the way back",
+  caption: "The request walks request id, recover, metrics, limit, auth, then your handler. The response walks back out through the same layers.",
+  svg: `<svg viewBox="0 0 960 340" role="img" aria-label="A request passes through request id, recover, metrics, limit and auth before the handler. The response returns through the same layers.">
+    <defs><marker id="dgArrMW" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">request</text>
+    <rect class="dg-box" x="16" y="56" width="148" height="150" rx="16"/>
+    <text class="dg-t xl" x="90" y="120" text-anchor="middle">1</text>
+    <text class="dg-t lg" x="90" y="168" text-anchor="middle">id</text>
+    <rect class="dg-box" x="176" y="56" width="148" height="150" rx="16"/>
+    <text class="dg-t xl" x="250" y="120" text-anchor="middle">2</text>
+    <text class="dg-t lg" x="250" y="168" text-anchor="middle">recover</text>
+    <rect class="dg-box" x="336" y="56" width="148" height="150" rx="16"/>
+    <text class="dg-t xl" x="410" y="120" text-anchor="middle">3</text>
+    <text class="dg-t lg" x="410" y="168" text-anchor="middle">metrics</text>
+    <rect class="dg-box" x="496" y="56" width="148" height="150" rx="16"/>
+    <text class="dg-t xl" x="570" y="120" text-anchor="middle">4</text>
+    <text class="dg-t lg" x="570" y="168" text-anchor="middle">limit</text>
+    <rect class="dg-box" x="656" y="56" width="148" height="150" rx="16"/>
+    <text class="dg-t xl" x="730" y="120" text-anchor="middle">5</text>
+    <text class="dg-t lg" x="730" y="168" text-anchor="middle">auth</text>
+    <rect class="dg-box accent dg-beat" x="816" y="56" width="128" height="150" rx="16"/>
+    <text class="dg-t xl" x="880" y="120" text-anchor="middle">6</text>
+    <text class="dg-t lg" x="880" y="168" text-anchor="middle">handler</text>
+    <path class="dg-arrow" d="M900 240 L40 240" marker-end="url(#dgArrMW)"/>
+    <text class="dg-t lg" x="480" y="280" text-anchor="middle">response comes back out</text>
   </svg>`
 }
 ,
 
 /* ─────────────── if / for / switch ─────────────── */
-"control-flow": {
-  title: "One loop keyword, and a switch with no fallthrough",
-  caption: "Go's three control structures: a branch, the single for loop in its four shapes, and a switch where cases never fall through.",
-  svg: `<svg viewBox="0 0 940 360" role="img" aria-label="if-else branching, the four forms of the for loop, and a switch selecting one case">
-    <defs><marker id="dgArrF" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+"control-if": {
+  title: "One test, one branch",
+  caption: "err == nil runs use(v). Anything else returns the error. v and err exist only in those branches.",
+  svg: `<svg viewBox="0 0 960 250" role="img" aria-label="The test err equals nil. True runs use(v). False returns the error.">
+    <defs><marker id="dgArrIF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <text class="dg-t" x="10" y="22">if / else, with an initialiser scoped to the branch</text>
-    <rect class="dg-box accent" x="10" y="34" width="220" height="64" rx="10"/>
-    <text class="dg-t mono sm" x="24" y="60">v, err := Atoi(s)</text>
-    <text class="dg-t mono sm dim" x="24" y="82">err == nil ?</text>
-    <path class="dg-arrow dg-ants fast" d="M236 50 L298 50" marker-end="url(#dgArrF)"/>
-    <text class="dg-t sm ok" x="244" y="42">true</text>
-    <rect class="dg-box ok dg-alt-a" x="304" y="28" width="190" height="44" rx="9"/>
-    <text class="dg-t mono sm" x="322" y="56">use(v)</text>
-    <path class="dg-arrow dg-ants slow" d="M236 82 L298 102" marker-end="url(#dgArrF)"/>
-    <text class="dg-t sm bad" x="244" y="96">false</text>
-    <rect class="dg-box bad dg-alt-b" x="304" y="80" width="190" height="44" rx="9"/>
-    <text class="dg-t mono sm" x="322" y="108">return err</text>
-    <text class="dg-t sm dim" x="510" y="52">v and err exist only inside</text>
-    <text class="dg-t sm dim" x="510" y="70">these two branches</text>
-    <text class="dg-t sm dim" x="510" y="98">guard clauses keep the happy path flat</text>
+    <rect class="dg-box accent" x="28" y="36" width="280" height="150" rx="16"/>
+    <text class="dg-t mono lg" x="168" y="104" text-anchor="middle">err == nil</text>
+    <text class="dg-t lg" x="168" y="152" text-anchor="middle">the test</text>
 
-    <line class="dg-rule" x1="10" y1="128" x2="930" y2="128"/>
+    <path class="dg-arrow" d="M320 80 L468 80" marker-end="url(#dgArrIF)"/>
+    <text class="dg-t lg" x="394" y="64" text-anchor="middle">true</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M328 80 L452 80')"/>
+    <rect class="dg-box ok dg-beat" x="480" y="40" width="250" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="605" y="88" text-anchor="middle">use(v)</text>
 
-    <text class="dg-t" x="10" y="156">for, the only loop keyword, in four shapes</text>
-    <g class="dg-seq" style="--i:0"><rect class="dg-box" x="10"  y="168" width="220" height="68" rx="10"/>
-      <text class="dg-t mono sm" x="24" y="196">for i := 0; i &lt; n; i++</text>
-      <text class="dg-t sm dim" x="24" y="218">three-clause</text></g>
-    <g class="dg-seq" style="--i:1"><rect class="dg-box" x="244" y="168" width="150" height="68" rx="10"/>
-      <text class="dg-t mono sm" x="258" y="196">for cond { }</text>
-      <text class="dg-t sm dim" x="258" y="218">a while loop</text></g>
-    <g class="dg-seq" style="--i:2"><rect class="dg-box" x="408" y="168" width="140" height="68" rx="10"/>
-      <text class="dg-t mono sm" x="422" y="196">for { }</text>
-      <text class="dg-t sm dim" x="422" y="218">until break</text></g>
-    <g class="dg-seq" style="--i:3"><rect class="dg-box accent" x="562" y="168" width="250" height="68" rx="10"/>
-      <text class="dg-t mono sm" x="576" y="196">for i, v := range x</text>
-      <text class="dg-t sm dim" x="576" y="218">own i on each pass</text></g>
+    <path class="dg-arrow" d="M320 150 L468 170" marker-end="url(#dgArrIF)"/>
+    <text class="dg-t lg" x="390" y="136" text-anchor="middle">false</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M328 152 L452 170'); --i: 1"/>
+    <rect class="dg-box bad" x="480" y="136" width="250" height="80" rx="16"/>
+    <text class="dg-t mono lg" x="605" y="184" text-anchor="middle">return err</text>
 
-    <line class="dg-rule" x1="10" y1="256" x2="930" y2="256"/>
-
-    <text class="dg-t" x="10" y="282">switch, one case runs. No break. No fallthrough.</text>
-    <rect class="dg-box dg-case" style="--i:0" x="10"  y="298" width="180" height="42" rx="8"/><text class="dg-t mono sm" x="24" y="324">case "Sat", "Sun":</text>
-    <rect class="dg-box dg-case" style="--i:1" x="202" y="298" width="140" height="42" rx="8"/><text class="dg-t mono sm" x="216" y="324">case "Mon":</text>
-    <rect class="dg-box dg-case" style="--i:2" x="354" y="298" width="168" height="42" rx="8"/><text class="dg-t mono sm" x="368" y="324">case score &gt; 90:</text>
-    <rect class="dg-box dg-case" style="--i:3" x="534" y="298" width="210" height="42" rx="8"/><text class="dg-t mono sm" x="548" y="324">case v := x.(type):</text>
-    <text class="dg-t sm dim" x="758" y="324">or fallthrough</text>
+    <text class="dg-t lg" x="756" y="100">v, err</text>
+    <text class="dg-t lg" x="756" y="132">only here</text>
   </svg>`
 },
 
+"control-for": {
+  title: "One keyword, four shapes",
+  caption: "A counter, a condition, a loop until break, and range. The highlight walks 1, then 2, then 3, then 4.",
+  svg: `<svg viewBox="0 0 960 250" role="img" aria-label="for has four shapes: a counter, a condition, a loop until break, and range.">
+    <rect class="dg-box dg-step" style="--i:0" x="28" y="28" width="216" height="196" rx="16"/>
+    <text class="dg-t xl" x="48" y="80">1</text>
+    <text class="dg-t mono lg" x="48" y="124">for i := 0</text>
+    <text class="dg-t mono lg" x="48" y="160">i &lt; n; i++</text>
+    <text class="dg-t lg" x="48" y="204">counter</text>
+
+    <rect class="dg-box dg-step" style="--i:1" x="260" y="28" width="216" height="196" rx="16"/>
+    <text class="dg-t xl" x="280" y="80">2</text>
+    <text class="dg-t mono lg" x="280" y="148">for n &gt; 0</text>
+    <text class="dg-t lg" x="280" y="204">while</text>
+
+    <rect class="dg-box dg-step" style="--i:2" x="492" y="28" width="216" height="196" rx="16"/>
+    <text class="dg-t xl" x="512" y="80">3</text>
+    <text class="dg-t mono lg" x="512" y="148">for { }</text>
+    <text class="dg-t lg" x="512" y="204">until break</text>
+
+    <rect class="dg-box accent dg-step" style="--i:3" x="724" y="28" width="212" height="196" rx="16"/>
+    <text class="dg-t xl" x="744" y="80">4</text>
+    <text class="dg-t mono lg" x="744" y="124">for i, v :=</text>
+    <text class="dg-t mono lg" x="744" y="160">range x</text>
+    <text class="dg-t lg" x="744" y="204">walk</text>
+  </svg>`
+},
+
+"control-switch": {
+  title: "One case, then stop",
+  caption: "day is Mon, so that case runs. Sat, Sun and default are skipped.",
+  svg: `<svg viewBox="0 0 960 220" role="img" aria-label="switch on Monday runs the Mon case and skips the others.">
+    <defs><marker id="dgArrSW" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+
+    <rect class="dg-box accent" x="28" y="36" width="180" height="150" rx="16"/>
+    <text class="dg-t lg" x="118" y="92" text-anchor="middle">day</text>
+    <text class="dg-t mono xl" x="118" y="148" text-anchor="middle">Mon</text>
+
+    <path class="dg-arrow" d="M220 110 L292 110" marker-end="url(#dgArrSW)"/>
+    <text class="dg-t lg" x="256" y="92" text-anchor="middle">runs</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M228 110 L284 110')"/>
+
+    <rect class="dg-box" x="304" y="36" width="200" height="150" rx="16"/>
+    <text class="dg-t lg" x="404" y="100" text-anchor="middle">Sat, Sun</text>
+    <text class="dg-t lg" x="404" y="140" text-anchor="middle">skipped</text>
+
+    <rect class="dg-box ok dg-beat" x="520" y="36" width="200" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="620" y="108" text-anchor="middle">Mon</text>
+    <text class="dg-t lg" x="620" y="152" text-anchor="middle">this one</text>
+
+    <rect class="dg-box" x="736" y="36" width="200" height="150" rx="16"/>
+    <text class="dg-t lg" x="836" y="100" text-anchor="middle">default</text>
+    <text class="dg-t lg" x="836" y="140" text-anchor="middle">skipped</text>
+  </svg>`
+},
+
+
 /* ─────────────── defer ─────────────── */
 "defer-stack": {
-  title: "defer is a stack: last in, first out",
-  caption: "Deferred calls are pushed as they execute and popped when the function returns, including during a panic.",
-  svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Three deferred calls pushed onto a stack and popped in reverse order on return">
-    <defs><marker id="dgArrD" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Last in runs first",
+  caption: "Written as Close, then Unlock, then log. The stack puts log on top, so return runs log, then Unlock, then Close. The 0 saved at defer stays 0.",
+  svg: `<svg viewBox="0 0 960 660" role="img" aria-label="Three defers are stacked with log on top. Return runs log, then Unlock, then Close. A saved 0 still prints 0 after i becomes 1.">
+    <defs><marker id="dgArrDF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <text class="dg-t mono sm" x="10" y="26">func read() error {</text>
-    <text class="dg-t mono sm" x="10" y="48">    f, _ := os.Open(p);  defer f.Close()</text>
-    <text class="dg-t mono sm" x="10" y="70">    mu.Lock();           defer mu.Unlock()</text>
-    <text class="dg-t mono sm" x="10" y="92">    t := time.Now();     defer log(t)</text>
-    <text class="dg-t mono sm" x="10" y="114">    return work()</text>
-    <text class="dg-t mono sm" x="10" y="136">}</text>
+    <text class="dg-t lg" x="28" y="36">1. Written</text>
+    <rect class="dg-box" x="28" y="56" width="300" height="72" rx="16"/>
+    <text class="dg-t xl" x="48" y="104">1</text>
+    <text class="dg-t mono lg" x="100" y="100">Close()</text>
 
-    <path class="dg-arrow dg-ants mid" d="M360 70 L430 70" marker-end="url(#dgArrD)"/>
-    <text class="dg-t sm" x="366" y="60">push</text>
+    <rect class="dg-box" x="28" y="144" width="300" height="72" rx="16"/>
+    <text class="dg-t xl" x="48" y="192">2</text>
+    <text class="dg-t mono lg" x="100" y="188">Unlock()</text>
 
-    <text class="dg-t sm dim" x="440" y="26">defer stack</text>
-    <g class="dg-push" style="--i:0"><rect class="dg-box" x="430" y="28" width="220" height="42" rx="8"/><text class="dg-t mono sm" x="446" y="54">log(t)        ← top</text></g>
-    <g class="dg-push" style="--i:1"><rect class="dg-box" x="430" y="78" width="220" height="42" rx="8"/><text class="dg-t mono sm" x="446" y="104">mu.Unlock()</text></g>
-    <g class="dg-push" style="--i:2"><rect class="dg-box" x="430" y="128" width="220" height="42" rx="8"/><text class="dg-t mono sm" x="446" y="154">f.Close()</text></g>
+    <rect class="dg-box" x="28" y="232" width="300" height="72" rx="16"/>
+    <text class="dg-t xl" x="48" y="280">3</text>
+    <text class="dg-t mono lg" x="100" y="276">log()</text>
 
-    <path class="dg-arrow dg-ants fast" d="M660 86 L730 86" marker-end="url(#dgArrD)"/>
-    <text class="dg-t sm" x="668" y="72">pop</text>
+    <path class="dg-arrow" d="M348 180 L468 180" marker-end="url(#dgArrDF)"/>
+    <text class="dg-t lg" x="408" y="164" text-anchor="middle">push</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M356 180 L456 180')"/>
 
-    <g class="dg-pop-seq" style="--i:0"><rect class="dg-box ok" x="730" y="28" width="198" height="42" rx="8"/><text class="dg-t mono sm" x="746" y="54">1. log(t)</text></g>
-    <g class="dg-pop-seq" style="--i:1"><rect class="dg-box ok" x="730" y="78" width="198" height="42" rx="8"/><text class="dg-t mono sm" x="746" y="104">2. mu.Unlock()</text></g>
-    <g class="dg-pop-seq" style="--i:2"><rect class="dg-box ok" x="730" y="128" width="198" height="42" rx="8"/><text class="dg-t mono sm" x="746" y="154">3. f.Close()</text></g>
+    <text class="dg-t lg" x="488" y="36">stack, top is last</text>
+    <rect class="dg-box ok dg-beat" x="488" y="56" width="440" height="72" rx="16"/>
+    <text class="dg-t mono lg" x="512" y="100">log()</text>
+    <text class="dg-t lg" x="800" y="100">top</text>
 
-    <text class="dg-t sm" x="10" y="182">Arguments are evaluated AT the defer statement; the call happens later:</text>
-    <rect class="dg-box" x="10" y="196" width="440" height="100" rx="9"/>
-    <text class="dg-t mono sm" x="22" y="218">i := 0</text>
-    <text class="dg-t mono sm" x="22" y="238">defer fmt.Println(i)          // prints 0</text>
-    <text class="dg-t mono sm" x="22" y="258">defer func(){ print(i) }()    // prints 1</text>
-    <text class="dg-t mono sm" x="22" y="272">i++</text>
+    <rect class="dg-box" x="488" y="144" width="440" height="72" rx="16"/>
+    <text class="dg-t mono lg" x="512" y="188">Unlock()</text>
 
-    <rect class="dg-box bad" x="470" y="196" width="460" height="100" rx="9"/>
-    <text class="dg-t sm bad" x="482" y="218">Never defer inside a loop body</text>
-    <text class="dg-t sm" x="482" y="240">defer fires at FUNCTION return, so 10,000 iterations</text>
-    <text class="dg-t sm" x="482" y="258">hold 10,000 files open. Extract the body into its own</text>
-    <text class="dg-t sm" x="482" y="272">function, or close explicitly each pass.</text>
+    <rect class="dg-box" x="488" y="232" width="440" height="72" rx="16"/>
+    <text class="dg-t mono lg" x="512" y="276">Close()</text>
+
+    <text class="dg-t lg" x="28" y="352">2. On return</text>
+    <rect class="dg-box ok dg-step" style="--i:0" x="28" y="372" width="280" height="88" rx="16"/>
+    <text class="dg-t xl" x="48" y="428">1</text>
+    <text class="dg-t mono lg" x="100" y="424">log()</text>
+
+    <rect class="dg-box ok dg-step" style="--i:1" x="340" y="372" width="280" height="88" rx="16"/>
+    <text class="dg-t xl" x="360" y="428">2</text>
+    <text class="dg-t mono lg" x="412" y="424">Unlock()</text>
+
+    <rect class="dg-box ok dg-step" style="--i:2" x="652" y="372" width="280" height="88" rx="16"/>
+    <text class="dg-t xl" x="672" y="428">3</text>
+    <text class="dg-t mono lg" x="724" y="424">Close()</text>
+
+    <text class="dg-t lg" x="28" y="508">3. The number is saved then</text>
+    <rect class="dg-box accent" x="28" y="528" width="200" height="100" rx="16"/>
+    <text class="dg-t lg" x="128" y="564" text-anchor="middle">i is</text>
+    <text class="dg-t mono xl" x="128" y="608" text-anchor="middle">0</text>
+
+    <path class="dg-arrow" d="M244 578 L360 578" marker-end="url(#dgArrDF)"/>
+    <text class="dg-t lg" x="302" y="560" text-anchor="middle">saved</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M252 578 L348 578'); --i: 1"/>
+
+    <rect class="dg-box ok" x="372" y="528" width="280" height="100" rx="16"/>
+    <text class="dg-t lg" x="512" y="564" text-anchor="middle">prints</text>
+    <text class="dg-t mono xl" x="512" y="608" text-anchor="middle">0</text>
+
+    <rect class="dg-box" x="688" y="528" width="244" height="100" rx="16"/>
+    <text class="dg-t lg" x="810" y="568" text-anchor="middle">i = 1</text>
+    <text class="dg-t lg" x="810" y="604" text-anchor="middle">still prints 0</text>
   </svg>`
 },
 
 /* ─────────────── multiple returns ─────────────── */
 "func-returns": {
-  title: "Multiple returns: the feature that replaced exceptions",
-  caption: "A function hands back a result and an error. The caller must look at both, failure is visible in the signature.",
-  svg: `<svg viewBox="0 0 940 280" role="img" aria-label="A function returning a value and an error, with the caller branching on the error">
-    <defs><marker id="dgArrR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "A number and an error",
+  caption: "divide(10, 2) gives 5 and nil, so you use 5. divide(10, 0) gives 0 and an error, so you stop. A map, a type check, and a channel use the same pair.",
+  svg: `<svg viewBox="0 0 960 520" role="img" aria-label="divide of 10 and 2 returns 5 and nil. divide of 10 and 0 returns 0 and an error. Map, type, and channel reads use the same two-result shape.">
+    <defs><marker id="dgArrFR" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="40">1. It worked</text>
+    <rect class="dg-box" x="24" y="56" width="280" height="120" rx="16"/>
+    <text class="dg-t mono lg" x="164" y="128" text-anchor="middle">divide(10, 2)</text>
+    <path class="dg-arrow" d="M316 116 L360 116" marker-end="url(#dgArrFR)"/>
+    <rect class="dg-box ok dg-beat" x="372" y="56" width="250" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="497" y="112" text-anchor="middle">5</text>
+    <text class="dg-t lg" x="497" y="152" text-anchor="middle">nil</text>
+    <path class="dg-arrow" d="M634 116 L690 116" marker-end="url(#dgArrFR)"/>
+    <rect class="dg-box ok" x="702" y="56" width="234" height="120" rx="16"/>
+    <text class="dg-t lg" x="819" y="128" text-anchor="middle">use it</text>
 
-    <rect class="dg-box" x="10" y="36" width="220" height="68" rx="9"/>
-    <text class="dg-t sm dim" x="22" y="60">caller</text>
-    <text class="dg-t mono sm" x="22" y="86">v, err := Divide(a, b)</text>
+    <text class="dg-t lg" x="24" y="224">2. It failed</text>
+    <rect class="dg-box" x="24" y="240" width="280" height="120" rx="16"/>
+    <text class="dg-t mono lg" x="164" y="312" text-anchor="middle">divide(10, 0)</text>
+    <path class="dg-arrow" d="M316 300 L360 300" marker-end="url(#dgArrFR)"/>
+    <rect class="dg-box bad" x="372" y="240" width="250" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="497" y="296" text-anchor="middle">0</text>
+    <text class="dg-t lg" x="497" y="336" text-anchor="middle">error</text>
+    <path class="dg-arrow" d="M634 300 L690 300" marker-end="url(#dgArrFR)"/>
+    <rect class="dg-box bad" x="702" y="240" width="234" height="120" rx="16"/>
+    <text class="dg-t lg" x="819" y="312" text-anchor="middle">stop</text>
 
-    <path class="dg-arrow dg-ants mid" d="M238 70 L286 70" marker-end="url(#dgArrR)"/>
-    <text class="dg-t sm dim" x="244" y="58">call</text>
-
-    <rect class="dg-box accent" x="290" y="22" width="250" height="108" rx="9"/>
-    <text class="dg-t mono sm" x="302" y="48">func Divide(a, b float64)</text>
-    <text class="dg-t mono sm" x="302" y="68">        (float64, error)</text>
-    <text class="dg-t sm dim" x="302" y="92">result first, error LAST</text>
-    <text class="dg-t sm dim" x="302" y="108">, always, by convention</text>
-
-    <path class="dg-arrow dg-ants fast" d="M546 50 L636 50" marker-end="url(#dgArrR)"/>
-    <path class="dg-arrow dg-ants fast" d="M546 90 L636 90" marker-end="url(#dgArrR)"/>
-
-    <rect class="dg-box ok dg-alt-a" x="640" y="32" width="290" height="36" rx="8"/>
-    <text class="dg-t mono sm" x="652" y="55">5.0, nil      → use the value</text>
-    <rect class="dg-box bad dg-alt-b" x="640" y="74" width="290" height="36" rx="8"/>
-    <text class="dg-t mono sm" x="652" y="97">0, ErrDivByZero → handle it</text>
-
-    <text class="dg-t" x="10" y="150">What the caller writes, every time:</text>
-    <rect class="dg-box" x="10" y="164" width="450" height="98" rx="9"/>
-    <text class="dg-t mono sm" x="22" y="186">v, err := Divide(a, b)</text>
-    <text class="dg-t mono sm bad" x="22" y="206">if err != nil {</text>
-    <text class="dg-t mono sm" x="22" y="226">    return fmt.Errorf("dividing: %w", err)</text>
-    <text class="dg-t mono sm bad" x="22" y="246">}</text>
-    <text class="dg-t mono sm ok" x="300" y="226">use(v)</text>
-
-    <rect class="dg-box" x="480" y="164" width="450" height="98" rx="9"/>
-    <text class="dg-t sm" x="492" y="186">Also returned in pairs across the language:</text>
-    <text class="dg-t mono sm" x="492" y="208">v, ok := m[key]        // map presence</text>
-    <text class="dg-t mono sm" x="492" y="228">v, ok := i.(string)    // type assertion</text>
-    <text class="dg-t mono sm" x="492" y="248">v, ok := &lt;-ch          // channel open?</text>
+    <text class="dg-t lg" x="24" y="404">3. Same pair, three places</text>
+    <rect class="dg-box" x="24" y="420" width="292" height="80" rx="16"/>
+    <text class="dg-t lg" x="170" y="468" text-anchor="middle">map, v, ok</text>
+    <rect class="dg-box" x="332" y="420" width="292" height="80" rx="16"/>
+    <text class="dg-t lg" x="478" y="468" text-anchor="middle">type, v, ok</text>
+    <rect class="dg-box" x="640" y="420" width="296" height="80" rx="16"/>
+    <text class="dg-t lg" x="788" y="468" text-anchor="middle">channel, v, ok</text>
   </svg>`
 },
 
 /* ─────────────── closures ─────────────── */
 closure: {
-  title: "The inner function keeps the variable, not a copy",
+  title: "Same count, then a new one",
   caption: "c() keeps adding to the same count, so three calls give 1, then 2, then 3. c2 is a second call to counter, so it has its own count and starts again at 1.",
-  svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Two closures returned from the same function, each owning an independent captured counter on the heap">
-    <defs><marker id="dgArrC2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="Three calls to c return 1, then 2, then 3 from one count. c2 has its own count and returns 1.">
+    <text class="dg-t lg" x="24" y="40">1. c, one count</text>
+    <rect class="dg-box ok" x="24" y="60" width="200" height="160" rx="16"/>
+    <text class="dg-t mono xl" x="124" y="156" text-anchor="middle">1</text>
+    <rect class="dg-box ok" x="244" y="60" width="200" height="160" rx="16"/>
+    <text class="dg-t mono xl" x="344" y="156" text-anchor="middle">2</text>
+    <rect class="dg-box ok dg-beat" x="464" y="60" width="200" height="160" rx="16"/>
+    <text class="dg-t mono xl" x="564" y="156" text-anchor="middle">3</text>
+    <rect class="dg-box accent" x="700" y="60" width="236" height="160" rx="16"/>
+    <text class="dg-t lg" x="818" y="120" text-anchor="middle">count</text>
+    <text class="dg-t mono xl" x="818" y="176" text-anchor="middle">3</text>
 
-    <text class="dg-t mono sm" x="10" y="26">func counter() func() int {</text>
-    <text class="dg-t mono sm" x="10" y="48">    count := 0              // captured</text>
-    <text class="dg-t mono sm" x="10" y="70">    return func() int { count++; return count }</text>
-    <text class="dg-t mono sm" x="10" y="92">}</text>
-    <text class="dg-t mono sm" x="10" y="126">c  := counter()</text>
-    <text class="dg-t mono sm" x="10" y="148">c2 := counter()   // independent</text>
-
-    <path class="dg-arrow dg-ants mid" d="M380 70 L470 70" marker-end="url(#dgArrC2)"/>
-    <text class="dg-t sm dim" x="386" y="60">returns</text>
-
-    <rect class="dg-box accent" x="474" y="30" width="200" height="86" rx="9"/>
-    <text class="dg-t sm" x="486" y="52">closure c</text>
-    <text class="dg-t sm dim" x="486" y="72">code + a reference to</text>
-    <text class="dg-t sm dim" x="486" y="90">its captured variable</text>
-    <path class="dg-arrow dg-glow" d="M680 72 L756 72" marker-end="url(#dgArrC2)"/>
-    <rect class="dg-box ok" x="760" y="46" width="170" height="52" rx="9"/>
-    <text class="dg-t sm dim" x="772" y="66">HEAP</text>
-    <text class="dg-t mono big dg-count" x="845" y="92" text-anchor="middle">3</text>
-
-    <rect class="dg-box" x="474" y="134" width="200" height="60" rx="9"/>
-    <text class="dg-t sm" x="486" y="156">closure c2</text>
-    <text class="dg-t sm dim" x="486" y="178">its own count</text>
-    <path class="dg-arrow" d="M680 164 L756 164" marker-end="url(#dgArrC2)"/>
-    <rect class="dg-box ok" x="760" y="140" width="170" height="48" rx="9"/>
-    <text class="dg-t mono" x="845" y="170" text-anchor="middle">1</text>
-
-    <text class="dg-t sm dim" x="10" y="196">count cannot live on the stack: the frame that</text>
-    <text class="dg-t sm dim" x="10" y="214">declared it has already returned → escape analysis</text>
-    <text class="dg-t sm dim" x="10" y="232">moves it to the heap.</text>
-
-    <rect class="dg-box ok" x="10" y="250" width="450" height="58" rx="9"/>
-    <text class="dg-t mono sm" x="22" y="274">c(); c(); c()  → 1, 2, 3        c2() → 1</text>
-    <text class="dg-t sm dim" x="22" y="294">same code, separate state</text>
-
-    <rect class="dg-box" x="480" y="250" width="450" height="58" rx="9"/>
-    <text class="dg-t sm" x="492" y="274">Go 1.22+: each loop pass gets a fresh variable,</text>
-    <text class="dg-t sm" x="492" y="294">so a goroutine captures the i you expect.</text>
+    <text class="dg-t lg" x="24" y="270">2. c2, its own count</text>
+    <rect class="dg-box ok dg-beat" x="24" y="290" width="200" height="90" rx="16"/>
+    <text class="dg-t mono xl" x="124" y="350" text-anchor="middle">1</text>
+    <rect class="dg-box accent" x="700" y="276" width="236" height="104" rx="16"/>
+    <text class="dg-t lg" x="818" y="320" text-anchor="middle">count</text>
+    <text class="dg-t mono xl" x="818" y="364" text-anchor="middle">1</text>
   </svg>`
 },
 
 /* ─────────────── worker pool ─────────────── */
 "worker-pool": {
-  title: "Worker pool: bounded concurrency over channels",
-  caption: "One jobs channel, N workers, one results channel. The pool size is the throttle, unbounded goroutines just move the bottleneck to memory.",
-  svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Jobs flowing from a channel into three workers and out to a results channel, coordinated by a WaitGroup">
-    <defs><marker id="dgArrP2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "Jobs in, results out",
+  caption: "Workers pull from one jobs queue. They send to one results queue. Close jobs, wait until the workers finish, then close results.",
+  svg: `<svg viewBox="0 0 960 480" role="img" aria-label="Jobs 7 and 8 wait in a queue for three workers. Results 3 and 4 go to a collector. Shutdown closes jobs, waits, then closes results.">
+    <defs><marker id="dgArrWP" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">jobs</text>
+    <rect class="dg-box ok" x="24" y="52" width="100" height="100" rx="16"/>
+    <text class="dg-t mono xl" x="74" y="116" text-anchor="middle">7</text>
+    <rect class="dg-box ok" x="136" y="52" width="100" height="100" rx="16"/>
+    <text class="dg-t mono xl" x="186" y="116" text-anchor="middle">8</text>
+    <rect class="dg-box dashed" x="248" y="52" width="100" height="100" rx="16"/>
+    <path class="dg-arrow" d="M364 102 L420 102" marker-end="url(#dgArrWP)"/>
 
-    <text class="dg-t sm dim" x="10" y="24">producer</text>
-    <rect class="dg-box" x="10" y="34" width="120" height="70" rx="9"/>
-    <text class="dg-t mono sm" x="22" y="60">for _, j :=</text>
-    <text class="dg-t mono sm" x="22" y="78">  range input {</text>
-    <text class="dg-t mono sm" x="22" y="96">  jobs &lt;- j }</text>
+    <rect class="dg-box accent dg-beat" x="432" y="16" width="220" height="64" rx="16"/>
+    <text class="dg-t lg" x="542" y="56" text-anchor="middle">worker 1</text>
+    <rect class="dg-box accent" x="432" y="92" width="220" height="64" rx="16"/>
+    <text class="dg-t lg" x="542" y="132" text-anchor="middle">worker 2</text>
+    <rect class="dg-box" x="432" y="168" width="220" height="64" rx="16"/>
+    <text class="dg-t lg" x="542" y="208" text-anchor="middle">worker 3</text>
+    <path class="dg-arrow" d="M664 124 L720 124" marker-end="url(#dgArrWP)"/>
 
-    <text class="dg-t sm dim" x="160" y="24">jobs chan Job (buffered)</text>
-    <rect class="dg-cell ok" x="160" y="46" width="44" height="44" rx="6"/><text class="dg-t mono sm" x="182" y="74" text-anchor="middle">7</text>
-    <rect class="dg-cell ok" x="208" y="46" width="44" height="44" rx="6"/><text class="dg-t mono sm" x="230" y="74" text-anchor="middle">8</text>
-    <rect class="dg-cell dashed" x="256" y="46" width="44" height="44" rx="6"/>
-    <rect class="dg-cell dashed" x="304" y="46" width="44" height="44" rx="6"/>
-    <text class="dg-t sm dim" x="160" y="108">full → the producer blocks (backpressure)</text>
+    <text class="dg-t lg" x="732" y="36">results</text>
+    <rect class="dg-box ok" x="732" y="52" width="90" height="90" rx="16"/>
+    <text class="dg-t mono xl" x="777" y="110" text-anchor="middle">3</text>
+    <rect class="dg-box ok" x="834" y="52" width="90" height="90" rx="16"/>
+    <text class="dg-t mono xl" x="879" y="110" text-anchor="middle">4</text>
 
-    <g class="dg-arrow dg-ants fast" marker-end="url(#dgArrP2)">
-      <line x1="352" y1="68" x2="420" y2="40"/><line x1="352" y1="68" x2="420" y2="68"/><line x1="352" y1="68" x2="420" y2="96"/>
-    </g>
-
-    <g class="dg-work" style="--i:0"><rect class="dg-box accent" x="424" y="20" width="170" height="40" rx="8"/>
-      <text class="dg-t mono sm" x="436" y="45">worker 1  job 5</text></g>
-    <g class="dg-work" style="--i:1"><rect class="dg-box accent" x="424" y="68" width="170" height="40" rx="8"/>
-      <text class="dg-t mono sm" x="436" y="93">worker 2  job 6</text></g>
-    <g class="dg-work" style="--i:2"><rect class="dg-box accent" x="424" y="116" width="170" height="40" rx="8"/>
-      <text class="dg-t mono sm" x="436" y="141">worker 3  idle</text></g>
-    <text class="dg-t sm dim" x="424" y="176">each worker: for j := range jobs { out &lt;- f(j) }</text>
-
-    <g class="dg-arrow dg-ants mid" marker-end="url(#dgArrP2)">
-      <line x1="600" y1="40" x2="668" y2="68"/><line x1="600" y1="88" x2="668" y2="68"/><line x1="600" y1="136" x2="668" y2="68"/>
-    </g>
-
-    <text class="dg-t sm dim" x="676" y="24">results chan</text>
-    <rect class="dg-cell" x="676" y="46" width="44" height="44" rx="6"/><text class="dg-t mono sm" x="698" y="74" text-anchor="middle">3</text>
-    <rect class="dg-cell" x="724" y="46" width="44" height="44" rx="6"/><text class="dg-t mono sm" x="746" y="74" text-anchor="middle">4</text>
-    <path class="dg-arrow" d="M776 68 L844 68" marker-end="url(#dgArrP2)"/>
-    <rect class="dg-box" x="848" y="44" width="82" height="48" rx="9"/>
-    <text class="dg-t sm" x="889" y="73" text-anchor="middle">collector</text>
-
-    <line class="dg-rule" x1="10" y1="206" x2="930" y2="206"/>
-    <rect class="dg-box" x="10" y="222" width="450" height="96" rx="9"/>
-    <text class="dg-t sm accentT" x="22" y="244">the shutdown dance (get this wrong and it hangs)</text>
-    <text class="dg-t mono sm" x="22" y="266">close(jobs)      // producer done → range ends</text>
-    <text class="dg-t mono sm" x="22" y="286">wg.Wait()        // all workers finished</text>
-    <text class="dg-t mono sm" x="22" y="306">close(results)   // safe: no senders left</text>
-
-    <rect class="dg-box" x="480" y="222" width="450" height="96" rx="9"/>
-    <text class="dg-t sm" x="492" y="244">Why bound it at all?</text>
-    <text class="dg-t sm dim" x="492" y="266">Goroutines are cheap, but the things they hold are not:</text>
-    <text class="dg-t sm dim" x="492" y="284">sockets, DB connections, buffers, the remote API's quota.</text>
-    <text class="dg-t sm dim" x="492" y="302">N workers (or a semaphore, or g.SetLimit) caps all of it.</text>
+    <text class="dg-t lg" x="24" y="280">Then, in order</text>
+    <rect class="dg-box" x="24" y="300" width="292" height="140" rx="16"/>
+    <text class="dg-t xl" x="48" y="360">1</text>
+    <text class="dg-t mono lg" x="110" y="356">close</text>
+    <text class="dg-t mono lg" x="110" y="396">jobs</text>
+    <rect class="dg-box" x="332" y="300" width="292" height="140" rx="16"/>
+    <text class="dg-t xl" x="356" y="360">2</text>
+    <text class="dg-t lg" x="430" y="380">wait</text>
+    <rect class="dg-box ok" x="640" y="300" width="296" height="140" rx="16"/>
+    <text class="dg-t xl" x="664" y="360">3</text>
+    <text class="dg-t mono lg" x="730" y="356">close</text>
+    <text class="dg-t mono lg" x="730" y="396">results</text>
   </svg>`
 },
 
 /* ─────────────── select ─────────────── */
 select: {
-  title: "select waits on whichever case is ready first",
-  caption: "The concurrency switch: data, a timeout and cancellation compete, and the first ready case wins. Ties are broken at random.",
-  svg: `<svg viewBox="0 0 940 290" role="img" aria-label="A select statement waiting on a data channel, a timeout and a context cancellation, with one case winning">
-    <defs><marker id="dgArrS2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+  title: "One case runs",
+  caption: "select waits on results, a timeout, and cancel. The first one ready runs. If two are ready, Go picks at random. default does not wait.",
+  svg: `<svg viewBox="0 0 960 460" role="img" aria-label="select waits on results, a timeout, and cancel. Results is ready, so that case runs. A tie is random. default does not wait.">
+    <defs><marker id="dgArrSE" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="dg-box ok dg-beat" x="24" y="24" width="300" height="110" rx="16"/>
+    <text class="dg-t lg" x="174" y="72" text-anchor="middle">results</text>
+    <text class="dg-t lg" x="174" y="108" text-anchor="middle">this one</text>
+    <rect class="dg-box" x="24" y="150" width="300" height="110" rx="16"/>
+    <text class="dg-t lg" x="174" y="198" text-anchor="middle">timeout</text>
+    <text class="dg-t lg" x="174" y="234" text-anchor="middle">waits</text>
+    <rect class="dg-box" x="24" y="276" width="300" height="110" rx="16"/>
+    <text class="dg-t lg" x="174" y="324" text-anchor="middle">cancel</text>
+    <text class="dg-t lg" x="174" y="360" text-anchor="middle">waits</text>
 
-    <rect class="dg-box accent" x="380" y="96" width="180" height="76" rx="9"/>
-    <text class="dg-t" x="470" y="128" text-anchor="middle">select</text>
-    <text class="dg-t sm dim" x="470" y="150" text-anchor="middle">parked until one is ready</text>
+    <path class="dg-arrow" d="M336 79 L430 190" marker-end="url(#dgArrSE)"/>
+    <path class="dg-arrow" d="M336 205 L430 220" marker-end="url(#dgArrSE)"/>
+    <path class="dg-arrow" d="M336 331 L430 250" marker-end="url(#dgArrSE)"/>
 
-    <g class="dg-sel" style="--i:0">
-      <rect class="dg-box ok" x="10" y="16" width="300" height="62" rx="9"/>
-      <text class="dg-t mono sm" x="22" y="42">case v := &lt;-results:</text>
-      <text class="dg-t sm dim" x="22" y="64">the happy path, work arrived</text>
-    </g>
-    <g class="dg-sel" style="--i:1">
-      <rect class="dg-box warn" x="10" y="104" width="300" height="62" rx="9"/>
-      <text class="dg-t mono sm" x="22" y="130">case &lt;-time.After(2*time.Second):</text>
-      <text class="dg-t sm dim" x="22" y="152">timeout, bound every wait</text>
-    </g>
-    <g class="dg-sel" style="--i:2">
-      <rect class="dg-box bad" x="10" y="192" width="300" height="62" rx="9"/>
-      <text class="dg-t mono sm" x="22" y="218">case &lt;-ctx.Done():</text>
-      <text class="dg-t sm dim" x="22" y="240">cancelled, return ctx.Err()</text>
-    </g>
+    <rect class="dg-box accent" x="442" y="160" width="180" height="120" rx="16"/>
+    <text class="dg-t lg" x="532" y="230" text-anchor="middle">select</text>
 
-    <g class="dg-arrow dg-ants mid" marker-end="url(#dgArrS2)">
-      <line x1="314" y1="43"  x2="376" y2="110"/>
-      <line x1="314" y1="133" x2="376" y2="133"/>
-      <line x1="314" y1="223" x2="376" y2="158"/>
-    </g>
+    <path class="dg-arrow" d="M634 220 L700 220" marker-end="url(#dgArrSE)"/>
+    <rect class="dg-box ok" x="712" y="160" width="224" height="120" rx="16"/>
+    <text class="dg-t lg" x="824" y="212" text-anchor="middle">one case</text>
+    <text class="dg-t lg" x="824" y="248" text-anchor="middle">runs</text>
 
-    <path class="dg-arrow dg-ants fast" d="M566 134 L636 134" marker-end="url(#dgArrS2)"/>
-    <rect class="dg-box" x="640" y="104" width="290" height="64" rx="9"/>
-    <text class="dg-t sm" x="652" y="130">exactly ONE case body runs,</text>
-    <text class="dg-t sm" x="652" y="152">then the code after select runs</text>
-
-    <rect class="dg-box" x="640" y="20" width="290" height="70" rx="9"/>
-    <text class="dg-t sm accentT" x="652" y="42">two or more ready at once?</text>
-    <text class="dg-t sm" x="652" y="62">A uniformly RANDOM one is chosen, </text>
-    <text class="dg-t sm" x="652" y="80">no starvation, no accidental priority.</text>
-
-    <rect class="dg-box" x="640" y="178" width="290" height="92" rx="9"/>
-    <text class="dg-t sm accentT" x="652" y="200">add default: → never blocks</text>
-    <text class="dg-t mono sm" x="652" y="222">select {</text>
-    <text class="dg-t mono sm" x="652" y="240">case q &lt;- job:   // enqueued</text>
-    <text class="dg-t mono sm" x="652" y="258">default:         // shed load, 503</text>
-
-    <text class="dg-t sm dim" x="10" y="270">a nil channel blocks forever, set a channel variable to nil to switch its case OFF</text>
+    <rect class="dg-box" x="442" y="340" width="220" height="90" rx="16"/>
+    <text class="dg-t lg" x="552" y="394" text-anchor="middle">tie: random</text>
+    <rect class="dg-box" x="680" y="340" width="256" height="90" rx="16"/>
+    <text class="dg-t lg" x="808" y="394" text-anchor="middle">default: no wait</text>
   </svg>`
 }
 

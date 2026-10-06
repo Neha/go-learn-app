@@ -168,7 +168,12 @@ ENTRYPOINT ["/server"]
     { t: "note", kind: "warn", title: "GOMAXPROCS and GOMEMLIMIT in containers", html: "A container with a 1-CPU quota still reports the host's core count to older Go versions, so <code>GOMAXPROCS</code> could be 64 on a 1-CPU limit, causing heavy scheduler churn and CPU throttling. Go 1.25 made the runtime cgroup-aware; before that, use <code>go.uber.org/automaxprocs</code> (a single blank import). Independently, always set <strong><code>GOMEMLIMIT</code> to ~80% of the memory limit</strong>, the GC does not know about cgroup limits and will happily grow into an OOM kill." },
 
     { t: "h", text: "Database migrations" },
-    { t: "p", html: "A migration is a SQL change with a version, applied in order, and recorded so it is not applied twice. Commit the SQL next to the code. Do not edit a migration that has already run in production. Add a new one." },
+    { t: "list", items: [
+      "A migration is a SQL change with a version, applied in order, and recorded so it is not applied twice.",
+      "Commit the SQL next to the code.",
+      "Do not edit a migration that has already run in production.",
+      "Add a new one.",
+    ]},
     { t: "code", title: "Versioned, forward-only in practice, never ad-hoc", code:
 `# golang-migrate, goose and atlas are the common choices
 migrate create -ext sql -dir migrations -seq add_users_table
@@ -235,7 +240,12 @@ jobs:
     },
 
     { t: "h", text: "Versioning and releases" },
-    { t: "p", html: "Tag a release with a version such as <code>v1.4.0</code>. The module path and the tag must agree. A changelog says what changed for the people who depend on you. <code>goreleaser</code> can build the binaries for each OS from that tag." },
+    { t: "list", items: [
+      "Tag a release with a version such as <code>v1.4.0</code>.",
+      "The module path and the tag must agree.",
+      "A changelog says what changed for the people who depend on you.",
+      "<code>goreleaser</code> can build the binaries for each OS from that tag.",
+    ]},
     { t: "code", title: "Semver, and the module major-version rule", code:
 `git tag v1.4.0 && git push origin v1.4.0     # that is a Go "release"
 
@@ -600,7 +610,13 @@ unless you ask. Consequences that matter:
     },
 
     { t: "h", text: "go.mod" },
-    { t: "p", html: "<code>module</code> is the path. <code>go</code> is the language version. <code>require</code> lists dependencies. <code>exclude</code> and <code>replace</code> override a version, usually for a local checkout or a broken release. <code>retract</code> tells other people not to use a version you already published." },
+    { t: "list", items: [
+      "<code>module</code> is the path.",
+      "<code>go</code> is the language version.",
+      "<code>require</code> lists dependencies.",
+      "<code>exclude</code> and <code>replace</code> override a version, usually for a local checkout or a broken release.",
+      "<code>retract</code> tells other people not to use a version you already published.",
+    ]},
     { t: "code", title: "go.mod, annotated", code:
 `module github.com/you/app          // import prefix AND repo location
 
@@ -661,7 +677,13 @@ tool golang.org/x/tools/cmd/stringer   // Go 1.24+: replaces the tools.go hack
     },
 
     { t: "h", text: "Module commands" },
-    { t: "p", html: "<code>go get</code> changes a dependency. <code>go mod tidy</code> makes <code>go.mod</code> match the imports. <code>go list -m</code> shows versions. <code>go mod why</code> says why a module is in the build. You do not edit version numbers by hand unless you mean to." },
+    { t: "list", items: [
+      "<code>go get</code> changes a dependency.",
+      "<code>go mod tidy</code> makes <code>go.mod</code> match the imports.",
+      "<code>go list -m</code> shows versions.",
+      "<code>go mod why</code> says why a module is in the build.",
+      "You do not edit version numbers by hand unless you mean to.",
+    ]},
     { t: "code", title: "Day-to-day and when things go wrong", code:
 `go get example.com/pkg@latest     # add or upgrade one dependency
 go get example.com/pkg@v1.4.2     # pin exactly
@@ -732,7 +754,12 @@ go mod vendor && go build ./...   # -mod=vendor becomes automatic when vendor/ e
     },
 
     { t: "h", text: "Supply chain" },
-    { t: "p", html: "Commit <code>go.sum</code>. Run <code>govulncheck</code> so you hear about vulnerabilities your code can reach. Prefer a module you can read over one that appeared last week. A <code>replace</code> that points at a random fork should not land on <code>main</code>." },
+    { t: "list", items: [
+      "Commit <code>go.sum</code>.",
+      "Run <code>govulncheck</code> so you hear about vulnerabilities your code can reach.",
+      "Prefer a module you can read over one that appeared last week.",
+      "A <code>replace</code> that points at a random fork should not land on <code>main</code>.",
+    ]},
     { t: "list", items: [
       "<strong>Prefer the standard library.</strong> \"A little copying is better than a little dependency\" is cheaper than it sounds, <code>net/http</code> plus 40 lines of middleware beats a framework you'll fight in two years.",
       "<strong>Audit before adding:</strong> maintenance activity, release cadence, its <em>own</em> dependency count, and whether it pulls in cgo.",
@@ -831,7 +858,14 @@ if !hmac.Equal(mac.Sum(nil), provided) { return ErrBadSignature }  // constant t
     },
 
     { t: "h", text: "Injection" },
-    { t: "p", html: "SQL injection is user text pasted into a query. Use placeholders. Command injection is user text pasted into a shell. Do not use a shell. Path traversal is a <code>..</code> in a filename. Clean the path and check it stays inside the directory you intended." },
+    { t: "list", items: [
+      "SQL injection is user text pasted into a query.",
+      "Use placeholders.",
+      "Command injection is user text pasted into a shell.",
+      "Do not use a shell.",
+      "Path traversal is a <code>..</code> in a filename.",
+      "Clean the path and check it stays inside the directory you intended.",
+    ]},
     { t: "code", title: "SQL, shell, and path", code:
 `// 1. SQL, placeholders, always. The driver sends values out of band.
 db.QueryContext(ctx, "SELECT * FROM users WHERE email = $1", email)   // SAFE
@@ -958,7 +992,13 @@ func safeClient() *http.Client {
     },
 
     { t: "h", text: "Authentication" },
-    { t: "p", html: "Authentication is who the caller is. Authorisation is what they may do. A valid token is not permission to read every record. Compare secrets with <code>subtle.ConstantTimeCompare</code> so the time taken does not leak the answer. Store passwords with a slow hash, not SHA-256 alone." },
+    { t: "list", items: [
+      "Authentication is who the caller is.",
+      "Authorisation is what they may do.",
+      "A valid token is not permission to read every record.",
+      "Compare secrets with <code>subtle.ConstantTimeCompare</code> so the time taken does not leak the answer.",
+      "Store passwords with a slow hash, not SHA-256 alone.",
+    ]},
     { t: "list", items: [
       "<strong>IDOR is the most common real breach.</strong> A valid token is not permission for a specific row: every handler must check <em>this</em> user may touch <em>this</em> resource. Make it a query predicate (<code>WHERE id = $1 AND owner_id = $2</code>) so it cannot be forgotten.",
       "<strong>Verify JWTs properly:</strong> pin the expected algorithm (reject <code>alg: none</code> and the HS/RS confusion attack by never letting the token choose the key type), and check <code>exp</code>, <code>nbf</code>, <code>iss</code> and <code>aud</code>. Many CVEs are libraries that skipped one of these.",

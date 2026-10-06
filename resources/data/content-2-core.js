@@ -733,10 +733,19 @@ func addItem3(s []int) []int { return append(s, 1) }  // idiomatic: return it`,
       out: `0
 1`
     },
-    { t: "p", html: "<strong>When to use a pointer receiver:</strong> the method mutates the receiver; the struct is large (copying costs more than 8 bytes of indirection); or the type contains a <code>sync.Mutex</code> (copying a mutex is a bug). <strong>Be consistent</strong>, if any method on a type needs a pointer receiver, give them all pointer receivers." },
+    { t: "list", items: [
+      "<strong>When to use a pointer receiver:</strong> the method mutates the receiver; the struct is large (copying costs more than 8 bytes of indirection); or the type contains a <code>sync.Mutex</code> (copying a mutex is a bug).",
+      "<strong>Be consistent</strong>, if any method on a type needs a pointer receiver, give them all pointer receivers.",
+    ]},
 
     { t: "h", text: "Stack and heap" },
-    { t: "p", html: "A value lives in one of two places. The <strong>stack</strong> belongs to one goroutine. It holds the function that is running, and it disappears when that function returns. The <strong>heap</strong> is shared memory that can outlive the function. Only the heap is freed by the garbage collector, the search from lesson 1." },
+    { t: "p", html: "A value lives in one of two places." },
+    { t: "list", items: [
+      "The <strong>stack</strong> belongs to one goroutine. It holds the function that is running, and it disappears when that function returns.",
+      "The <strong>heap</strong> is shared. A value there can outlive the function.",
+      "Only the heap is freed by the garbage collector, the search from lesson 1.",
+      "Reassigning an <code>int</code> overwrites one stack slot. Reassigning a <code>string</code> points the slot at new heap bytes, and the old bytes can be collected."
+    ]},
     { t: "table", head: ["", "Stack", "Heap"],
       rows: [
         ["Allocation cost", "~free (bump a pointer)", "allocator work + GC bookkeeping"],
@@ -747,10 +756,10 @@ func addItem3(s []int) []int { return append(s, 1) }  // idiomatic: return it`,
       ]
     },
     { t: "h", text: "Stack frames" },
-    { t: "p", html: "When <code>main</code> calls <code>score</code>, Go pushes a frame for <code>score</code> on top of <code>main</code>. The locals of <code>score</code> are slots in that frame. <code>n = 10</code> writes into the slot <code>n</code> already has. It does not ask for new memory. When <code>score</code> returns, the frame is popped and the next call reuses those bytes. That is why a stack allocation is almost free: it moves a pointer." },
+    { t: "p", html: "<code>main</code> calls <code>score</code>. Go pushes a frame for <code>score</code> on top of <code>main</code>. The locals of <code>score</code> are slots in that frame. <code>n = 10</code> writes into the slot <code>n</code> already has. It does not ask for new memory. When <code>score</code> returns, the frame is popped. The next call reuses those bytes. That is why a stack allocation is almost free: it moves a pointer. The collector is not involved." },
     { t: "diagram", id: "call-stack" },
     { t: "h", text: "Escape analysis" },
-    { t: "p", html: "Returning the number copies it into the caller, so the frame can die. Returning <code>&amp;n</code> hands out the address of <code>n</code>. If the frame disappeared, that address would point at reused bytes. The compiler sees this and puts <code>n</code> on the heap instead. That decision is escape analysis. You do not write it. <code>new(int)</code> and <code>&amp;n</code> mean \"I need a pointer\". They do not mean \"put this on the heap\"." },
+    { t: "p", html: "Returning the number copies it. The frame can die. Returning <code>&amp;n</code> hands out the address of <code>n</code>. The frame must not reuse those bytes. The compiler sees that and puts <code>n</code> on the heap. That decision is escape analysis. You do not write it. <code>new(int)</code> and <code>&amp;n</code> mean \"I need a pointer\". They do not mean \"put this on the heap\"." },
     { t: "diagram", id: "stack-heap" },
     { t: "p", html: "In C, <code>malloc</code> means heap and a local means stack. In Go the compiler places each value wherever is safe and cheap." },
     { t: "code", title: "Ask the compiler what it decided", code:
