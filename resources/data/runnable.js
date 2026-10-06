@@ -47,7 +47,7 @@ func main() {
 }
 `,
 
-"data-types|Bytes vs runes — the thing everyone gets wrong once":
+"data-types|Bytes vs runes, the thing everyone gets wrong once":
 `package main
 
 import (
@@ -83,7 +83,7 @@ func main() {
 }
 `,
 
-"printing-fmt|Width, precision, flags — and the quick mental model":
+"printing-fmt|Width, precision, flags, and the quick mental model":
 `package main
 
 import "fmt"
@@ -95,7 +95,7 @@ type User struct {
 
 type Temp float64
 
-// Convert to the underlying type — formatting the receiver itself would recurse.
+// Convert to the underlying type, formatting the receiver itself would recurse.
 func (t Temp) String() string { return fmt.Sprintf("%.1f°C", float64(t)) }
 
 func main() {
@@ -125,9 +125,9 @@ func main() {
 import "fmt"
 
 func lifo() {
-	defer fmt.Println("1 — pushed first, runs LAST")
+	defer fmt.Println("1, pushed first, runs LAST")
 	defer fmt.Println("2")
-	defer fmt.Println("3 — pushed last, runs FIRST")
+	defer fmt.Println("3, pushed last, runs FIRST")
 	fmt.Println("function body")
 }
 
@@ -169,8 +169,8 @@ func main() {
 	c := counter()
 	c2 := counter()
 
-	fmt.Println(c(), c(), c()) // 1 2 3 — same variable
-	fmt.Println(c2())          // 1     — independent state
+	fmt.Println(c(), c(), c()) // 1 2 3, same variable
+	fmt.Println(c2())          // 1, independent state
 
 	// Go 1.22+: every iteration gets a FRESH loop variable
 	funcs := make([]func() int, 0, 3)
@@ -245,7 +245,7 @@ func main() {
 }
 `,
 
-"methods-interfaces|The nil-interface trap — read this twice":
+"methods-interfaces|The nil-interface trap, read this twice":
 `package main
 
 import "fmt"
@@ -403,7 +403,7 @@ func main() {
 	case queue <- 2:
 		fmt.Println("enqueued")
 	default:
-		fmt.Println("queue full — shed the request instead of blocking")
+		fmt.Println("queue full, shed the request instead of blocking")
 	}
 
 	// 5. a closed channel is always ready
@@ -536,7 +536,7 @@ import (
 func Count(n int) iter.Seq[int] {
 	return func(yield func(int) bool) {
 		for i := range n {
-			if !yield(i) { // the consumer stopped — you MUST return
+			if !yield(i) { // the consumer stopped, you MUST return
 				return
 			}
 		}
@@ -596,7 +596,7 @@ import (
 )
 
 // The same source, compiled ahead of time for whatever target you name.
-// The Playground reports linux/amd64 (or js/wasm) — on your machine it will
+// The Playground reports linux/amd64 (or js/wasm), on your machine it will
 // print your own OS and architecture.
 func main() {
 	fmt.Println("Go version:  ", runtime.Version())

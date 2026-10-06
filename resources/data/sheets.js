@@ -110,7 +110,7 @@ DOCS & INSPECTION
 RUNTIME ENVIRONMENT VARIABLES
   GOMAXPROCS=4                  max goroutines executing Go code at once
   GOGC=100                      heap growth % before the next GC (off = never)
-  GOMEMLIMIT=900MiB             soft memory ceiling (1.19+) — fixes container OOM
+  GOMEMLIMIT=900MiB             soft memory ceiling (1.19+), fixes container OOM
   GOTRACEBACK=all|system|crash  detail level in a panic traceback
   GORACE="halt_on_error=1"      race detector options
 
@@ -128,7 +128,7 @@ GODEBUG (diagnostics)
   id: "devenv",
   icon: "🛠️",
   name: "IDE, Linters & Dev Tooling",
-  desc: "Editor setup, gopls config, .golangci.yml, launch.json, Makefile, pre-commit — copy-paste ready.",
+  desc: "Editor setup, gopls config, .golangci.yml, launch.json, Makefile, pre-commit, copy-paste ready.",
   tags: ["VS Code", "gopls", "golangci-lint", "delve", "gofumpt"],
   body:
 `IDE, LINTERS & DEV TOOLING CHEAT SHEET
@@ -232,7 +232,7 @@ LINTING: THREE LAYERS
   golangci-lint run --new-from-rev=main     <- how to adopt it on legacy code
   golangci-lint run ./internal/...
 
-.golangci.yml  (v2 reshuffled the schema — the SELECTION is what matters)
+.golangci.yml  (v2 reshuffled the schema, the SELECTION is what matters)
   linters:
     enable:
       - errcheck        unchecked errors (highest value of all)
@@ -337,7 +337,7 @@ AI ASSISTANTS IN THE EDITOR
   good at: table tests, struct conversions, boilerplate, explaining stdlib
   watch for: outdated idioms (i := i, interface{}, hand-rolled slices helpers,
              a router for plain method+path routing) and invented APIs
-  ground truth is gopls, go build, go vet and a failing test — not confidence
+  ground truth is gopls, go build, go vet and a failing test, not confidence
 `
 },
 
@@ -345,7 +345,7 @@ AI ASSISTANTS IN THE EDITOR
   id: "syntax",
   icon: "📘",
   name: "Syntax Quick Reference",
-  desc: "Declarations, types, control flow, functions, structs, interfaces — one page.",
+  desc: "Declarations, types, control flow, functions, structs, interfaces, one page.",
   tags: ["var", "for", "switch", "struct", "interface"],
   body:
 `GO SYNTAX QUICK REFERENCE
@@ -471,9 +471,9 @@ SEMICOLONS
 
 ALLOCATION: new vs make vs literal
   new(T)            zeroed storage, returns *T. Rare in idiomatic Go.
-  make(T, len, cap) slices, maps, channels ONLY — builds the internals
+  make(T, len, cap) slices, maps, channels ONLY, builds the internals
   &T{Field: v}      allocate + initialise; what constructors return
-  returning &localVar is fine — escape analysis handles it
+  returning &localVar is fine, escape analysis handles it
   always name fields in struct literals
 
 GENERICS (1.18+)
@@ -484,7 +484,7 @@ GENERICS (1.18+)
   type Num interface { ~int | ~float64 }
   var zero T                          // zero value of a type parameter
 
-fmt — THE FOUR FAMILIES
+fmt, THE FOUR FAMILIES
   Print / Printf / Println          -> stdout
   Sprint / Sprintf / Sprintln       -> string
   Fprint / Fprintf / Fprintln(w,…)  -> any io.Writer  (TESTABLE: pass a Buffer)
@@ -619,7 +619,7 @@ STRINGS
   for i, r := range s               i = byte offset, r = rune
   []rune(s)                         character-indexable (allocates)
   []byte(s) / string(b)             each conversion COPIES
-  string(65) == "A"                 NOT "65" — use strconv.Itoa
+  string(65) == "A"                 NOT "65", use strconv.Itoa
 
   strings.Builder                   the ONLY way to concatenate in a loop
     var sb strings.Builder; sb.Grow(n); sb.WriteString("x"); sb.String()
@@ -634,7 +634,7 @@ strings PACKAGE
   Repeat, Map, Title(deprecated -> x/text/cases)
   NewReader, NewReplacer, Cut, CutPrefix, CutSuffix
 
-  bytes has the same API for []byte — prefer it to avoid conversions.
+  bytes has the same API for []byte, prefer it to avoid conversions.
 `
 },
 
@@ -653,7 +653,7 @@ GOROUTINES
   ~2 KB initial stack, grown by copying; multiplexed onto OS threads
   runtime.NumGoroutine()  runtime.NumCPU()  runtime.GOMAXPROCS(0)
   main returning KILLS every goroutine
-  a goroutine blocked forever is a LEAK — always know how each one ends
+  a goroutine blocked forever is a LEAK, always know how each one ends
 
 CHANNELS
   ch := make(chan T)          unbuffered: send blocks until a receiver is ready
@@ -801,7 +801,7 @@ TUNING
   GOGC=100            default: collect when heap = 2x live data
   GOGC=200            half as many GCs, ~2x memory
   GOGC=off            never collect (benchmarks / short batch jobs)
-  GOMEMLIMIT=900MiB   soft ceiling (1.19+) — the fix for container OOM kills
+  GOMEMLIMIT=900MiB   soft ceiling (1.19+), the fix for container OOM kills
   common production:  GOGC=off + GOMEMLIMIT=<~80% of the container limit
 
   debug.SetGCPercent(200)
@@ -867,7 +867,7 @@ INSPECTION
   id: "stdlib",
   icon: "📚",
   name: "Standard Library Essentials",
-  desc: "net/http, json, sql, slog, time, io, os, testing — the calls you actually make.",
+  desc: "net/http, json, sql, slog, time, io, os, testing, the calls you actually make.",
   tags: ["net/http", "json", "sql", "slog"],
   body:
 `STANDARD LIBRARY ESSENTIALS
@@ -927,7 +927,7 @@ log/slog (1.21+)
   levels: slog.LevelDebug/Info/Warn/Error via &slog.HandlerOptions{Level: ...}
 
 database/sql
-  db, _ := sql.Open("postgres", dsn)     // LAZY — PingContext to verify
+  db, _ := sql.Open("postgres", dsn)     // LAZY, PingContext to verify
   db.SetMaxOpenConns(25) SetMaxIdleConns(25) SetConnMaxLifetime(5*time.Minute)
   db.QueryRowContext(ctx, q, args...).Scan(&a, &b)
   errors.Is(err, sql.ErrNoRows)
@@ -935,7 +935,7 @@ database/sql
   for rows.Next() { rows.Scan(...) }; if err := rows.Err(); err != nil { }
   db.ExecContext(ctx, q, args...)  -> res.RowsAffected() / LastInsertId()
   tx, _ := db.BeginTx(ctx, nil); defer tx.Rollback(); tx.Commit()
-  placeholders only ($1 / ?) — never fmt.Sprintf a query
+  placeholders only ($1 / ?), never fmt.Sprintf a query
 
 time
   time.Now()  time.Since(start)  time.Until(deadline)
@@ -966,7 +966,7 @@ CLI
 OTHER WORTH KNOWING
   sort.Slice / SearchInts            (slices.Sort is usually better now)
   regexp.MustCompile  re.FindStringSubmatch  re.ReplaceAllString
-  text/template  html/template (auto-escaping — use this for HTML)
+  text/template  html/template (auto-escaping, use this for HTML)
   crypto/rand (secrets) vs math/rand/v2 (simulation)
   crypto/sha256  crypto/hmac  golang.org/x/crypto/bcrypt (passwords)
   net/url  net  encoding/csv  encoding/base64  compress/gzip
@@ -1001,7 +1001,7 @@ FILE & NAME RULES
   func FuzzXxx(f *testing.F)
   func Example()           compiled, and run if it has an "// Output:" comment
   func TestMain(m *testing.M)   package-level setup/teardown
-  testdata/                ignored by the go tool — fixtures and golden files live here
+  testdata/                ignored by the go tool, fixtures and golden files live here
 
 TABLE-DRIVEN TEST (the default shape)
   tests := []struct{ name string; in, want string; wantErr bool }{
@@ -1028,7 +1028,7 @@ testing API
   t.Log / t.Logf     shown with -v or on failure
   t.Context()        1.24+: a context cancelled at test end
 
-FAKES — no mocking library needed
+FAKES, no mocking library needed
   // declare the interface in the CONSUMER, with only the methods you call
   type Store interface { Get(context.Context, int) (*User, error) }
   type fakeStore struct{ getFn func(context.Context, int) (*User, error) }
@@ -1117,7 +1117,7 @@ PROFILING
     /debug/pprof/profile?seconds=30   CPU
     /debug/pprof/heap                 live heap     ?gc=1 to force a GC first
     /debug/pprof/allocs               all allocations
-    /debug/pprof/goroutine?debug=2    EVERY stack — fastest leak hunt
+    /debug/pprof/goroutine?debug=2    EVERY stack, fastest leak hunt
     /debug/pprof/mutex  /block        contention
   go test -trace=t.out && go tool trace t.out   # scheduler + latency timelines
 
@@ -1135,7 +1135,7 @@ WHAT TO TEST
   behaviour at boundaries, not implementation details
   error paths (they're where the bugs live), not just the happy path
   concurrency with -race and >1 goroutine in the test itself
-  every bug you fix gets a test FIRST — that's the regression suite
+  every bug you fix gets a test FIRST, that's the regression suite
   skip: trivial getters, generated code, and chasing a coverage number
 `
 },
@@ -1152,7 +1152,7 @@ WHAT TO TEST
 
 CONFIG & SECRETS
   [ ] all config from env vars (or flags); ONE artifact for every environment
-  [ ] validated at STARTUP — a missing value refuses to boot, not a 3am 500
+  [ ] validated at STARTUP, a missing value refuses to boot, not a 3am 500
   [ ] no global config var; passed down explicitly from main
   [ ] secrets from a secret store, never in source, images, or logs
   [ ] secret fields wrapped in a type whose String() returns "[REDACTED]"
@@ -1228,7 +1228,7 @@ SECURITY
   [ ] passwords: bcrypt/argon2. Tokens/IDs: crypto/rand, never math/rand
   [ ] SSRF defence on any user-supplied URL (block private/link-local ranges)
   [ ] govulncheck in CI; dependencies updated on a schedule
-  [ ] 5xx responses leak nothing — return a request ID, log the detail
+  [ ] 5xx responses leak nothing, return a request ID, log the detail
   [ ] security headers; CORS explicitly configured, not wildcarded
 
 CI GATES
@@ -1245,7 +1245,7 @@ OPERATIONAL READINESS
   [ ] rollback procedure tested (and it's a digest change, not a rebuild)
   [ ] feature flags / kill switch for anything risky; stale flags deleted
   [ ] load test done: you know your throughput ceiling and what breaks first
-  [ ] failure drill done: kill the DB, kill a pod, slow a dependency — watch it
+  [ ] failure drill done: kill the DB, kill a pod, slow a dependency, watch it
   [ ] dashboards a tired on-call engineer can read in 30 seconds
 `
 },
@@ -1276,7 +1276,7 @@ REST CONVENTIONS
   DELETE /v1/books/{id}     delete      204            (idempotent)
   nest only one level: /v1/books/{id}/reviews
   plural nouns, no verbs in paths; actions as sub-resources: POST .../publish
-  version in the path (/v1) — simplest thing that works
+  version in the path (/v1), simplest thing that works
 
 STATUS CODES THAT MATTER
   200 OK          201 Created (+Location)   202 Accepted (async)
@@ -1295,7 +1295,7 @@ ERROR ENVELOPE (pick one shape, document it, never deviate)
   map domain errors -> status in ONE place at the transport boundary
   5xx: log the detail, return only the request ID. Leak nothing.
 
-AUTH — SESSIONS (browsers)
+AUTH, SESSIONS (browsers)
   token = 32 bytes from crypto/rand; store the session SERVER-SIDE
   cookie: HttpOnly, Secure, SameSite=Lax (or Strict), Path=/, MaxAge
   rotate the session ID on login (session fixation); delete server-side on logout
@@ -1303,12 +1303,12 @@ AUTH — SESSIONS (browsers)
   identical error + similar timing for unknown-user vs wrong-password
   rate limit + lockout/backoff on repeated failures
 
-AUTH — TOKENS (APIs, mobile, service-to-service)
+AUTH, TOKENS (APIs, mobile, service-to-service)
   access token:  JWT, 5-15 min, claims sub/exp/iat/jti/aud/iss, HS256 or EdDSA
-                 SIGNED, NOT ENCRYPTED — anyone can read the payload
+                 SIGNED, NOT ENCRYPTED, anyone can read the payload
   refresh token: 32 random bytes, HASHED at rest, long-lived, SINGLE USE
                  reuse of a used refresh token -> revoke the whole family
-  verify: signature, exp, nbf, iss, aud — every time, no exceptions
+  verify: signature, exp, nbf, iss, aud, every time, no exceptions
   authorisation is PER-RESOURCE ("can this user edit THIS row?"), not per-route
   Authorization: Bearer <token>
 
@@ -1324,15 +1324,15 @@ CORS
   Access-Control-Allow-Origin: echo a SPECIFIC allowlisted origin, never *
     when credentials are involved (* + credentials is rejected by browsers)
   Allow-Methods / Allow-Headers / Max-Age; handle the OPTIONS preflight
-  Vary: Origin — or your cache will serve one origin's headers to another
+  Vary: Origin, or your cache will serve one origin's headers to another
 
 PAGINATION
-  KEYSET (cursor) — the right default:
+  KEYSET (cursor), the right default:
     WHERE (created_at, id) < ($t, $id) ORDER BY created_at DESC, id DESC LIMIT n+1
     opaque base64 cursor; flat latency at any depth; stable under inserts
-  OFFSET — only for small, static datasets: slow and skips rows as data shifts
+  OFFSET, only for small, static datasets: slow and skips rows as data shifts
   ALWAYS a default limit (25) and a max limit (100)
-  allowlist sortable/filterable fields — never interpolate a sort column
+  allowlist sortable/filterable fields, never interpolate a sort column
 
 CACHING & CONDITIONAL REQUESTS
   ETag: "<hash>"            + If-None-Match      -> 304
@@ -1353,7 +1353,7 @@ UPLOADS
   http.MaxBytesReader(w, r.Body, N) + check declared Content-Length
   r.MultipartReader() to STREAM; ParseMultipartForm buffers (small files only)
   sniff the type with http.DetectContentType(first 512 bytes) + allowlist
-  GENERATE your own filename — hdr.Filename may be "../../etc/passwd"
+  GENERATE your own filename, hdr.Filename may be "../../etc/passwd"
   serve with Content-Disposition: attachment and X-Content-Type-Options: nosniff
   io.TeeReader + io.MultiWriter: hash, count and store in ONE pass
   large files: presigned PUT straight to object storage, then verify
@@ -1378,7 +1378,7 @@ TEMPLATES (server-rendered HTML)
   html/template ONLY (contextual auto-escaping); never text/template for HTML
   parse ONCE at startup; render into a bytes.Buffer, then copy to the response
   //go:embed templates/* static/*  -> one self-contained binary
-  template.HTML opts OUT of escaping — sanitise (bluemonday) before using it
+  template.HTML opts OUT of escaping, sanitise (bluemonday) before using it
   HTMX: return HTML FRAGMENTS; branch on the HX-Request header for full pages
 
 SECURITY HEADERS
@@ -1390,7 +1390,7 @@ SECURITY HEADERS
   Permissions-Policy: geolocation=(), camera=()
 
 SERVER / CLIENT HYGIENE
-  server: ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout — always
+  server: ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout, always
   client: &http.Client{Timeout: …} + Transport{MaxIdleConnsPerHost: >2}
   defer resp.Body.Close() on EVERY response; non-2xx is not a Go error
   reverse proxy: httputil.ReverseProxy + Rewrite + SetXForwarded,
@@ -1402,7 +1402,7 @@ gRPC (service-to-service)
   status codes: InvalidArgument, NotFound, AlreadyExists, PermissionDenied,
     Unauthenticated, DeadlineExceeded, ResourceExhausted, Unavailable, Internal
   ONE ClientConn per process (it pools + multiplexes)
-  always set a deadline — it propagates to the server automatically
+  always set a deadline, it propagates to the server automatically
   interceptors = middleware; health + reflection servers; mTLS via creds
   grpc-gateway or ConnectRPC when you also need JSON/REST
 `
@@ -1461,7 +1461,7 @@ Reading old Go is easy; writing old Go by habit is the thing to avoid.
     timer/ticker overhaul: unreferenced timers are collectable; no more
       time.After leak in a hot select loop
     unique.Make (interning); structs.HostLayout
-    Request.Pattern (the matched route — use it as a metric label)
+    Request.Pattern (the matched route, use it as a metric label)
 
 1.24  (Feb 2025)
     SWISS-TABLE MAPS           (faster lookups/deletes, smaller small maps)
@@ -1558,10 +1558,10 @@ MEMORISE THESE PANICS
 
 SLICES
   [ ] every append reassigns:  s = append(s, v)
-  [ ] sub-slices alias the parent — clone when you need isolation
+  [ ] sub-slices alias the parent, clone when you need isolation
   [ ] no small long-lived slice of a huge array (it pins the whole array)
   [ ] capacity preallocated where the size is known
-  [ ] ranging a []struct copies each element — index to mutate in place
+  [ ] ranging a []struct copies each element, index to mutate in place
 
 MAPS
   [ ] v, ok := m[k] used wherever absence differs from the zero value
@@ -1571,9 +1571,9 @@ MAPS
   [ ] no &m[k] (illegal); store pointers as values if you must mutate
 
 STRINGS
-  [ ] len(s) is bytes — use utf8.RuneCountInString for characters
-  [ ] no += in a loop — strings.Builder or strings.Join
-  [ ] string(intVar) is a code point, not a number — strconv.Itoa
+  [ ] len(s) is bytes, use utf8.RuneCountInString for characters
+  [ ] no += in a loop, strings.Builder or strings.Join
+  [ ] string(intVar) is a code point, not a number, strconv.Itoa
   [ ] []byte(s) and string(b) copy; avoid them on hot paths (use bytes.*)
 
 ERRORS
@@ -1581,7 +1581,7 @@ ERRORS
   [ ] wrapped with %w and real context ("opening %s: %w")
   [ ] errors.Is / errors.As instead of == or type assertions
   [ ] no typed nil pointer returned as an error
-  [ ] handled ONCE: wrap and return, or log — not both
+  [ ] handled ONCE: wrap and return, or log, not both
   [ ] panic reserved for programmer bugs; recover only at a boundary
 
 CONCURRENCY
@@ -1597,7 +1597,7 @@ CONCURRENCY
 
 DEFER
   [ ] not inside a loop body (it runs at FUNCTION return)
-  [ ] arguments are evaluated at the defer statement — wrap in a closure if you
+  [ ] arguments are evaluated at the defer statement, wrap in a closure if you
       need the later value
   [ ] Close() errors on writers are checked (data loss hides there)
   [ ] remember log.Fatal / os.Exit SKIP deferred functions
@@ -1606,7 +1606,7 @@ HTTP
   [ ] server timeouts set (ReadHeaderTimeout at minimum)
   [ ] client has a Timeout (the zero http.Client waits forever)
   [ ] every resp.Body closed, even on non-2xx
-  [ ] non-2xx status codes checked — they are not Go errors
+  [ ] non-2xx status codes checked, they are not Go errors
   [ ] request bodies size-limited (http.MaxBytesReader)
   [ ] WriteHeader called after setting headers, before writing the body
   [ ] r.Context() honoured for long work

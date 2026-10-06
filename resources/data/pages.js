@@ -7,16 +7,16 @@ about: {
   title: "About Go From Zero",
   blurb: "Why this exists, what it covers, and who made it.",
   blocks: [
-    { t: "p", html: "<strong>Go From Zero</strong> is a complete, self-contained course for learning Go properly — starting from “is Go compiled or interpreted?” and going all the way into the scheduler, the garbage collector, the memory allocator, and what it takes to run a Go service in production." },
+    { t: "p", html: "<strong>Go From Zero</strong> is a complete, self-contained course for learning Go properly, starting from “is Go compiled or interpreted?” and going all the way into the scheduler, the garbage collector, the memory allocator, and what it takes to run a Go service in production." },
 
     { t: "h", text: "Why it exists" },
-    { t: "p", html: "Most Go material falls into one of two piles. There are syntax tours that stop at “here is a for loop”, and there are deep-dive blog posts that assume you already ship Go for a living. Very little walks you from the first pile to the second <em>in order</em>, explains the <em>why</em> behind the language's odd decisions, and then shows you what production actually demands — timeouts, observability, graceful shutdown, security, dependency hygiene." },
+    { t: "p", html: "Most Go material falls into one of two piles. There are syntax tours that stop at “here is a for loop”, and there are deep-dive blog posts that assume you already ship Go for a living. Very little walks you from the first pile to the second <em>in order</em>, explains the <em>why</em> behind the language's odd decisions, and then shows you what production actually demands, timeouts, observability, graceful shutdown, security, dependency hygiene." },
     { t: "p", html: "This course tries to be that path. It is opinionated on purpose: when there are three ways to do something, it tells you which one to reach for and what the trade-off costs you." },
 
     { t: "h", text: "What's inside" },
     { t: "p", html: "The course is modules, projects, diagrams, cheat sheets, and a glossary. This is the inventory." },
     { t: "list", items: [
-      "<strong>24 modules</strong> across four levels — Beginner, Intermediate, Advanced and Production — each ending with a summary and five questions with explanations.",
+      "<strong>24 modules</strong> across four levels, Beginner, Intermediate, Advanced and Production, each ending with a summary and five questions with explanations.",
       "<strong>13 end-to-end projects</strong> in four tracks (CLI tools, web apps, APIs &amp; services, systems &amp; data), each a full build guide with a tickable milestone plan and an honest definition of done.",
       "<strong>18 animated diagrams</strong> for the things that are genuinely hard to picture: the compile pipeline, the slice header, escape analysis, interface values, channel rendezvous, the G-M-P scheduler, tri-colour GC.",
       "<strong>12 printable cheat sheets</strong>, each downloadable as a real PDF generated in your browser.",
@@ -25,14 +25,14 @@ about: {
     ]},
 
     { t: "h", text: "What it is not" },
-    { t: "p", html: "It is not a reference manual — the <a href=\"https://go.dev/ref/spec\" target=\"_blank\" rel=\"noopener\">language spec</a> and <a href=\"https://pkg.go.dev\" target=\"_blank\" rel=\"noopener\">pkg.go.dev</a> already do that better. It is not a book about distributed systems, and it will not teach you Kubernetes. It also will not pretend Go is the right tool for everything: the first module is explicit about where Go loses to Python, Rust or Kotlin." },
+    { t: "p", html: "It is not a reference manual, the <a href=\"https://go.dev/ref/spec\" target=\"_blank\" rel=\"noopener\">language spec</a> and <a href=\"https://pkg.go.dev\" target=\"_blank\" rel=\"noopener\">pkg.go.dev</a> already do that better. It is not a book about distributed systems, and it will not teach you Kubernetes. It also will not pretend Go is the right tool for everything: the first module is explicit about where Go loses to Python, Rust or Kotlin." },
 
     { t: "h", text: "Accuracy" },
-    { t: "p", html: "The latest stable Go release is <strong>1.27.1</strong> (28 August 2026; language version <a href=\"https://go.dev/doc/go1.27\" target=\"_blank\" rel=\"noopener\">1.27</a>). Install it from <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. These lessons name the release each feature arrived in. The detailed walkthroughs were checked through Go 1.25, and the version timeline includes 1.26 and 1.27. Coverage is checked against <a href=\"https://go.dev/doc/effective_go\" target=\"_blank\" rel=\"noopener\">Effective Go</a> and the <a href=\"https://go.dev/wiki/CodeReviewComments\" target=\"_blank\" rel=\"noopener\">Code Review Comments</a> wiki. If you find something wrong or out of date, please say so — corrections are welcome and credited." },
+    { t: "p", html: "The latest stable Go release is <strong>1.27.1</strong> (28 August 2026; language version <a href=\"https://go.dev/doc/go1.27\" target=\"_blank\" rel=\"noopener\">1.27</a>). Install it from <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. These lessons name the release each feature arrived in. The detailed walkthroughs were checked through Go 1.25, and the version timeline includes 1.26 and 1.27. Coverage is checked against <a href=\"https://go.dev/doc/effective_go\" target=\"_blank\" rel=\"noopener\">Effective Go</a> and the <a href=\"https://go.dev/wiki/CodeReviewComments\" target=\"_blank\" rel=\"noopener\">Code Review Comments</a> wiki. If you find something wrong or out of date, please say so, corrections are welcome and credited." },
 
     { t: "h", text: "The author" },
-    { t: "p", html: "Built by <strong>Neha Sharma</strong>. The project is on <a href=\"https://github.com/Neha/go-learn-app\" target=\"_blank\" rel=\"noopener\">GitHub</a>. Find her on X at <a href=\"https://x.com/hellonehha\" target=\"_blank\" rel=\"noopener\">@hellonehha</a> — that is also the best place to send a correction, a suggestion, or a note about something that finally clicked." },
-    { t: "note", kind: "tip", title: "How it's built", html: "Plain HTML, CSS and vanilla JavaScript. No framework, no build step, no bundler, no dependencies and no backend — open <code>index.html</code> and it works, online or off. The hosted copy on Vercel loads one analytics script to count anonymous visits; a local copy does not. The PDFs are generated by a small built-in PDF writer; the diagrams are hand-written SVG with CSS animation. Content lives in readable data files, so it is easy to fix a typo or add a module. The writing was done with help from <strong>Opus 5.5</strong> and <strong>Grok 4.7</strong>." },
+    { t: "p", html: "Built by <strong>Neha Sharma</strong>. The project is on <a href=\"https://github.com/Neha/go-learn-app\" target=\"_blank\" rel=\"noopener\">GitHub</a>. Find her on X at <a href=\"https://x.com/hellonehha\" target=\"_blank\" rel=\"noopener\">@hellonehha</a>, that is also the best place to send a correction, a suggestion, or a note about something that finally clicked." },
+    { t: "note", kind: "tip", title: "How it's built", html: "Plain HTML, CSS and vanilla JavaScript. No framework, no build step, no bundler, no dependencies and no backend, open <code>index.html</code> and it works, online or off. The hosted copy on Vercel loads one analytics script to count anonymous visits; a local copy does not. The PDFs are generated by a small built-in PDF writer; the diagrams are hand-written SVG with CSS animation. Content lives in readable data files, so it is easy to fix a typo or add a module. The writing was done with help from <strong>Opus 5.5</strong> and <strong>Grok 4.7</strong>." },
 
     { t: "h", text: "Standing on other people's shoulders" },
     { t: "p", html: "The Go team's own writing is still the best source there is: <a href=\"https://go.dev/doc/effective_go\" target=\"_blank\" rel=\"noopener\">Effective Go</a>, the <a href=\"https://go.dev/blog/\" target=\"_blank\" rel=\"noopener\">Go blog</a> (especially the posts on slices, interfaces, the GC and the scheduler), <a href=\"https://go.dev/tour/\" target=\"_blank\" rel=\"noopener\">A Tour of Go</a>, <a href=\"https://gobyexample.com\" target=\"_blank\" rel=\"noopener\">Go by Example</a>, <a href=\"https://quii.gitbook.io/learn-go-with-tests\" target=\"_blank\" rel=\"noopener\">Learn Go with Tests</a> and <a href=\"https://google.github.io/styleguide/go/\" target=\"_blank\" rel=\"noopener\">Google's Go Style Guide</a>. Go itself, the Playground and the gopher mascot are the work of the Go team and its contributors; the gopher was designed by Renée French." }
@@ -44,7 +44,7 @@ about: {
   title: "How to use this course",
   blurb: "The intended path, what every feature does, and how to actually make it stick.",
   blocks: [
-    { t: "p", html: "You can read this in any order — but there <em>is</em> an intended path, and following it means nothing is ever explained with something you haven't met yet." },
+    { t: "p", html: "You can read this in any order, but there <em>is</em> an intended path, and following it means nothing is ever explained with something you haven't met yet." },
 
     { t: "h", text: "The path" },
     { t: "p", html: "Each row is one level. The last column is what you can do when you finish it." },
@@ -54,21 +54,21 @@ about: {
         ["<strong>Intermediate</strong>", "9–13", "Think in Go: packages, slices and maps with their internals, pointers and memory, interfaces, error handling"],
         ["<strong>Advanced</strong>", "14–20", "Concurrency, runtime internals, generics, iterators, testing and profiling, a real HTTP service, idiomatic style"],
         ["<strong>Production</strong>", "21–24", "Ship it: config and containers, timeouts and observability, dependency management, security"],
-        ["<strong>Projects</strong>", "13 builds", "Prove it — a CLI, a web app, an API, a storage engine, a job queue, a gateway"]
+        ["<strong>Projects</strong>", "13 builds", "Prove it, a CLI, a web app, an API, a storage engine, a job queue, a gateway"]
       ]
     },
-    { t: "note", kind: "tip", title: "Already know another language?", html: "Skim modules 1–8 for the Go-specific bits (zero values, <code>:=</code> rules, bytes vs runes, <code>defer</code>, the <code>fmt</code> verbs) and slow down from module 9 — slices, interfaces, errors and concurrency are where Go differs most from what you already know, and where experienced developers make the most mistakes." },
+    { t: "note", kind: "tip", title: "Already know another language?", html: "Skim modules 1–8 for the Go-specific bits (zero values, <code>:=</code> rules, bytes vs runes, <code>defer</code>, the <code>fmt</code> verbs) and slow down from module 9, slices, interfaces, errors and concurrency are where Go differs most from what you already know, and where experienced developers make the most mistakes." },
 
     { t: "h", text: "How to work through one module" },
     { t: "p", html: "Do these in order. The quiz at the end passes only when every answer is right." },
     { t: "list", ordered: true, items: [
       "<strong>Read the prose, not just the code.</strong> The code blocks are compressed; the sentences around them carry the <em>why</em>.",
       "<strong>Watch the diagram.</strong> Where one exists, it is explaining the thing people most often get wrong. Use <strong>⏸ pause</strong> and <strong>↻ replay</strong> freely.",
-      "<strong>Tap any dashed term</strong> you are not sure about — <em>JIT</em>, <em>write barrier</em>, <em>escape analysis</em> — for a definition without leaving the page.",
+      "<strong>Tap any dashed term</strong> you are not sure about, <em>JIT</em>, <em>write barrier</em>, <em>escape analysis</em>, for a definition without leaving the page.",
       "{{playground}}<strong>Run the code.</strong> Where you see <strong>▶ Run</strong>, press it: the program is copied and the Go Playground opens. Then <em>change something</em> and see what breaks. That is where the learning happens.",
       "<strong>Type the code out and run it yourself.</strong> Copy a snippet into a scratch module (or <a href=\"https://go.dev/play/\" target=\"_blank\" rel=\"noopener\">the Playground</a>), then <em>change something</em> and see what breaks. That is where the learning happens.",
       "<strong>Read the summary</strong> and check that every line sounds obvious. Any that doesn't, re-read that section.",
-      "<strong>Answer the five questions honestly</strong> — no scrolling back. Read the explanation even when you were right; it usually adds something.",
+      "<strong>Answer the five questions honestly</strong>, no scrolling back. Read the explanation even when you were right; it usually adds something.",
       "<strong>Stop at the end of a module.</strong> Two modules a day beats eight; sleep is part of the process."
     ]},
 
@@ -79,38 +79,39 @@ about: {
         ["<strong>Search</strong> (or press <kbd>/</kbd>)", "Filters modules, projects and cheat sheets by title, summary and content"],
         ["<kbd>←</kbd> <kbd>→</kbd>", "Previous / next module (or project) without touching the mouse"],
         ["<kbd>Esc</kbd>", "Closes a glossary popover, the search box or the mobile menu"],
-        ["<strong>Progress ring</strong> (top right)", "Percentage of modules completed — a module ticks off when you answer all five questions"],
+        ["<strong>Progress ring</strong> (top right)", "Percentage of modules completed, a module ticks off when you answer all five questions"],
         ["<strong>⏸ pause</strong> on a diagram", "Freezes every animation on the site and remembers it; <strong>↻ replay</strong> restarts one figure"],
         ["{{playground}}<strong>▶ Run</strong> on a code block", "Copies a complete, compiling program and opens the Go Playground"],
         ["<strong>Copy</strong> on a code block", "Copies the snippet exactly as shown"],
+        ["<strong>Highlight</strong>", "Select a passage and choose Highlight. It stays in this browser. Click a highlight to remove it."],
         ["<strong>Milestone checkboxes</strong> in a project", "Tick them as you build; progress is saved per project"],
         ["<strong>Cheat sheets</strong>", "Download each as PDF, .txt or .md, or get all twelve as one PDF"],
         ["<strong>Theme toggle</strong>", "Dark and light; it follows your system preference on the first visit"],
-        ["<strong>Reset progress</strong> (sidebar)", "Clears completions, quiz scores and milestones from this browser"]
+        ["<strong>Reset progress</strong> (sidebar)", "Clears completions, quiz scores, milestones and highlights from this browser"]
       ]
     },
 
     { t: "h", text: "Pick a schedule" },
     { t: "p", html: "Pick one pace and stay with it. The times assume you also type the examples." },
     { t: "list", items: [
-      "<strong>Two-week sprint</strong> (~2h/day) — 2–3 modules a day, then one project. Good if you need to be productive in Go at work very soon.",
-      "<strong>Six weeks of evenings</strong> (~45m/day) — one module a session, a project each weekend. The most comfortable pace, and the one most likely to be finished.",
-      "<strong>Weekend deep-dives</strong> — one level per weekend, plus a project. Works well if you already program daily in something else.",
-      "<strong>Reference mode</strong> — ignore the order, use search and the glossary, download the cheat sheets. Perfectly valid if you're already shipping Go and want the internals and production modules."
+      "<strong>Two-week sprint</strong> (~2h/day), 2–3 modules a day, then one project. Good if you need to be productive in Go at work very soon.",
+      "<strong>Six weeks of evenings</strong> (~45m/day), one module a session, a project each weekend. The most comfortable pace, and the one most likely to be finished.",
+      "<strong>Weekend deep-dives</strong>, one level per weekend, plus a project. Works well if you already program daily in something else.",
+      "<strong>Reference mode</strong>, ignore the order, use search and the glossary, download the cheat sheets. Perfectly valid if you're already shipping Go and want the internals and production modules."
     ]},
-    { t: "note", kind: "warn", title: "The one mistake to avoid", html: "Reading all 24 modules without writing any code feels productive and teaches you very little. You will understand <code>append</code> the day a sub-slice mutation surprises you, not the day you read about it. <strong>Target ratio: one hour reading to two hours typing.</strong> Start project 1 (<em>gostat</em>) as soon as you finish the Beginner level — do not wait until you feel ready." },
+    { t: "note", kind: "warn", title: "The one mistake to avoid", html: "Reading all 24 modules without writing any code feels productive and teaches you very little. You will understand <code>append</code> the day a sub-slice mutation surprises you, not the day you read about it. <strong>Target ratio: one hour reading to two hours typing.</strong> Start project 1 (<em>gostat</em>) as soon as you finish the Beginner level, do not wait until you feel ready." },
 
     { t: "h", text: "What to keep nearby" },
     { t: "p", html: "Keep these open in another tab while you work through a module." },
     { t: "list", items: [
       "<strong>The Playground</strong> (<a href=\"https://go.dev/play/\" target=\"_blank\" rel=\"noopener\">go.dev/play</a>) in a tab, for ten-second experiments.",
       "<strong>Two cheat sheets printed:</strong> <em>Syntax Quick Reference</em> while you're learning, and <em>Gotchas &amp; Review Checklist</em> once you're writing real code.",
-      "<strong><code>go doc</code></strong> in your terminal — faster than searching the web, and always the version you actually have.",
+      "<strong><code>go doc</code></strong> in your terminal, faster than searching the web, and always the version you actually have.",
       "<strong>A scratch module</strong> (<code>mkdir ~/scratch &amp;&amp; go mod init scratch</code>) so trying something is never more than one command away."
     ]},
 
     { t: "h", text: "Using it with a team" },
-    { t: "p", html: "It works as onboarding material: assign one level per week, use the five questions as a self-check, and make the first project a pairing exercise. The <em>Gotchas &amp; Review Checklist</em> and <em>Production Readiness Checklist</em> sheets double as pull-request and launch checklists — download them, delete what doesn't apply, and commit them to your repo. Progress is stored per browser, so everyone keeps their own." }
+    { t: "p", html: "It works as onboarding material: assign one level per week, use the five questions as a self-check, and make the first project a pairing exercise. The <em>Gotchas &amp; Review Checklist</em> and <em>Production Readiness Checklist</em> sheets double as pull-request and launch checklists, download them, delete what doesn't apply, and commit them to your repo. Progress is stored per browser, so everyone keeps their own." }
   ]
 },
 
@@ -127,6 +128,7 @@ privacy: {
       "which modules you have completed,",
       "your quiz scores per module,",
       "which project milestones you have ticked,",
+      "the passages you have highlighted,",
       "your theme choice (dark or light),",
       "whether you have paused animations."
     ]},
@@ -138,41 +140,41 @@ privacy: {
     { t: "h", text: "What is NOT collected" },
     { t: "p", html: "The site does not ask who you are. This is the list of things it does not store." },
     { t: "list", items: [
-      "No name, email, account or login — there is nothing to sign up for.",
+      "No name, email, account or login, there is nothing to sign up for.",
       "No cookies of any kind.",
       "No session recording, advertising pixels or fingerprinting beyond the one-day visitor hash Vercel uses for visit counts.",
       "No third-party fonts or CDNs. Course files are served from the same place as the page. The hosted copy also requests Vercel's analytics endpoint.",
-      "No advertising, and no sale of your progress or quiz answers — those never leave the browser."
+      "No advertising, and no sale of your progress or quiz answers, those never leave the browser."
     ]},
     { t: "note", kind: "deep", title: "You can verify all of this", html: "Open your browser's developer tools, go to the Network tab and reload. Locally you will see only this site's own HTML, CSS and JavaScript files. On the hosted site you will also see a request for <code>/_vercel/insights/script.js</code> and a page-view report. The Application (or Storage) tab shows the single <code>localStorage</code> key and its exact contents. There is no analytics cookie." },
 
     { t: "h", text: "Hosting and server logs" },
-    { t: "p", html: "If you are reading this on a hosted copy, the hosting provider may keep standard web-server access logs (IP address, timestamp, requested path, user agent) as part of operating any website. That is the host's processing, governed by their policy, and is outside this site's control. If you run it locally — which it fully supports, offline — not even that happens." },
+    { t: "p", html: "If you are reading this on a hosted copy, the hosting provider may keep standard web-server access logs (IP address, timestamp, requested path, user agent) as part of operating any website. That is the host's processing, governed by their policy, and is outside this site's control. If you run it locally, which it fully supports, offline, not even that happens." },
 
     { t: "h", text: "Links that leave this site" },
     { t: "p", html: "Some actions open third-party sites in a new tab, at which point their own privacy policies apply:" },
     { t: "list", items: [
-      "{{playground}}<strong>The Go Playground</strong> (<code>go.dev/play</code>) — opened by the <strong>▶ Run</strong> buttons. Note what Run actually does: it <em>copies the program to your clipboard</em> and opens the Playground. Nothing is uploaded by this site. If you then paste and press Run there, your code is compiled and executed on Google's servers and is subject to <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener\">Google's privacy policy</a>. Don't paste anything confidential into any public playground.",
-      "<strong>Documentation links</strong> — go.dev, pkg.go.dev, GitHub and similar, all plain outbound links you choose to click.",
+      "{{playground}}<strong>The Go Playground</strong> (<code>go.dev/play</code>), opened by the <strong>▶ Run</strong> buttons. Note what Run actually does: it <em>copies the program to your clipboard</em> and opens the Playground. Nothing is uploaded by this site. If you then paste and press Run there, your code is compiled and executed on Google's servers and is subject to <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener\">Google's privacy policy</a>. Don't paste anything confidential into any public playground.",
+      "<strong>Documentation links</strong>, go.dev, pkg.go.dev, GitHub and similar, all plain outbound links you choose to click.",
       "<strong>The author's X profile.</strong>"
     ]},
 
     { t: "h", text: "Clipboard, downloads and printing" },
-    { t: "p", html: "The <strong>Copy</strong> and cheat-sheet buttons write to your clipboard only when you press them. PDFs, <code>.txt</code> and <code>.md</code> files are generated <em>inside your browser</em> and saved locally — nothing is uploaded, and no external PDF service is involved. Printing uses your browser's own print dialog." },
+    { t: "p", html: "The <strong>Copy</strong> and cheat-sheet buttons write to your clipboard only when you press them. PDFs, <code>.txt</code> and <code>.md</code> files are generated <em>inside your browser</em> and saved locally, nothing is uploaded, and no external PDF service is involved. Printing uses your browser's own print dialog." },
 
     { t: "h", text: "Children, GDPR, CCPA" },
     { t: "p", html: "Progress and quiz answers never leave your browser, so the way to erase them is still <strong>Reset progress</strong>. The hosted site's anonymous visit counts are held by Vercel under their <a href=\"https://vercel.com/docs/analytics/privacy-policy\" target=\"_blank\" rel=\"noopener\">Web Analytics privacy policy</a>, not in an account on this site." },
 
     { t: "h", text: "Copyright" },
     { t: "p", html: "© 2026 <strong>Neha Sharma</strong>. The course text, module structure, explanations, diagrams, quizzes and cheat sheets are her original work, and all rights are reserved unless stated otherwise." },
-    { t: "p", html: "<strong>The Go code samples in this course are free for you to use</strong> in your own projects, at work or anywhere else, with no attribution required — they exist to be used. Reproducing or republishing the <em>written material</em> (in whole or in substantial part, including translations, mirrors, paid courses, video adaptations or AI-training redistribution) needs permission first. For teaching, internal onboarding or study groups, you are welcome to share a link and print the cheat sheets — just ask before republishing." },
+    { t: "p", html: "<strong>The Go code samples in this course are free for you to use</strong> in your own projects, at work or anywhere else, with no attribution required, they exist to be used. Reproducing or republishing the <em>written material</em> (in whole or in substantial part, including translations, mirrors, paid courses, video adaptations or AI-training redistribution) needs permission first. For teaching, internal onboarding or study groups, you are welcome to share a link and print the cheat sheets, just ask before republishing." },
     { t: "note", kind: "warn", title: "Trademarks and attribution", html: "Go, the Go logo and the Go Playground are the work of the Go Authors and Google; the Go gopher was designed by <a href=\"https://reneefrench.blogspot.com/\" target=\"_blank\" rel=\"noopener\">Renée French</a>. Product names such as Docker, Kubernetes, PostgreSQL, Prometheus and JetBrains GoLand belong to their respective owners. This site is an independent educational project and is not affiliated with, endorsed by or sponsored by Google or any company mentioned in it." },
 
     { t: "h", text: "No warranty" },
-    { t: "p", html: "This material is provided for education, as-is and without warranty of any kind. It is written as carefully as possible and targets Go 1.25, but software changes and mistakes happen: <strong>verify anything security-sensitive or production-critical against the <a href=\"https://go.dev/doc/\" target=\"_blank\" rel=\"noopener\">official documentation</a></strong> before relying on it. The author is not liable for any outcome of using this material. Found an error? Please report it — see below." },
+    { t: "p", html: "This material is provided for education, as-is and without warranty of any kind. It is written as carefully as possible and targets Go 1.25, but software changes and mistakes happen: <strong>verify anything security-sensitive or production-critical against the <a href=\"https://go.dev/doc/\" target=\"_blank\" rel=\"noopener\">official documentation</a></strong> before relying on it. The author is not liable for any outcome of using this material. Found an error? Please report it, see below." },
 
     { t: "h", text: "Contact" },
-    { t: "p", html: "Corrections, questions and suggestions: <strong>Neha Sharma</strong> on X — <a href=\"https://x.com/hellonehha\" target=\"_blank\" rel=\"noopener\">@hellonehha</a>." },
+    { t: "p", html: "Corrections, questions and suggestions: <strong>Neha Sharma</strong> on X, <a href=\"https://x.com/hellonehha\" target=\"_blank\" rel=\"noopener\">@hellonehha</a>." },
     { t: "p", html: "<em>Last updated: October 2026.</em>" }
   ]
 }
