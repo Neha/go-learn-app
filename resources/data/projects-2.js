@@ -1,4 +1,4 @@
-/* Web app and API build guides — appended to the project list */
+/* Web app and API build guides, appended to the project list */
 window.PROJECTS = (window.PROJECTS || []).concat([
 
 /* ══════════════════════════ WEB APPS ══════════════════════════ */
@@ -7,14 +7,14 @@ window.PROJECTS = (window.PROJECTS || []).concat([
   id: "inkwell",
   category: "Web Apps",
   icon: "✍️",
-  name: "inkwell — a server-rendered blog & CMS",
+  name: "inkwell, a server-rendered blog & CMS",
   tagline: "A complete web application with no JavaScript framework: sessions, CSRF, bcrypt auth, image uploads, markdown, an admin area and HTMX for interactivity.",
   level: "Intermediate",
   time: "14–22 hours",
   stack: ["html/template", "embed", "sessions + cookies", "bcrypt", "SQLite or Postgres", "HTMX", "httptest"],
   covers: ["stdlib-service", "errors", "methods-interfaces", "testing", "security"],
   blocks: [
-    { t: "p", html: "Go is excellent at the thing the industry forgot how to do: render HTML on the server, fast, from one binary. This project is a real multi-user web app — public blog, login, draft/publish workflow, image uploads, comments with moderation — and the entire frontend is <code>html/template</code> plus about 30 lines of HTMX. No npm, no build step, no hydration." },
+    { t: "p", html: "Go is excellent at the thing the industry forgot how to do: render HTML on the server, fast, from one binary. This project is a real multi-user web app, public blog, login, draft/publish workflow, image uploads, comments with moderation, and the entire frontend is <code>html/template</code> plus about 30 lines of HTMX. No npm, no build step, no hydration." },
     { t: "h", text: "Pages and routes" },
     { t: "p", html: "These are the pages and the form posts. Public routes need no login. The rest should refuse a request that has no session." },
     { t: "code", title: "The surface", code:
@@ -29,7 +29,7 @@ window.PROJECTS = (window.PROJECTS || []).concat([
 AUTH
   GET/POST /login             session cookie on success
   POST     /logout
-  GET/POST /register          (or seeded admin only — your call)
+  GET/POST /register          (or seeded admin only, your call)
 
 ADMIN  (requires a session + the author/admin role)
   GET      /admin             dashboard: counts, recent comments
@@ -50,7 +50,7 @@ var assets embed.FS
 func parseTemplates() (map[string]*template.Template, error) {
     funcs := template.FuncMap{
         "fmtDate":  func(t time.Time) string { return t.Format("2 Jan 2006") },
-        "markdown": renderMarkdown,          // returns template.HTML — SANITISE IT
+        "markdown": renderMarkdown,          // returns template.HTML, SANITISE IT
         "csrf":     func(tok string) template.HTML {
             return template.HTML(fmt.Sprintf(
                 ` + "`" + `<input type="hidden" name="csrf_token" value="%s">` + "`" + `,
@@ -83,7 +83,7 @@ func (s *Server) render(w http.ResponseWriter, status int, page string, data any
     buf.WriteTo(w)
 }`
     },
-    { t: "note", kind: "warn", title: "html/template escapes — until you hand it HTML", html: "<code>html/template</code> is <em>contextually</em> auto-escaping: it knows the difference between an attribute, a URL, a JS literal and body text, which kills most XSS for free. The moment you return <code>template.HTML</code> from a markdown renderer, you have opted out — so sanitise the rendered output with <code>bluemonday.UGCPolicy()</code> before marking it safe. Never use <code>text/template</code> for HTML." },
+    { t: "note", kind: "warn", title: "html/template escapes, until you hand it HTML", html: "<code>html/template</code> is <em>contextually</em> auto-escaping: it knows the difference between an attribute, a URL, a JS literal and body text, which kills most XSS for free. The moment you return <code>template.HTML</code> from a markdown renderer, you have opted out, so sanitise the rendered output with <code>bluemonday.UGCPolicy()</code> before marking it safe. Never use <code>text/template</code> for HTML." },
 
     { t: "h", text: "Sessions, cookies and CSRF" },
     { t: "p", html: "The session cookie must be HttpOnly so a script cannot read it, Secure so it is only sent over HTTPS, and SameSite so another site cannot send it. A CSRF token is a second check on every form post." },
@@ -114,7 +114,7 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
 
 // CSRF: a per-session token in a hidden field, compared with
 // subtle.ConstantTimeCompare on every non-GET request. Middleware, not
-// per-handler — one forgotten handler is the hole.`
+// per-handler, one forgotten handler is the hole.`
     },
     { t: "code", title: "File uploads without becoming a malware host", code:
 `func (s *Server) upload(w http.ResponseWriter, r *http.Request) {
@@ -136,7 +136,7 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
     }
     file.Seek(0, io.SeekStart)
 
-    // Generate your OWN filename — never use hdr.Filename in a path
+    // Generate your OWN filename, never use hdr.Filename in a path
     // ("../../etc/passwd" is a real submission).
     name := uuid.NewString() + extFor(ct)
     _ = hdr
@@ -159,11 +159,11 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
   ],
   done: [
     "Every form is CSRF-protected and rejects a request with a missing or stale token",
-    "A post body containing `<script>alert(1)</script>` renders as text, never as script — asserted by a test",
+    "A post body containing `<script>alert(1)</script>` renders as text, never as script, asserted by a test",
     "Uploading a .php file renamed to .jpg is rejected by content sniffing",
     "Login failures are indistinguishable between unknown user and wrong password, and are rate limited",
     "Templates are parsed once at startup; a template error returns a clean 500 rather than a half-written page",
-    "The whole app is one binary plus a database — `./inkwell` serves the site with no asset pipeline"
+    "The whole app is one binary plus a database, `./inkwell` serves the site with no asset pipeline"
   ],
   stretch: [
     "Full-text search with Postgres tsvector or SQLite FTS5",
@@ -179,7 +179,7 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
   id: "chatter",
   category: "Web Apps",
   icon: "💬",
-  name: "chatter — real-time chat with WebSockets",
+  name: "chatter, real-time chat with WebSockets",
   tagline: "Multi-room chat with presence, typing indicators, history, reconnect and horizontal scaling through Redis pub/sub. The project that teaches long-lived connections.",
   level: "Advanced",
   time: "14–20 hours",
@@ -208,10 +208,10 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(attempt))   // constant time
  messages from instance B. Presence lives in a Redis set with a TTL.
 
  Why a single hub goroutine: all mutation funnels through one channel, so the
- shared maps are owned by exactly one goroutine. That is the Go way — and it
+ shared maps are owned by exactly one goroutine. That is the Go way, and it
  is dramatically easier to reason about than locking three maps.`
     },
-    { t: "code", title: "The two pumps — and the slow-client rule", code:
+    { t: "code", title: "The two pumps, and the slow-client rule", code:
 `func (c *Client) readPump(ctx context.Context) {
     defer c.hub.unregister(c)                      // ALWAYS clean up
     c.conn.SetReadLimit(4 << 10)                   // cap message size
@@ -258,8 +258,8 @@ func (h *Hub) send(c *Client, msg []byte) {
     }
 }`
     },
-    { t: "note", kind: "warn", title: "Where the leaks hide", html: "One forgotten <code>unregister</code> and the hub keeps a pointer to a dead client forever — with its 64-message buffer. Watch <code>runtime.NumGoroutine()</code> and your client count as a metric; after a load test they must both return to baseline. The other classic: a <code>WriteTimeout</code> on the <code>http.Server</code> silently kills every long-lived connection, so set deadlines per write with <code>http.NewResponseController</code> instead of globally." },
-    { t: "note", kind: "tip", title: "WebSocket or SSE?", html: "If the server only ever <em>pushes</em> — dashboards, notifications, progress — Server-Sent Events is plain HTTP, reconnects automatically, needs no special proxy config, and is half the code (see project <em>pulse</em>). Choose WebSockets when you genuinely need low-latency client→server messages, which chat does. Knowing when <em>not</em> to use them is part of the lesson." }
+    { t: "note", kind: "warn", title: "Where the leaks hide", html: "One forgotten <code>unregister</code> and the hub keeps a pointer to a dead client forever, with its 64-message buffer. Watch <code>runtime.NumGoroutine()</code> and your client count as a metric; after a load test they must both return to baseline. The other classic: a <code>WriteTimeout</code> on the <code>http.Server</code> silently kills every long-lived connection, so set deadlines per write with <code>http.NewResponseController</code> instead of globally." },
+    { t: "note", kind: "tip", title: "WebSocket or SSE?", html: "If the server only ever <em>pushes</em>, dashboards, notifications, progress, Server-Sent Events is plain HTTP, reconnects automatically, needs no special proxy config, and is half the code (see project <em>pulse</em>). Choose WebSockets when you genuinely need low-latency client→server messages, which chat does. Knowing when <em>not</em> to use them is part of the lesson." }
   ],
   milestones: [
     { title: "Echo server", detail: "Upgrade a connection, read a message, write it back. A static page with ~30 lines of JS. Prove the handshake and the lifecycle before adding any state." },
@@ -284,7 +284,7 @@ func (h *Hub) send(c *Client, msg []byte) {
     "File/image sharing reusing dropbin's upload path",
     "Message editing/deletion with a tombstone and ordering guarantees",
     "End-to-end encryption between clients, with the server as a blind relay",
-    "A terminal client using the same protocol (Bubble Tea) — proof the protocol is real",
+    "A terminal client using the same protocol (Bubble Tea), proof the protocol is real",
     "Swap Redis for NATS and compare operational complexity and latency"
   ]
 },
@@ -293,7 +293,7 @@ func (h *Hub) send(c *Client, msg []byte) {
   id: "tilled",
   category: "Web Apps",
   icon: "🛒",
-  name: "tilled — a storefront with real checkout",
+  name: "tilled, a storefront with real checkout",
   tagline: "Catalog, cart, Stripe test-mode payments, signed webhooks, an order state machine and idempotency. Money makes correctness non-negotiable.",
   level: "Advanced",
   time: "16–24 hours",
@@ -317,7 +317,7 @@ func (h *Hub) send(c *Client, msg []byte) {
 
  RULE: the browser redirect is a UX hint, never the trigger for fulfilment.
  The user can close the tab; the webhook is the authoritative event. Design
- the whole system so the redirect landing page just READS the order state —
+ the whole system so the redirect landing page just READS the order state, 
  and shows "processing" if the webhook hasn't arrived yet.`
     },
     { t: "code", title: "Money, and the state machine", code:
@@ -389,7 +389,7 @@ func (o *Order) To(next Status) error {
     w.WriteHeader(200)
 }`
     },
-    { t: "note", kind: "warn", title: "Four bugs that cost real money", html: "<strong>(1)</strong> Trusting the success redirect instead of the webhook — the user closes the tab and you never ship. <strong>(2)</strong> No idempotency on checkout creation — a double-click charges twice; pass an idempotency key. <strong>(3)</strong> Recomputing nothing server-side — a tampered form buys a laptop for $1. <strong>(4)</strong> Stock decremented outside the payment transaction — oversell. Put the stock decrement and the status change in the same transaction, with a row-level lock or a conditional <code>UPDATE … WHERE stock &gt;= qty</code>." },
+    { t: "note", kind: "warn", title: "Four bugs that cost real money", html: "<strong>(1)</strong> Trusting the success redirect instead of the webhook, the user closes the tab and you never ship. <strong>(2)</strong> No idempotency on checkout creation, a double-click charges twice; pass an idempotency key. <strong>(3)</strong> Recomputing nothing server-side, a tampered form buys a laptop for $1. <strong>(4)</strong> Stock decremented outside the payment transaction, oversell. Put the stock decrement and the status change in the same transaction, with a row-level lock or a conditional <code>UPDATE … WHERE stock &gt;= qty</code>." },
     { t: "note", kind: "tip", title: "You never need a real card", html: "Stripe (and every competitor) has a test mode with documented test cards, plus a CLI that replays real webhook payloads at <code>localhost</code>. For tests, run against a fake: a local <code>httptest</code> server that implements the three endpoints you use, so your whole suite is offline and deterministic. Never let CI call a payment provider." }
   ],
   milestones: [
@@ -406,7 +406,7 @@ func (o *Order) To(next Status) error {
     "Delivering the same webhook event three times produces exactly one paid order and one email",
     "A checkout double-click creates one order and one payment intent",
     "A tampered quantity or price in the form cannot change what is charged",
-    "50 concurrent purchases of the last 10 units sell exactly 10 — asserted by a `-race` test",
+    "50 concurrent purchases of the last 10 units sell exactly 10, asserted by a `-race` test",
     "Closing the browser immediately after paying still results in a fulfilled order",
     "No card data touches your database, and no secret appears in a log line",
     "The full test suite runs offline against a fake provider"
@@ -427,7 +427,7 @@ func (o *Order) To(next Status) error {
   id: "shelf",
   category: "APIs & Services",
   icon: "📚",
-  name: "shelf — a production-grade REST API",
+  name: "shelf, a production-grade REST API",
   tagline: "The complete API: JWT with refresh rotation, RBAC, pagination, filtering, validation, idempotency, ETags, OpenAPI, versioning and a documented error contract.",
   level: "Intermediate",
   time: "18–26 hours",
@@ -437,7 +437,7 @@ func (o *Order) To(next Status) error {
     { t: "p", html: "<em>snip</em> taught you a working API. This one teaches the hundred decisions that separate a working API from one other teams can build on: how errors are shaped, how clients page through a million rows without timing out, how a token is revoked, how you add a field without breaking anyone, and how all of that is documented and tested." },
     { t: "h", text: "The surface" },
     { t: "p", html: "This is the HTTP API. The auth routes hand out a short-lived token. Every other route requires that token." },
-    { t: "code", title: "A bookshelf API — boring domain, interesting engineering", code:
+    { t: "code", title: "A bookshelf API, boring domain, interesting engineering", code:
 `AUTH
   POST   /v1/auth/register
   POST   /v1/auth/login            -> access (15 min JWT) + refresh (30 d, rotating)
@@ -476,14 +476,14 @@ type APIError struct {
 // 400 invalid_request      malformed body/params
 // 401 unauthenticated      missing/expired token      (WWW-Authenticate header)
 // 403 forbidden            authenticated, not allowed
-// 404 not_found            — also use for "exists but you can't see it"
+// 404 not_found, also use for "exists but you can't see it"
 // 409 conflict             duplicate, or an illegal state transition
 // 412 precondition_failed  If-Match didn't hold
 // 422 validation_failed    well-formed but semantically invalid, + fields{}
 // 429 rate_limited         + Retry-After
 // 500 internal             NO detail, just the request ID; log the rest
 
-// Map domain errors to this in ONE place at the transport boundary — handlers
+// Map domain errors to this in ONE place at the transport boundary, handlers
 // return errors, middleware renders them. Then write a test per status code.`
     },
     { t: "code", title: "Pagination that still works at ten million rows", code:
@@ -491,7 +491,7 @@ type APIError struct {
 // data changes under the client. Use KEYSET (cursor) pagination:
 //   SELECT ... WHERE (published_at, id) < ($cursorTime, $cursorID)
 //   ORDER BY published_at DESC, id DESC LIMIT $limit + 1
-// The cursor is an opaque base64 of the last row's sort key — opaque so you
+// The cursor is an opaque base64 of the last row's sort key, opaque so you
 // can change the implementation without breaking clients.
 
 type Page[T any] struct {
@@ -503,14 +503,14 @@ type Page[T any] struct {
 // Always: a DEFAULT limit (25) and a MAX limit (100). An unbounded limit is a
 // denial-of-service endpoint you wrote yourself.
 // Filtering: an allowlist of fields and operators parsed into parameterised
-// SQL. Never interpolate a user-supplied sort column — that is SQL injection
+// SQL. Never interpolate a user-supplied sort column, that is SQL injection
 // with extra steps.
 var sortable = map[string]string{"published_at": "published_at", "title": "title"}`
     },
     { t: "code", title: "Auth: short access tokens, rotating refresh tokens", code:
 `// Access token: a JWT, 15 minutes, signed (HS256 with a strong secret, or
 // RS256/EdDSA if other services verify it). Claims: sub, exp, iat, jti, roles.
-// Keep it small, and NEVER put anything secret in it — a JWT is signed, not
+// Keep it small, and NEVER put anything secret in it, a JWT is signed, not
 // encrypted, and anyone can read the payload.
 
 // Refresh token: 32 random bytes, HASHED in the database (treat it like a
@@ -536,7 +536,7 @@ func (s *Server) requireAuth(next http.Handler) http.Handler {
 // book?" A role check in middleware plus an ownership check in the service.
 // The classic breach (IDOR) is a valid token fetching someone else's /books/42.`
     },
-    { t: "note", kind: "tip", title: "Spec-first pays for itself", html: "Write the OpenAPI document before the handlers, generate your request/response types or your client from it (<code>oapi-codegen</code>), serve the spec from the binary with <code>go:embed</code>, and add a CI check that the implementation still matches. You get real documentation, typed clients in any language, and a contract test for free. The alternative — handwritten docs — is wrong within a week." }
+    { t: "note", kind: "tip", title: "Spec-first pays for itself", html: "Write the OpenAPI document before the handlers, generate your request/response types or your client from it (<code>oapi-codegen</code>), serve the spec from the binary with <code>go:embed</code>, and add a CI check that the implementation still matches. You get real documentation, typed clients in any language, and a contract test for free. The alternative, handwritten docs, is wrong within a week." }
   ],
   milestones: [
     { title: "Spec first", detail: "Write `openapi.yaml` for the whole surface. Generate types/stubs, embed the spec, serve rendered docs at `/docs`. Review it before writing a handler." },
@@ -552,7 +552,7 @@ func (s *Server) requireAuth(next http.Handler) http.Handler {
     "Every documented status code has a test asserting the exact response body shape",
     "A valid token for user A cannot read, modify or delete user B's resources (IDOR test exists)",
     "A reused refresh token revokes the whole family and forces re-login",
-    "Page 10,000 responds as fast as page 1 — measured, not assumed",
+    "Page 10,000 responds as fast as page 1, measured, not assumed",
     "Repeating a POST with the same `Idempotency-Key` returns the original result and creates nothing new",
     "A stale `If-Match` returns 412 instead of silently overwriting",
     "`/export` streams a million rows with flat memory",
@@ -572,14 +572,14 @@ func (s *Server) requireAuth(next http.Handler) http.Handler {
   id: "ledger-grpc",
   category: "APIs & Services",
   icon: "🔀",
-  name: "ledger — gRPC services that talk to each other",
-  tagline: "Protobuf contracts, codegen, streaming, interceptors, deadline propagation, mTLS and REST transcoding — the internal-API half of Go's ecosystem.",
+  name: "ledger, gRPC services that talk to each other",
+  tagline: "Protobuf contracts, codegen, streaming, interceptors, deadline propagation, mTLS and REST transcoding, the internal-API half of Go's ecosystem.",
   level: "Advanced",
   time: "16–24 hours",
   stack: ["protobuf", "grpc-go", "buf", "grpc-gateway", "OpenTelemetry", "mTLS"],
   covers: ["methods-interfaces", "concurrency", "errors", "reliability-observability", "production-readiness"],
   blocks: [
-    { t: "p", html: "REST is how services talk to browsers; gRPC is how they talk to each other. You get a typed contract both sides compile against, HTTP/2 multiplexing, real streaming, generated clients, and deadlines that propagate automatically. Build two services — an <code>accounts</code> service and a <code>ledger</code> service — and make them call each other properly." },
+    { t: "p", html: "REST is how services talk to browsers; gRPC is how they talk to each other. You get a typed contract both sides compile against, HTTP/2 multiplexing, real streaming, generated clients, and deadlines that propagate automatically. Build two services, an <code>accounts</code> service and a <code>ledger</code> service, and make them call each other properly." },
     { t: "h", text: "The contract comes first" },
     { t: "p", html: "The <code>.proto</code> file is the API. Generate the Go types from it, and do not hand-write a second copy." },
     { t: "code", title: "proto/ledger/v1/ledger.proto", code:
@@ -603,18 +603,18 @@ message Entry {
   int64  amount_minor = 3;             // integers for money, always
   string currency = 4;
   google.protobuf.Timestamp created_at = 5;
-  reserved 6;                          // a field you removed — NEVER reuse the number
+  reserved 6;                          // a field you removed, NEVER reuse the number
 }
 
 // Compatibility rules that keep rolling deploys safe:
-//   • field NUMBERS are the wire format — never change or reuse one
+//   • field NUMBERS are the wire format, never change or reuse one
 //   • adding an optional field is safe in both directions
 //   • removing a field: reserve its number and name
-//   • renaming a field is safe on the wire, breaking in JSON/code — treat as breaking
+//   • renaming a field is safe on the wire, breaking in JSON/code, treat as breaking
 //   • "buf breaking --against .git#branch=main" enforces all of this IN CI`
     },
     { t: "code", title: "Codegen and the server", code:
-`# buf.gen.yaml + one command — no hand-written client code, ever
+`# buf.gen.yaml + one command, no hand-written client code, ever
 buf lint && buf breaking --against '.git#branch=main' && buf generate
 
 // The generated interface is the contract. Embed Unimplemented* so adding an
@@ -626,7 +626,7 @@ type server struct {
 
 func (s *server) CreateEntry(ctx context.Context, req *ledgerv1.CreateEntryRequest) (*ledgerv1.Entry, error) {
     if req.GetAmountMinor() == 0 {
-        // gRPC status codes, not strings — clients switch on these
+        // gRPC status codes, not strings, clients switch on these
         return nil, status.Error(codes.InvalidArgument, "amount_minor must be non-zero")
     }
     e, err := s.store.Create(ctx, toDomain(req))
@@ -638,7 +638,7 @@ func (s *server) CreateEntry(ctx context.Context, req *ledgerv1.CreateEntryReque
     return toProto(e), nil
 }
 
-// Server streaming: push rows as you read them — constant memory for any size
+// Server streaming: push rows as you read them, constant memory for any size
 func (s *server) ListEntries(req *ledgerv1.ListEntriesRequest,
     stream ledgerv1.LedgerService_ListEntriesServer) error {
     return s.store.Each(stream.Context(), req.GetAccountId(), func(e Entry) error {
@@ -650,7 +650,7 @@ func (s *server) ListEntries(req *ledgerv1.ListEntriesRequest,
 `srv := grpc.NewServer(
     grpc.ChainUnaryInterceptor(
         // (current otelgrpc prefers a stats handler:
-        //  grpc.StatsHandler(otelgrpc.NewServerHandler()) — the interceptor
+        //  grpc.StatsHandler(otelgrpc.NewServerHandler()), the interceptor
         //  form is deprecated. Check the version you pull in.)
         otelgrpc.UnaryServerInterceptor(),        // tracing, context propagated
         loggingInterceptor(logger),               // request_id, method, duration, code
@@ -676,14 +676,14 @@ conn, _ := grpc.NewClient(target,
     grpc.WithChainUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 )
 // retryPolicy JSON: maxAttempts, initialBackoff, retryableStatusCodes
-// ["UNAVAILABLE","RESOURCE_EXHAUSTED"] — and NEVER a non-idempotent method.`
+// ["UNAVAILABLE","RESOURCE_EXHAUSTED"], and NEVER a non-idempotent method.`
     },
-    { t: "note", kind: "tip", title: "You still get REST and JSON", html: "<code>grpc-gateway</code> generates a reverse proxy from <code>google.api.http</code> annotations in your proto, so one service definition serves gRPC to internal callers <em>and</em> JSON/REST (plus a generated OpenAPI spec) to browsers and curl. <a href=\"https://connectrpc.com/\" target=\"_blank\" rel=\"noopener\">ConnectRPC</a> is the modern alternative: one server that speaks gRPC, gRPC-Web and plain HTTP/JSON with no proxy at all — worth evaluating as a stretch goal." },
-    { t: "note", kind: "warn", title: "The gRPC footguns", html: "Reuse <strong>one</strong> <code>ClientConn</code> for the process — it pools and multiplexes; creating one per call is catastrophic. Always set a deadline; a gRPC call without one blocks forever. Streams leak if you don't drain or cancel them. Load balancing needs care: HTTP/2 holds a long-lived connection, so a plain L4 balancer pins you to one backend — use client-side round-robin with DNS resolution, a service mesh, or an L7 proxy." }
+    { t: "note", kind: "tip", title: "You still get REST and JSON", html: "<code>grpc-gateway</code> generates a reverse proxy from <code>google.api.http</code> annotations in your proto, so one service definition serves gRPC to internal callers <em>and</em> JSON/REST (plus a generated OpenAPI spec) to browsers and curl. <a href=\"https://connectrpc.com/\" target=\"_blank\" rel=\"noopener\">ConnectRPC</a> is the modern alternative: one server that speaks gRPC, gRPC-Web and plain HTTP/JSON with no proxy at all, worth evaluating as a stretch goal." },
+    { t: "note", kind: "warn", title: "The gRPC footguns", html: "Reuse <strong>one</strong> <code>ClientConn</code> for the process, it pools and multiplexes; creating one per call is catastrophic. Always set a deadline; a gRPC call without one blocks forever. Streams leak if you don't drain or cancel them. Load balancing needs care: HTTP/2 holds a long-lived connection, so a plain L4 balancer pins you to one backend, use client-side round-robin with DNS resolution, a service mesh, or an L7 proxy." }
   ],
   milestones: [
     { title: "Proto + codegen pipeline", detail: "`buf` with lint and breaking-change checks, generated Go into `gen/`, a Makefile target, and CI running `buf lint` + `buf breaking`." },
-    { title: "Unary service", detail: "Implement CreateEntry/GetBalance over Postgres, map domain errors to gRPC status codes, and test with `grpc.NewServer` on a bufconn listener — no real ports, fast tests." },
+    { title: "Unary service", detail: "Implement CreateEntry/GetBalance over Postgres, map domain errors to gRPC status codes, and test with `grpc.NewServer` on a bufconn listener, no real ports, fast tests." },
     { title: "Streaming", detail: "Server-stream ListEntries with constant memory, client-stream ImportEntries with batched commits, and a Watch stream fed by a channel. Test cancellation mid-stream." },
     { title: "Interceptors", detail: "Logging with request IDs, panic recovery, auth from metadata, validation, rate limiting. Unit-test each interceptor independently." },
     { title: "Service-to-service", detail: "A second `accounts` service; ledger calls it with a propagated deadline and a shared trace. Show a single trace spanning both services." },
@@ -714,7 +714,7 @@ conn, _ := grpc.NewClient(target,
   id: "dropbin",
   category: "APIs & Services",
   icon: "📦",
-  name: "dropbin — a file upload & sharing API",
+  name: "dropbin, a file upload & sharing API",
   tagline: "Streaming multipart uploads, S3 presigned URLs, checksums, resumable transfers, range requests, quotas and signed expiring links. All about io.Reader.",
   level: "Advanced",
   time: "14–20 hours",
@@ -743,7 +743,7 @@ GET    /v1/usage                      quota: bytes used / allowed`
     r.Body = http.MaxBytesReader(w, r.Body, s.maxUpload)
 
     // MultipartReader streams part by part. ParseMultipartForm would buffer
-    // the whole thing in memory and spill to temp files — fine for a 2 MB
+    // the whole thing in memory and spill to temp files, fine for a 2 MB
     // avatar, fatal for a 4 GB video.
     mr, err := r.MultipartReader()
     if err != nil { s.bad(w, "expected multipart/form-data"); return }
@@ -754,7 +754,7 @@ GET    /v1/usage                      quota: bytes used / allowed`
         if err != nil { s.bad(w, "malformed multipart"); return }
         if part.FormName() != "file" { part.Close(); continue }
 
-        // Compute the hash WHILE streaming to storage — one pass, no temp file.
+        // Compute the hash WHILE streaming to storage, one pass, no temp file.
         h := sha256.New()
         counter := &countingWriter{}
         tee := io.TeeReader(part, io.MultiWriter(h, counter))
@@ -780,7 +780,7 @@ GET    /v1/usage                      quota: bytes used / allowed`
 // Memory used: one 32 KB copy buffer, regardless of file size.`
     },
     { t: "code", title: "Presigned URLs and range downloads", code:
-`// For large files, do NOT proxy the bytes through your service — it burns
+`// For large files, do NOT proxy the bytes through your service, it burns
 // your bandwidth, your memory and your request timeout. Hand the client a
 // short-lived presigned PUT URL and let it talk to S3 directly.
 url, err := presigner.PutObject(ctx, &s3.PutObjectInput{
@@ -788,7 +788,7 @@ url, err := presigner.PutObject(ctx, &s3.PutObjectInput{
     ContentLength: aws.Int64(declaredSize),
 }, s3.WithPresignExpires(15*time.Minute))
 // Then /complete verifies the object exists, its size and its checksum before
-// marking the row usable. Until then the file row is "pending" — and a
+// marking the row usable. Until then the file row is "pending", and a
 // scheduled job purges pending rows older than an hour.
 
 // Downloads: http.ServeContent gives you Range requests, If-Modified-Since,
@@ -812,13 +812,13 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) {
 // forged or expired link.`
     },
     { t: "note", kind: "warn", title: "Uploads are the most attacked endpoint you own", html: "Checklist: cap size (<code>MaxBytesReader</code> <em>and</em> a declared-length check), sniff the real content type from the bytes, <strong>generate your own filename</strong> (<code>hdr.Filename</code> may be <code>../../../etc/passwd</code> or a 4 KB Unicode payload), store outside the web root or in object storage, serve with <code>Content-Disposition: attachment</code> and <code>nosniff</code>, never execute or template an uploaded file, enforce per-user quotas and per-IP rate limits, and strip EXIF from images (it contains GPS). Then add a malware-scanning hook as an async job." },
-    { t: "note", kind: "deep", title: "Why TeeReader is the hero of this project", html: "<code>io.TeeReader(src, w)</code> returns a reader that writes everything it reads into <code>w</code>. Combined with <code>io.MultiWriter</code>, one pass over the upload simultaneously streams to storage, computes SHA-256, counts bytes and could feed a virus scanner — with a single fixed-size buffer and no temp file. That composability is the whole argument for small interfaces (Module 9)." }
+    { t: "note", kind: "deep", title: "Why TeeReader is the hero of this project", html: "<code>io.TeeReader(src, w)</code> returns a reader that writes everything it reads into <code>w</code>. Combined with <code>io.MultiWriter</code>, one pass over the upload simultaneously streams to storage, computes SHA-256, counts bytes and could feed a virus scanner, with a single fixed-size buffer and no temp file. That composability is the whole argument for small interfaces (Module 9)." }
   ],
   milestones: [
     { title: "Streaming multipart upload", detail: "`MultipartReader`, size cap, local disk storage behind a `Blobstore` interface, SHA-256 computed inline with TeeReader. Test with a 100 MB generated file and assert flat memory." },
     { title: "Metadata and downloads", detail: "Postgres rows, `http.ServeContent` for Range/ETag/304, Content-Disposition and nosniff, soft delete. Test a partial Range request returns 206 with the right bytes." },
     { title: "Security hardening", detail: "Content sniffing with an allowlist, server-generated keys, path-traversal tests, EXIF stripping, per-user quota enforcement, per-IP rate limits." },
-    { title: "Object storage", detail: "Implement the `Blobstore` interface against S3/MinIO; run MinIO in Docker for tests. Same test suite passes for disk and S3 — proof the interface is right." },
+    { title: "Object storage", detail: "Implement the `Blobstore` interface against S3/MinIO; run MinIO in Docker for tests. Same test suite passes for disk and S3, proof the interface is right." },
     { title: "Presigned direct uploads", detail: "`/presign` + `/complete` with pending rows, checksum verification, and a scheduled purge of abandoned uploads." },
     { title: "Resumable uploads", detail: "Chunked PATCH with offsets, state in the database, resume after a killed client, and a concurrency guard so two writers can't interleave chunks." },
     { title: "Signed share links", detail: "HMAC tokens with expiry and optional one-time use, constant-time verification, a public download route with no auth, and revocation." },
@@ -826,7 +826,7 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) {
   ],
   done: [
     "Uploading a 1 GB file keeps process memory flat (verified with a heap profile)",
-    "A filename of `../../etc/passwd` cannot escape the storage prefix — test exists",
+    "A filename of `../../etc/passwd` cannot escape the storage prefix, test exists",
     "An uploaded `.html` file downloads as an attachment and never renders inline",
     "Range requests return 206 with correct byte offsets; `If-None-Match` returns 304",
     "A forged or expired share token is rejected without a database query",
@@ -847,14 +847,14 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) {
   id: "gateway",
   category: "APIs & Services",
   icon: "🚪",
-  name: "gateway — an API gateway & BFF",
+  name: "gateway, an API gateway & BFF",
   tagline: "A reverse proxy you wrote: routing, auth termination, rate limits, circuit breaking, response caching, request aggregation and canary traffic splitting.",
   level: "Advanced",
   time: "12–18 hours",
   stack: ["httputil.ReverseProxy", "sync", "golang.org/x/time/rate", "gobreaker", "OpenTelemetry"],
   covers: ["concurrency", "methods-interfaces", "reliability-observability", "runtime-internals", "production-readiness"],
   blocks: [
-    { t: "p", html: "Every platform grows one of these. Building it yourself — on top of <code>httputil.ReverseProxy</code>, which is about 400 lines of standard library — demystifies Nginx, Envoy and Kong, and forces you to understand HTTP hop-by-hop semantics, streaming bodies, connection pooling and cross-cutting resilience in one place." },
+    { t: "p", html: "Every platform grows one of these. Building it yourself, on top of <code>httputil.ReverseProxy</code>, which is about 400 lines of standard library, demystifies Nginx, Envoy and Kong, and forces you to understand HTTP hop-by-hop semantics, streaming bodies, connection pooling and cross-cutting resilience in one place." },
     { t: "h", text: "What it does" },
     { t: "p", html: "A YAML file lists each path and the servers behind it. The gateway reads that file and forwards the request." },
     { t: "code", title: "Config-driven routing", code:
@@ -896,7 +896,7 @@ routes:
             }
         },
         Transport: &http.Transport{
-            MaxIdleConnsPerHost:   64,        // default 2 — the #1 proxy bottleneck
+            MaxIdleConnsPerHost:   64,        // default 2, the #1 proxy bottleneck
             IdleConnTimeout:       90 * time.Second,
             ResponseHeaderTimeout: route.Timeout,
             ForceAttemptHTTP2:     true,
@@ -957,7 +957,7 @@ func (g *Gateway) aggregate(w http.ResponseWriter, r *http.Request, specs []Spec
 // Total latency = the slowest upstream, not the sum. Prove it with a test
 // using three httptest servers with different artificial delays.`
     },
-    { t: "note", kind: "warn", title: "HTTP details a proxy must get right", html: "Strip <strong>hop-by-hop</strong> headers (<code>Connection</code>, <code>Keep-Alive</code>, <code>Transfer-Encoding</code>, <code>Upgrade</code>, <code>TE</code>, <code>Trailer</code>, <code>Proxy-*</code>) — <code>ReverseProxy</code> does this for you, which is a good reason not to hand-roll one. Never trust an inbound <code>X-Forwarded-For</code> from the internet; append, don't replace, and only trust it from known proxies. Set <code>FlushInterval: -1</code> or you will buffer SSE and streaming responses into uselessness. And retrying a request whose body you already streamed requires buffering it first — which is why retries must be size-capped." },
+    { t: "note", kind: "warn", title: "HTTP details a proxy must get right", html: "Strip <strong>hop-by-hop</strong> headers (<code>Connection</code>, <code>Keep-Alive</code>, <code>Transfer-Encoding</code>, <code>Upgrade</code>, <code>TE</code>, <code>Trailer</code>, <code>Proxy-*</code>), <code>ReverseProxy</code> does this for you, which is a good reason not to hand-roll one. Never trust an inbound <code>X-Forwarded-For</code> from the internet; append, don't replace, and only trust it from known proxies. Set <code>FlushInterval: -1</code> or you will buffer SSE and streaming responses into uselessness. And retrying a request whose body you already streamed requires buffering it first, which is why retries must be size-capped." },
     { t: "note", kind: "tip", title: "This is also the best possible pprof exercise", html: "A gateway is pure I/O multiplexing, so it exposes everything Module 12 taught: goroutines per connection, connection-pool reuse, allocation per request, GC pressure from header maps. Run a load test, capture CPU and heap profiles, and tune <code>MaxIdleConnsPerHost</code>, buffer reuse and <code>GOGC</code>. You can usually find a 2–5× improvement in your own first version." }
   ],
   milestones: [
@@ -974,7 +974,7 @@ func (g *Gateway) aggregate(w http.ResponseWriter, r *http.Request, specs []Spec
     "Killing one upstream mid-load causes no client-visible errors (health checks + breaker + retry proven)",
     "Streaming and SSE responses pass through without buffering",
     "A rate-limited client gets 429 with Retry-After; limits are per key, not global",
-    "The aggregate endpoint's latency equals the slowest upstream, not the sum — asserted in a test",
+    "The aggregate endpoint's latency equals the slowest upstream, not the sum, asserted in a test",
     "100 concurrent requests for the same cold cache key produce exactly ONE upstream call (singleflight)",
     "Hot config reload changes routing without dropping in-flight requests",
     "A load test plus a before/after profile showing a measured throughput improvement you can explain"

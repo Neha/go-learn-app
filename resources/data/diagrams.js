@@ -7,7 +7,7 @@ window.DIAGRAMS = {
 /* ─────────────── the compile pipeline ─────────────── */
 pipeline: {
   title: "From source to a single binary",
-  caption: "One ahead-of-time pass. No bytecode, no VM, no JIT at run time — the Go runtime is linked in as ordinary code.",
+  caption: "One ahead-of-time pass. No bytecode, no VM, no JIT at run time, the Go runtime is linked in as ordinary code.",
   svg: `<svg viewBox="0 0 980 360" role="img" aria-label="Source text becomes a tree, is type-checked and tidied, turns into CPU instructions, then links with imports and the runtime into one file">
     <defs><marker id="dgArrP" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
       <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
@@ -74,7 +74,7 @@ pipeline: {
       <line x1="704" y1="96" x2="732" y2="96"/>
     </g>
 
-    <text class="dg-t sm" x="20" y="204">link — your code, the packages you import, and the runtime</text>
+    <text class="dg-t sm" x="20" y="204">link, your code, the packages you import, and the runtime</text>
 
     <g class="dg-seq" style="--i:5"><rect class="dg-box accent" x="20" y="230" width="156" height="50" rx="10"/>
       <text class="dg-t" x="98" y="259" text-anchor="middle">your code</text></g>
@@ -177,7 +177,7 @@ variable: {
       <text class="dg-t sm dim" x="604" y="104">on the stack</text>
     </g>
 
-    <text class="dg-t" x="10" y="166">No value? You still get a usable one — the ZERO VALUE. Go has no &quot;undefined&quot;.</text>
+    <text class="dg-t" x="10" y="166">No value? You still get a usable one, the ZERO VALUE. Go has no &quot;undefined&quot;.</text>
 
     <g class="dg-seq" style="--i:4"><rect class="dg-box" x="10"  y="186" width="128" height="72" rx="8"/>
       <text class="dg-t sm mono dim" x="74"  y="206" text-anchor="middle">int, float64</text><text class="dg-t mono" x="74"  y="232" text-anchor="middle">0</text></g>
@@ -204,7 +204,7 @@ variable: {
   svg: `<svg viewBox="0 0 940 280" role="img" aria-label="The string Héllo shown as six UTF-8 bytes grouping into five runes">
     <text class="dg-t mono" x="10" y="28">s := &quot;Héllo&quot;</text>
 
-    <text class="dg-t sm dim" x="10" y="64">bytes — what len(s) and s[i] see</text>
+    <text class="dg-t sm dim" x="10" y="64">bytes, what len(s) and s[i] see</text>
     <g class="dg-seq" style="--i:0"><rect class="dg-cell" x="10"  y="76" width="80" height="54" rx="7"/><text class="dg-t mono" x="50"  y="108" text-anchor="middle">H</text><text class="dg-t sm dim" x="50"  y="146" text-anchor="middle">0</text></g>
     <g class="dg-seq pair" style="--i:1"><rect class="dg-cell hot" x="98" y="76" width="80" height="54" rx="7"/><text class="dg-t mono sm" x="138" y="108" text-anchor="middle">0xC3</text><text class="dg-t sm dim" x="138" y="146" text-anchor="middle">1</text></g>
     <g class="dg-seq pair" style="--i:2"><rect class="dg-cell hot" x="186" y="76" width="80" height="54" rx="7"/><text class="dg-t mono sm" x="226" y="108" text-anchor="middle">0xA9</text><text class="dg-t sm dim" x="226" y="146" text-anchor="middle">2</text></g>
@@ -215,13 +215,13 @@ variable: {
     <path class="dg-brace2 dg-glow" d="M102 160 L102 172 L262 172 L262 160"/>
     <text class="dg-t sm accentT dg-glow" x="182" y="192" text-anchor="middle">these two bytes are ONE rune: é</text>
 
-    <text class="dg-t sm dim" x="600" y="64">runes — what for i, r := range s sees</text>
+    <text class="dg-t sm dim" x="600" y="64">runes, what for i, r := range s sees</text>
     <g class="dg-seq" style="--i:6"><rect class="dg-cell ok" x="600" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="628" y="108" text-anchor="middle">H</text><text class="dg-t sm dim" x="628" y="146" text-anchor="middle">i=0</text></g>
     <g class="dg-seq" style="--i:7"><rect class="dg-cell ok" x="664" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="692" y="108" text-anchor="middle">é</text><text class="dg-t sm dim" x="692" y="146" text-anchor="middle">i=1</text></g>
     <g class="dg-seq" style="--i:8"><rect class="dg-cell ok" x="728" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="756" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="756" y="146" text-anchor="middle">i=3</text></g>
     <g class="dg-seq" style="--i:9"><rect class="dg-cell ok" x="792" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="820" y="108" text-anchor="middle">l</text><text class="dg-t sm dim" x="820" y="146" text-anchor="middle">i=4</text></g>
     <g class="dg-seq" style="--i:10"><rect class="dg-cell ok" x="856" y="76" width="56" height="54" rx="7"/><text class="dg-t mono" x="884" y="108" text-anchor="middle">o</text><text class="dg-t sm dim" x="884" y="146" text-anchor="middle">i=5</text></g>
-    <text class="dg-t sm dim" x="600" y="192">byte offsets jump — they are not 0,1,2,3,4</text>
+    <text class="dg-t sm dim" x="600" y="192">byte offsets jump, they are not 0,1,2,3,4</text>
 
     <text class="dg-t mono sm" x="10"  y="232">len(s) = 6</text>
     <text class="dg-t mono sm" x="150" y="232">utf8.RuneCountInString(s) = 5</text>
@@ -291,17 +291,63 @@ variable: {
     <rect class="dg-cell dashed" x="796" y="340" width="40" height="40" rx="5"/>
     <rect class="dg-cell dashed" x="840" y="340" width="40" height="40" rx="5"/>
     <rect class="dg-cell dashed" x="884" y="340" width="40" height="40" rx="5"/>
-    <text class="dg-t sm dim" x="536" y="332">new array: cap 8 — doubles under 256 elements, then ~1.25×</text>
+    <text class="dg-t sm dim" x="536" y="332">new array: cap 8, doubles under 256 elements, then ~1.25×</text>
 
     <text class="dg-t sm bad" x="200" y="330">this is why you MUST write s = append(s, …)</text>
   </svg>`
 },
 
+/* ─────────────── a call pushes a frame ─────────────── */
+"call-stack": {
+  title: "A call pushes a frame. Return pops it.",
+  caption: "Each goroutine has its own stack. The frame on top is the function running now. Its locals die with the return, and the next call reuses those bytes.",
+  svg: `<svg viewBox="0 0 960 380" role="img" aria-label="main stays on the stack while score is pushed on top with a local n, then popped on return">
+    <defs><marker id="dgArrCS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+
+    <text class="dg-t sm dim" x="24" y="28">this goroutine's stack, top is the function running now</text>
+
+    <g class="dg-pushpop">
+      <rect class="dg-box accent" x="24" y="48" width="280" height="96" rx="10"/>
+      <text class="dg-t" x="40" y="78">score</text>
+      <text class="dg-t mono" x="40" y="106">n = 10</text>
+      <text class="dg-t sm dim" x="40" y="128">locals live here</text>
+      <path class="dg-arrow dg-ants slow" d="M312 96 L392 96" marker-end="url(#dgArrCS)"/>
+      <text class="dg-t sm" x="318" y="84">return</text>
+    </g>
+
+    <rect class="dg-box" x="24" y="164" width="280" height="88" rx="10"/>
+    <text class="dg-t" x="40" y="198">main</text>
+    <text class="dg-t sm dim" x="40" y="226">still here after score returns</text>
+
+    <text class="dg-t sm dim" x="24" y="278">older frames sit underneath</text>
+
+    <g class="dg-beat" style="--i:0">
+      <rect class="dg-box" x="430" y="48" width="500" height="72" rx="9"/>
+      <text class="dg-t sm" x="448" y="76">1. Call pushes a frame</text>
+      <text class="dg-t sm dim" x="448" y="100">score is laid on top of main</text>
+    </g>
+    <g class="dg-beat" style="--i:1">
+      <rect class="dg-box" x="430" y="136" width="500" height="72" rx="9"/>
+      <text class="dg-t sm" x="448" y="164">2. Locals are slots in that frame</text>
+      <text class="dg-t sm dim" x="448" y="188">n = 10 writes into the slot n already has</text>
+    </g>
+    <g class="dg-beat" style="--i:2">
+      <rect class="dg-box ok" x="430" y="224" width="500" height="72" rx="9"/>
+      <text class="dg-t sm" x="448" y="252">3. Return pops the frame</text>
+      <text class="dg-t sm dim" x="448" y="276">those bytes are reused by the next call</text>
+    </g>
+
+    <text class="dg-t sm dim" x="24" y="340">Moving the stack pointer is the whole allocation. The garbage collector is not involved.</text>
+    <text class="dg-t sm dim" x="24" y="362">A heap value is different: it can outlive this frame, so something has to free it later.</text>
+  </svg>`
+},
+
 /* ─────────────── stack vs heap ─────────────── */
 "stack-heap": {
-  title: "Stack or heap? The compiler decides",
-  caption: "Escape analysis asks one question: can this value outlive the function's frame?",
-  svg: `<svg viewBox="0 0 940 300" role="img" aria-label="Two functions: one returning a value that stays on the stack, one returning a pointer that escapes to the heap">
+  title: "A copy stays. A pointer has to escape.",
+  caption: "Escape analysis asks one question: can this value outlive the function's frame? If the caller only receives a copy, the frame can die. If the caller receives the address, the value moves to the heap.",
+  svg: `<svg viewBox="0 0 960 300" role="img" aria-label="Two functions: one returning a value that stays on the stack, one returning a pointer that escapes to the heap">
     <defs><marker id="dgArrH" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 
@@ -309,15 +355,15 @@ variable: {
     <text class="dg-t mono" x="20" y="38">func stays() int {</text>
     <text class="dg-t mono" x="20" y="60">    x := 42; return x</text>
     <text class="dg-t mono" x="20" y="82">}</text>
-    <g class="dg-frame">
+    <g class="dg-rest">
       <rect class="dg-box" x="20" y="100" width="180" height="76" rx="9"/>
       <text class="dg-t sm dim" x="30" y="120">stack frame</text>
       <text class="dg-t mono" x="30" y="146">x = 42</text>
       <text class="dg-t sm dim" x="30" y="166">popped on return</text>
     </g>
-    <path class="dg-arrow" d="M206 138 L286 138" marker-end="url(#dgArrH)"/>
+    <path class="dg-arrow dg-ants slow" d="M206 138 L286 138" marker-end="url(#dgArrH)"/>
     <text class="dg-t sm" x="214" y="128">copy out</text>
-    <rect class="dg-box ok" x="290" y="114" width="150" height="48" rx="9"/>
+    <rect class="dg-box ok dg-arrive" x="290" y="114" width="150" height="48" rx="9"/>
     <text class="dg-t mono" x="365" y="144" text-anchor="middle">42</text>
     <text class="dg-t sm ok" x="20" y="214">STACK: allocation is a pointer bump,</text>
     <text class="dg-t sm ok" x="20" y="234">reclaimed instantly, zero GC work</text>
@@ -327,14 +373,14 @@ variable: {
     <text class="dg-t mono" x="492" y="38">func escapes() *int {</text>
     <text class="dg-t mono" x="492" y="60">    x := 42; return &amp;x</text>
     <text class="dg-t mono" x="492" y="82">}</text>
-    <g class="dg-frame">
+    <g class="dg-rest">
       <rect class="dg-box" x="492" y="100" width="170" height="76" rx="9"/>
       <text class="dg-t sm dim" x="502" y="120">stack frame</text>
       <text class="dg-t mono sm" x="502" y="146">&amp;x ●</text>
       <text class="dg-t sm dim" x="502" y="166">frame still pops…</text>
     </g>
-    <path class="dg-arrow dg-glow" d="M600 146 C 700 146 700 138 772 138" marker-end="url(#dgArrH)"/>
-    <rect class="dg-box accent" x="776" y="108" width="148" height="60" rx="9"/>
+    <path class="dg-arrow dg-ants slow" d="M600 146 C 700 146 700 138 772 138" marker-end="url(#dgArrH)"/>
+    <rect class="dg-box accent dg-arrive go" x="776" y="108" width="148" height="60" rx="9"/>
     <text class="dg-t sm dim" x="786" y="128">HEAP</text>
     <text class="dg-t mono" x="850" y="156" text-anchor="middle">42</text>
     <text class="dg-t sm warn" x="492" y="214">HEAP: the value must outlive the frame,</text>
@@ -346,7 +392,7 @@ variable: {
 /* ─────────────── interface value ─────────────── */
 "iface-value": {
   title: "An interface value is two words",
-  caption: "A type word and a data word — which is exactly why a nil pointer inside an interface is not nil.",
+  caption: "A type word and a data word, which is exactly why a nil pointer inside an interface is not nil.",
   svg: `<svg viewBox="0 0 940 300" role="img" aria-label="Interface value holding a type pointer and a data pointer, and the typed-nil trap">
     <defs><marker id="dgArrI" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -387,7 +433,7 @@ variable: {
     <text class="dg-t mono sm" x="813" y="140">nil</text>
     <text class="dg-t sm dim" x="813" y="158">empty</text>
 
-    <text class="dg-t sm bad" x="680" y="196">err != nil is TRUE — the type word is set</text>
+    <text class="dg-t sm bad" x="680" y="196">err != nil is TRUE, the type word is set</text>
     <text class="dg-t sm dim" x="680" y="222">An interface is nil only when BOTH words are nil.</text>
     <text class="dg-t sm ok" x="680" y="252">Fix: return a literal nil, never a typed nil pointer.</text>
   </svg>`
@@ -401,7 +447,7 @@ channel: {
     <defs><marker id="dgArrC" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 
-    <text class="dg-t" x="10" y="24">ch := make(chan int)   — unbuffered</text>
+    <text class="dg-t" x="10" y="24">ch := make(chan int), unbuffered</text>
 
     <rect class="dg-box" x="10" y="40" width="170" height="96" rx="9"/>
     <text class="dg-t sm" x="24" y="66">goroutine A</text>
@@ -421,11 +467,11 @@ channel: {
     <line class="dg-arrow dashed" x1="526" y1="80" x2="756" y2="80"/>
     <g class="dg-handoff"><circle class="dg-token" cx="0" cy="80" r="13"/><text class="dg-t mono sm tok" x="0" y="85" text-anchor="middle">42</text></g>
 
-    <text class="dg-t sm ok" x="300" y="158">both resume at the hand-off — that is the synchronisation</text>
+    <text class="dg-t sm ok" x="300" y="158">both resume at the hand-off, that is the synchronisation</text>
 
     <line class="dg-rule" x1="10" y1="172" x2="930" y2="172"/>
 
-    <text class="dg-t" x="10" y="204">ch := make(chan int, 4)   — buffered</text>
+    <text class="dg-t" x="10" y="204">ch := make(chan int, 4), buffered</text>
 
     <rect class="dg-box" x="10" y="220" width="170" height="74" rx="9"/>
     <text class="dg-t sm" x="24" y="244">sender</text>
@@ -435,7 +481,7 @@ channel: {
     <rect class="dg-cell ok dg-fill" style="--i:1" x="368" y="226" width="60" height="52" rx="6"/><text class="dg-t mono sm" x="398" y="258" text-anchor="middle">2</text>
     <rect class="dg-cell dashed" x="436" y="226" width="60" height="52" rx="6"/>
     <rect class="dg-cell dashed" x="504" y="226" width="60" height="52" rx="6"/>
-    <text class="dg-t sm dim" x="300" y="296">len 2 / cap 4 — a queue, in FIFO order</text>
+    <text class="dg-t sm dim" x="300" y="296">len 2 / cap 4, a queue, in FIFO order</text>
 
     <rect class="dg-box" x="760" y="220" width="170" height="74" rx="9"/>
     <text class="dg-t sm" x="774" y="244">receiver</text>
@@ -448,19 +494,19 @@ channel: {
 
 /* ─────────────── GMP scheduler ─────────────── */
 gmp: {
-  title: "The scheduler: G, M, P and work stealing",
+  title: "Scheduler",
   caption: "Goroutines are queued per-P and run on OS threads. An idle P steals half of someone else's queue rather than sitting still.",
   svg: `<svg viewBox="0 0 940 360" role="img" aria-label="Three processors with local run queues, OS threads beneath them, a global queue, and an idle processor stealing work">
     <defs><marker id="dgArrG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 
     <rect class="dg-box" x="600" y="10" width="330" height="56" rx="9"/>
-    <text class="dg-t sm dim" x="614" y="32">global queue — overflow and new goroutines</text>
+    <text class="dg-t sm dim" x="614" y="32">global queue, overflow and new goroutines</text>
     <circle class="dg-g" cx="640" cy="50" r="10"/><circle class="dg-g" cx="668" cy="50" r="10"/><circle class="dg-g" cx="696" cy="50" r="10"/>
 
     <g>
       <rect class="dg-box accent" x="10" y="90" width="290" height="104" rx="9"/>
-      <text class="dg-t sm" x="24" y="112">P0 — local queue, 256 slots</text>
+      <text class="dg-t sm" x="24" y="112">P0, local queue, 256 slots</text>
       <circle class="dg-g" cx="40"  cy="146" r="12"/><text class="dg-t sm tok" x="40"  y="151" text-anchor="middle">G</text>
       <circle class="dg-g" cx="74"  cy="146" r="12"/><text class="dg-t sm tok" x="74"  y="151" text-anchor="middle">G</text>
       <circle class="dg-g steal" cx="108" cy="146" r="12"/><text class="dg-t sm tok" x="108" y="151" text-anchor="middle">G</text>
@@ -480,7 +526,7 @@ gmp: {
 
     <g>
       <rect class="dg-box dashed" x="618" y="90" width="312" height="104" rx="9"/>
-      <text class="dg-t sm" x="632" y="112">P2 — queue empty</text>
+      <text class="dg-t sm" x="632" y="112">P2, queue empty</text>
       <text class="dg-t sm accentT dg-blink" x="632" y="148">idle, then steal half a queue</text>
       <text class="dg-t sm dim" x="632" y="180">never sits still while work exists</text>
     </g>
@@ -493,6 +539,62 @@ gmp: {
     <rect class="dg-box" x="618" y="286" width="130" height="54" rx="9"/><text class="dg-t sm" x="683" y="310" text-anchor="middle">M2</text><text class="dg-t sm dim" x="683" y="328" text-anchor="middle">OS thread</text>
     <text class="dg-t sm dim" x="770" y="312">GOMAXPROCS = how many</text>
     <text class="dg-t sm dim" x="770" y="330">Ps exist (default: NumCPU)</text>
+  </svg>`
+},
+
+/* ─────────────── lesson 1: what the collector keeps ─────────────── */
+"gc-reach": {
+  title: "Keep what you can still reach",
+  caption: "Mark starts at the roots and follows pointers. Sweep throws away the objects that walk never visited. The program keeps running; the pause is the short stop around that search.",
+  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="Garbage collection starts at the stack and globals, follows pointers to objects still in use, and sweeps an object nothing points at">
+    <defs><marker id="dgArrGR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+
+    <rect class="dg-box accent" x="16" y="24" width="176" height="140" rx="10"/>
+    <text class="dg-t" x="32" y="56">roots</text>
+    <text class="dg-t sm dim" x="32" y="82">the stack</text>
+    <text class="dg-t sm dim" x="32" y="106">globals</text>
+    <text class="dg-t sm dim" x="32" y="138">still named</text>
+
+    <path class="dg-arrow dg-ants slow" d="M192 78 L268 78" marker-end="url(#dgArrGR)"/>
+
+    <g class="dg-marked" style="--i:0">
+      <rect class="dg-box ok" x="272" y="42" width="156" height="76" rx="9"/>
+      <text class="dg-t" x="350" y="76" text-anchor="middle">order</text>
+      <text class="dg-t sm dim" x="350" y="98" text-anchor="middle">still in use</text>
+    </g>
+    <path class="dg-arrow dg-ants slow" d="M428 80 L504 80" marker-end="url(#dgArrGR)"/>
+    <g class="dg-marked" style="--i:1">
+      <rect class="dg-box ok" x="508" y="42" width="156" height="76" rx="9"/>
+      <text class="dg-t" x="586" y="76" text-anchor="middle">user</text>
+      <text class="dg-t sm dim" x="586" y="98" text-anchor="middle">reached</text>
+    </g>
+
+    <g class="dg-reclaim">
+      <rect class="dg-box bad" x="508" y="160" width="156" height="76" rx="9"/>
+      <text class="dg-t" x="586" y="194" text-anchor="middle">temp</text>
+      <text class="dg-t sm dim" x="586" y="216" text-anchor="middle">no pointer</text>
+    </g>
+    <text class="dg-t sm bad dg-away" x="680" y="204">swept away</text>
+
+    <g class="dg-seq" style="--i:0">
+      <rect class="dg-box" x="16" y="268" width="292" height="68" rx="9"/>
+      <text class="dg-t sm" x="32" y="296">1. Mark from the roots</text>
+      <text class="dg-t sm dim" x="32" y="318">name what is still in use</text>
+    </g>
+    <g class="dg-seq" style="--i:3">
+      <rect class="dg-box" x="324" y="268" width="308" height="68" rx="9"/>
+      <text class="dg-t sm" x="340" y="296">2. Follow every pointer</text>
+      <text class="dg-t sm dim" x="340" y="318">order points at user, so user stays</text>
+    </g>
+    <g class="dg-seq" style="--i:6">
+      <rect class="dg-box" x="648" y="268" width="296" height="68" rx="9"/>
+      <text class="dg-t sm" x="664" y="296">3. Sweep the rest</text>
+      <text class="dg-t sm dim" x="664" y="318">temp is thrown away</text>
+    </g>
+
+    <text class="dg-t sm dim" x="16" y="360">Your code keeps running during the mark. The pause is usually under a millisecond.</text>
+    <text class="dg-t sm dim" x="16" y="382">Objects stay where they are. Nothing is slid together to close the gaps.</text>
   </svg>`
 },
 
@@ -530,15 +632,15 @@ gc: {
     <text class="dg-t sm bad" x="722" y="152">unreachable → swept</text>
 
     <g class="dg-legend">
-      <circle class="lg white" cx="24" cy="196" r="11"/><text class="dg-t sm" x="44" y="201">WHITE — not yet proven reachable</text>
-      <circle class="lg grey"  cx="24" cy="226" r="11"/><text class="dg-t sm" x="44" y="231">GREY — reachable, children not scanned yet</text>
-      <circle class="lg black" cx="24" cy="256" r="11"/><text class="dg-t sm" x="44" y="261">BLACK — reachable and fully scanned</text>
+      <circle class="lg white" cx="24" cy="196" r="11"/><text class="dg-t sm" x="44" y="201">WHITE, not yet proven reachable</text>
+      <circle class="lg grey"  cx="24" cy="226" r="11"/><text class="dg-t sm" x="44" y="231">GREY, reachable, children not scanned yet</text>
+      <circle class="lg black" cx="24" cy="256" r="11"/><text class="dg-t sm" x="44" y="261">BLACK, reachable and fully scanned</text>
     </g>
 
     <rect class="dg-box accent" x="470" y="178" width="460" height="92" rx="9"/>
     <text class="dg-t sm accentT" x="484" y="200">WRITE BARRIER</text>
     <text class="dg-t sm" x="484" y="222">Your code keeps running while marking. If it stores a pointer to a</text>
-    <text class="dg-t sm" x="484" y="240">WHITE object into a BLACK one, the barrier greys it — otherwise</text>
+    <text class="dg-t sm" x="484" y="240">WHITE object into a BLACK one, the barrier greys it, otherwise</text>
     <text class="dg-t sm" x="484" y="258">live data would be collected.</text>
 
     <text class="dg-t sm dim" x="10" y="300">STW ~10-100µs → concurrent mark (~25% of CPU) → STW ~10-100µs → concurrent lazy sweep</text>
@@ -548,47 +650,32 @@ gc: {
 
 /* ─────────────── module or just a file? ─────────────── */
 "module-or-file": {
-  title: "Do I need a module, or just a .go file?",
-  caption: "A module costs one command. The only reason to skip it is a throwaway snippet.",
-  svg: `<svg viewBox="0 0 940 300" role="img" aria-label="Decision flow: a throwaway single stdlib-only file can use go run directly, everything else needs go mod init">
+  title: "Module or a single file",
+  caption: "A single standard-library file can run on its own. Anything else starts with one init command.",
+  svg: `<svg viewBox="0 0 960 220" role="img" aria-label="One standard-library file uses go run. Anything else uses go mod init example/hello-world.">
     <defs><marker id="dgArrM" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 
-    <rect class="dg-box" x="10" y="20" width="250" height="80" rx="9"/>
-    <text class="dg-t sm" x="24" y="46">One file, standard library</text>
-    <text class="dg-t sm" x="24" y="66">only, and you'll delete it</text>
-    <text class="dg-t sm" x="24" y="86">in ten minutes?</text>
+    <rect class="dg-box" x="16" y="20" width="250" height="72" rx="10"/>
+    <text class="dg-t" x="32" y="50">One file?</text>
+    <text class="dg-t sm dim" x="32" y="74">Standard library only</text>
 
-    <path class="dg-arrow dg-path-a" d="M264 44 L368 44" marker-end="url(#dgArrM)"/>
-    <text class="dg-t sm ok" x="286" y="34">yes</text>
-    <rect class="dg-box ok" x="372" y="18" width="330" height="56" rx="9"/>
-    <text class="dg-t mono sm" x="386" y="42">go run scratch.go</text>
-    <text class="dg-t sm dim" x="386" y="62">no go.mod needed — or just use the Playground</text>
+    <path class="dg-arrow dg-ants slow" d="M274 44 L360 44" marker-end="url(#dgArrM)"/>
+    <text class="dg-t sm ok" x="292" y="34">yes</text>
+    <rect class="dg-box ok" x="368" y="24" width="250" height="52" rx="10"/>
+    <text class="dg-t mono sm" x="384" y="56">go run scratch.go</text>
 
-    <path class="dg-arrow dg-path-b" d="M135 104 L135 150" marker-end="url(#dgArrM)"/>
-    <text class="dg-t sm" x="146" y="132">no</text>
-
-    <rect class="dg-box accent" x="10" y="154" width="430" height="124" rx="9"/>
-    <text class="dg-t sm accentT" x="24" y="178">ANY of these → make a module</text>
-    <text class="dg-t sm" x="24" y="202">· a third-party import (go get needs go.mod)</text>
-    <text class="dg-t sm" x="24" y="222">· more than a file or two, or any subpackage</text>
-    <text class="dg-t sm" x="24" y="242">· tests, go build ./... , or go vet ./...</text>
-    <text class="dg-t sm" x="24" y="262">· it goes into git, or anyone else will run it</text>
-
-    <path class="dg-arrow" d="M444 216 L520 216" marker-end="url(#dgArrM)"/>
-    <rect class="dg-box ok" x="524" y="154" width="406" height="124" rx="9"/>
-    <text class="dg-t mono sm" x="538" y="180">mkdir thing &amp;&amp; cd thing</text>
-    <text class="dg-t mono sm" x="538" y="202">go mod init thing</text>
-    <text class="dg-t sm dim" x="538" y="230">Two seconds. You get dependency pinning, reproducible</text>
-    <text class="dg-t sm dim" x="538" y="248">builds, ./... commands and editor tooling that works.</text>
-    <text class="dg-t sm ok" x="538" y="270">When unsure: make the module.</text>
+    <path class="dg-arrow dg-ants slow" d="M140 96 L140 132" marker-end="url(#dgArrM)"/>
+    <text class="dg-t sm" x="152" y="120">no</text>
+    <rect class="dg-box accent" x="16" y="140" width="430" height="56" rx="10"/>
+    <text class="dg-t mono sm" x="32" y="174">go mod init example/hello-world</text>
   </svg>`
 },
 
 /* ─────────────── middleware chain ─────────────── */
 middleware: {
   title: "Middleware is just handlers wrapping handlers",
-  caption: "Each layer sees the request on the way in and the response on the way out — which is why logging and recovery belong at the edges.",
+  caption: "Each layer sees the request on the way in and the response on the way out, which is why logging and recovery belong at the edges.",
   svg: `<svg viewBox="0 0 940 240" role="img" aria-label="An HTTP request passing inward through middleware layers to the handler and the response returning outward">
     <defs><marker id="dgArrW" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -620,7 +707,7 @@ middleware: {
     <defs><marker id="dgArrF" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
 
-    <text class="dg-t" x="10" y="22">if / else — with an initialiser scoped to the branch</text>
+    <text class="dg-t" x="10" y="22">if / else, with an initialiser scoped to the branch</text>
     <rect class="dg-box accent" x="10" y="34" width="220" height="64" rx="10"/>
     <text class="dg-t mono sm" x="24" y="60">v, err := Atoi(s)</text>
     <text class="dg-t mono sm dim" x="24" y="82">err == nil ?</text>
@@ -638,7 +725,7 @@ middleware: {
 
     <line class="dg-rule" x1="10" y1="128" x2="930" y2="128"/>
 
-    <text class="dg-t" x="10" y="156">for — the only loop keyword, in four shapes</text>
+    <text class="dg-t" x="10" y="156">for, the only loop keyword, in four shapes</text>
     <g class="dg-seq" style="--i:0"><rect class="dg-box" x="10"  y="168" width="220" height="68" rx="10"/>
       <text class="dg-t mono sm" x="24" y="196">for i := 0; i &lt; n; i++</text>
       <text class="dg-t sm dim" x="24" y="218">three-clause</text></g>
@@ -654,7 +741,7 @@ middleware: {
 
     <line class="dg-rule" x1="10" y1="256" x2="930" y2="256"/>
 
-    <text class="dg-t" x="10" y="282">switch — one case runs. No break. No fallthrough.</text>
+    <text class="dg-t" x="10" y="282">switch, one case runs. No break. No fallthrough.</text>
     <rect class="dg-box dg-case" style="--i:0" x="10"  y="298" width="180" height="42" rx="8"/><text class="dg-t mono sm" x="24" y="324">case "Sat", "Sun":</text>
     <rect class="dg-box dg-case" style="--i:1" x="202" y="298" width="140" height="42" rx="8"/><text class="dg-t mono sm" x="216" y="324">case "Mon":</text>
     <rect class="dg-box dg-case" style="--i:2" x="354" y="298" width="168" height="42" rx="8"/><text class="dg-t mono sm" x="368" y="324">case score &gt; 90:</text>
@@ -666,7 +753,7 @@ middleware: {
 /* ─────────────── defer ─────────────── */
 "defer-stack": {
   title: "defer is a stack: last in, first out",
-  caption: "Deferred calls are pushed as they execute and popped when the function returns — including during a panic.",
+  caption: "Deferred calls are pushed as they execute and popped when the function returns, including during a panic.",
   svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Three deferred calls pushed onto a stack and popped in reverse order on return">
     <defs><marker id="dgArrD" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -711,7 +798,7 @@ middleware: {
 /* ─────────────── multiple returns ─────────────── */
 "func-returns": {
   title: "Multiple returns: the feature that replaced exceptions",
-  caption: "A function hands back a result and an error. The caller must look at both — failure is visible in the signature.",
+  caption: "A function hands back a result and an error. The caller must look at both, failure is visible in the signature.",
   svg: `<svg viewBox="0 0 940 280" role="img" aria-label="A function returning a value and an error, with the caller branching on the error">
     <defs><marker id="dgArrR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -727,7 +814,7 @@ middleware: {
     <text class="dg-t mono sm" x="302" y="48">func Divide(a, b float64)</text>
     <text class="dg-t mono sm" x="302" y="68">        (float64, error)</text>
     <text class="dg-t sm dim" x="302" y="92">result first, error LAST</text>
-    <text class="dg-t sm dim" x="302" y="108">— always, by convention</text>
+    <text class="dg-t sm dim" x="302" y="108">, always, by convention</text>
 
     <path class="dg-arrow dg-ants fast" d="M546 50 L636 50" marker-end="url(#dgArrR)"/>
     <path class="dg-arrow dg-ants fast" d="M546 90 L636 90" marker-end="url(#dgArrR)"/>
@@ -804,7 +891,7 @@ closure: {
 /* ─────────────── worker pool ─────────────── */
 "worker-pool": {
   title: "Worker pool: bounded concurrency over channels",
-  caption: "One jobs channel, N workers, one results channel. The pool size is the throttle — unbounded goroutines just move the bottleneck to memory.",
+  caption: "One jobs channel, N workers, one results channel. The pool size is the throttle, unbounded goroutines just move the bottleneck to memory.",
   svg: `<svg viewBox="0 0 940 330" role="img" aria-label="Jobs flowing from a channel into three workers and out to a results channel, coordinated by a WaitGroup">
     <defs><marker id="dgArrP2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path class="dg-head" d="M0,0 L8,4 L0,8 z"/></marker></defs>
@@ -875,17 +962,17 @@ select: {
     <g class="dg-sel" style="--i:0">
       <rect class="dg-box ok" x="10" y="16" width="300" height="62" rx="9"/>
       <text class="dg-t mono sm" x="22" y="42">case v := &lt;-results:</text>
-      <text class="dg-t sm dim" x="22" y="64">the happy path — work arrived</text>
+      <text class="dg-t sm dim" x="22" y="64">the happy path, work arrived</text>
     </g>
     <g class="dg-sel" style="--i:1">
       <rect class="dg-box warn" x="10" y="104" width="300" height="62" rx="9"/>
       <text class="dg-t mono sm" x="22" y="130">case &lt;-time.After(2*time.Second):</text>
-      <text class="dg-t sm dim" x="22" y="152">timeout — bound every wait</text>
+      <text class="dg-t sm dim" x="22" y="152">timeout, bound every wait</text>
     </g>
     <g class="dg-sel" style="--i:2">
       <rect class="dg-box bad" x="10" y="192" width="300" height="62" rx="9"/>
       <text class="dg-t mono sm" x="22" y="218">case &lt;-ctx.Done():</text>
-      <text class="dg-t sm dim" x="22" y="240">cancelled — return ctx.Err()</text>
+      <text class="dg-t sm dim" x="22" y="240">cancelled, return ctx.Err()</text>
     </g>
 
     <g class="dg-arrow dg-ants mid" marker-end="url(#dgArrS2)">
@@ -901,7 +988,7 @@ select: {
 
     <rect class="dg-box" x="640" y="20" width="290" height="70" rx="9"/>
     <text class="dg-t sm accentT" x="652" y="42">two or more ready at once?</text>
-    <text class="dg-t sm" x="652" y="62">A uniformly RANDOM one is chosen —</text>
+    <text class="dg-t sm" x="652" y="62">A uniformly RANDOM one is chosen, </text>
     <text class="dg-t sm" x="652" y="80">no starvation, no accidental priority.</text>
 
     <rect class="dg-box" x="640" y="178" width="290" height="92" rx="9"/>
@@ -910,7 +997,7 @@ select: {
     <text class="dg-t mono sm" x="652" y="240">case q &lt;- job:   // enqueued</text>
     <text class="dg-t mono sm" x="652" y="258">default:         // shed load, 503</text>
 
-    <text class="dg-t sm dim" x="10" y="270">a nil channel blocks forever — set a channel variable to nil to switch its case OFF</text>
+    <text class="dg-t sm dim" x="10" y="270">a nil channel blocks forever, set a channel variable to nil to switch its case OFF</text>
   </svg>`
 }
 

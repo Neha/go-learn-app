@@ -1,5 +1,5 @@
 /* ===========================================================
-   Go From Zero — app logic (vanilla JS, no dependencies)
+   Go From Zero, app logic (vanilla JS, no dependencies)
    =========================================================== */
 (function () {
 "use strict";
@@ -126,7 +126,7 @@ function highlight(code) {
 }
 
 /* ---------- block renderers ---------- */
-/* Shell/YAML/Dockerfile snippets are not runnable Go — don't offer Run on them. */
+/* Shell/YAML/Dockerfile snippets are not runnable Go, don't offer Run on them. */
 function looksLikeGo(code) {
   if (/^\s*(#|FROM |name:|version:|module |VERSION )/m.test(code) && !/\bfunc\b/.test(code)) return false;
   return /\b(func|package|type|var|const|import)\b/.test(code);
@@ -168,7 +168,7 @@ function toProgram(code) {
 
 /* A snippet is offered "Run" only when we have a program we know compiles:
    either an explicit `play:` field, or the snippet is already a full program.
-   Fragments (most of the course) just get Copy — pasting code that does not
+   Fragments (most of the course) just get Copy, pasting code that does not
    build is worse than not offering the button. */
 function codeBlock(b) {
   const prog = flagOn("playground")
@@ -191,8 +191,8 @@ async function runInPlayground(btn, programOverride) {
     (host ? decodeURIComponent(host.dataset.prog) : toProgram(btn.closest(".code").querySelector("pre").innerText));
   const ok = await copyText(program);
   window.open(PLAYGROUND, "_blank", "noopener");
-  toast(ok ? "Copied — paste into the Playground (⌘/Ctrl-V) and press Run"
-           : "Playground opened — copy the snippet manually");
+  toast(ok ? "Copied, paste into the Playground (⌘/Ctrl-V) and press Run"
+           : "Playground opened, copy the snippet manually");
 }
 
 /* every runnable program in the course, for the #/playground index */
@@ -214,7 +214,7 @@ function playgroundPage() {
       '<span class="eyebrow">▶ Run it</span><h1>Playground</h1>' +
       "<p>" + ex.length + " complete, compiling programs from across the course. " +
       "<strong>Run</strong> copies the program and opens the official " +
-      '<a href="' + PLAYGROUND + '" target="_blank" rel="noopener">Go Playground</a> — ' +
+      '<a href="' + PLAYGROUND + '" target="_blank" rel="noopener">Go Playground</a>, ' +
       "paste and press Run there. Execution happens on Google's servers because compiling Go needs a " +
       "Go toolchain; this site is static files with no backend.</p>" +
       '<div class="hero-actions">' +
@@ -300,7 +300,7 @@ function linkifyGlossary(root, used) {
       btn.type = "button";
       btn.className = "gloss";
       btn.dataset.g = key;
-      btn.setAttribute("aria-label", m[1] + " — show definition");
+      btn.setAttribute("aria-label", m[1] + ", show definition");
       btn.textContent = m[1];
       after.parentNode.replaceChild(btn, after);
       cur = rest;
@@ -375,7 +375,7 @@ function glossaryPage() {
   return '<div class="wrap">' +
     '<section class="hero" style="padding:34px 30px">' +
       '<span class="eyebrow">📖 Reference</span><h1>Glossary</h1>' +
-      "<p>Every term the course assumes, defined in one place — " + GLOSS_KEYS.length + " of them, " +
+      "<p>Every term the course assumes, defined in one place, " + GLOSS_KEYS.length + " of them, " +
       "from <em>compiled</em> and <em>JIT</em> to <em>write barrier</em> and <em>minimal version selection</em>. " +
       "Terms are also tappable wherever they appear in a module.</p>" +
       '<div class="gloss-index">' + letters.map(l =>
@@ -490,7 +490,7 @@ function paintProgress() {
 }
 
 /* localStorage is unavailable on some file:// origins and in locked-down private
-   modes — progress silently vanishing is worse than saying so. */
+   modes, progress silently vanishing is worse than saying so. */
 function storageWorks() {
   try {
     const k = "__gfz_probe";
@@ -506,7 +506,7 @@ function warnNoStorage() {
   el.id = "noStore";
   el.className = "store-warn";
   el.innerHTML = "⚠️ <b>Progress can't be saved in this context.</b> Your browser is blocking " +
-    "local storage — usually because the page was opened as a <code>file://</code> path. " +
+    "local storage, usually because the page was opened as a <code>file://</code> path. " +
     "Serve the folder instead: <code>python3 -m http.server</code> then open " +
     "<code>http://localhost:8000</code>. " +
     '<button type="button" data-dismisswarn aria-label="Dismiss">✕</button>';
@@ -552,7 +552,7 @@ function renderNav() {
       const ps = inCat(c);
       const built = ps.filter(p => msDone(p) === p.milestones.length).length;
       return navGroup("Projects", c, built + "/" + ps.length,
-        ps.map(p => navItem("#/p/" + p.id, p.id, p.icon, p.name.split(" — ")[0],
+        ps.map(p => navItem("#/p/" + p.id, p.id, p.icon, p.name.split(", ")[0],
           p.name + " " + p.tagline + " " + p.stack.join(" ") + " " + c,
           msDone(p) === p.milestones.length)).join(""));
     }).join("") : "") +
@@ -619,7 +619,7 @@ function home() {
   return '<div class="wrap">' +
     '<section class="hero">' +
       '<span class="eyebrow">🐹 Beginner → Internals</span>' +
-      "<h1>Learn <em>Go</em> properly — from a variable to the garbage collector.</h1>" +
+      "<h1>Learn <em>Go</em> properly, from a variable to the garbage collector.</h1>" +
       "<p>" + MODULES.length + " modules that start with “is Go compiled?” and run through the scheduler, the GC and the " +
       "memory allocator to testing, deployment and on-call. Every module closes with a summary and five questions, " +
       "plus " + PROJECTS.length + " end-to-end projects and " + SHEETS.length + " printable cheat sheets.</p>" +
@@ -674,7 +674,7 @@ function projectCard(p) {
   const d = msDone(p), n = p.milestones.length;
   return '<a class="card' + (d === n ? " done" : "") + '" href="#/p/' + p.id + '" data-search="' +
     esc((p.name + " " + p.tagline + " " + p.stack.join(" ")).toLowerCase()) + '">' +
-    '<div class="row"><span class="ico">' + p.icon + "</span><h3>" + esc(p.name.split(" — ")[0]) + "</h3></div>" +
+    '<div class="row"><span class="ico">' + p.icon + "</span><h3>" + esc(p.name.split(", ")[0]) + "</h3></div>" +
     "<p>" + esc(p.tagline) + "</p>" +
     '<div class="tags">' + p.stack.slice(0, 4).map(s => '<span class="tag">' + esc(s) + "</span>").join("") +
       (p.stack.length > 4 ? '<span class="tag">+' + (p.stack.length - 4) + "</span>" : "") + "</div>" +
@@ -693,7 +693,7 @@ function projectsPage() {
       "<p>Reading about Go gets you to “I follow the syntax”. These get you to “I can ship a Go service”. " +
       "Each one is a complete build guide: target behaviour, architecture, the code that matters, a tickable " +
       "milestone plan, a definition of done you can honestly check, the bugs you <em>will</em> hit, and stretch goals. " +
-      "Four tracks — command-line tools, web apps, APIs and services, and systems/data. " +
+      "Four tracks, command-line tools, web apps, APIs and services, and systems/data. " +
       "Within a track, work top to bottom; each reuses the last one's skills.</p>" +
       '<div class="hero-actions">' + PCATS.map(c =>
         '<button class="btn btn-ghost" type="button" data-jump="' + slug(c) + '">' +
@@ -710,7 +710,7 @@ function projectsPage() {
       '<div class="grid">' + inCat(c).map(projectCard).join("") + "</div>"
     ).join("") +
     '<div class="note tip" style="margin-top:22px"><span class="n-ico">💡</span><div>' +
-    "<b>How to use these</b><p>Don't read the code blocks and move on — type them. Build the simplest correct version " +
+    "<b>How to use these</b><p>Don't read the code blocks and move on, type them. Build the simplest correct version " +
     "first (milestone 1 is always “make it work without the hard part”), commit after every milestone, and write the " +
     "test before the fix when something breaks. If a project takes twice the estimate, that's normal and it's where " +
     "the learning is.</p></div></div></div>";
@@ -752,7 +752,7 @@ function projectPage(id) {
       '<div class="quiz-head"><h2>✅ Milestone plan</h2>' +
       '<span class="score" data-msscore>' + d + " / " + n + "</span></div>" +
       '<div class="bar big"><i data-msbar style="width:' + (d / n * 100) + '%"></i></div>' +
-      '<p class="hint">Tick each one as you finish it — progress is saved in this browser. Commit at every tick.</p>' +
+      '<p class="hint">Tick each one as you finish it, progress is saved in this browser. Commit at every tick.</p>' +
       p.milestones.map((m, mi) =>
         '<button class="ms' + (s[mi] ? " done" : "") + '" type="button" data-ms="' + mi + '">' +
         '<span class="box">' + (s[mi] ? "✓" : "") + "</span>" +
@@ -769,9 +769,9 @@ function projectPage(id) {
     "</ul></section>" +
 
     '<nav class="pager">' +
-      (prev ? '<a href="#/p/' + prev.id + '"><span>← Previous project</span><b>' + esc(prev.name.split(" — ")[0]) + "</b></a>"
+      (prev ? '<a href="#/p/' + prev.id + '"><span>← Previous project</span><b>' + esc(prev.name.split(", ")[0]) + "</b></a>"
             : '<a href="#/projects"><span>← Back</span><b>All projects</b></a>') +
-      (nxt ? '<a class="next" href="#/p/' + nxt.id + '"><span>Next project →</span><b>' + esc(nxt.name.split(" — ")[0]) + "</b></a>"
+      (nxt ? '<a class="next" href="#/p/' + nxt.id + '"><span>Next project →</span><b>' + esc(nxt.name.split(", ")[0]) + "</b></a>"
            : '<a class="next" href="#/sheets"><span>Finished →</span><b>Cheat sheets</b></a>') +
     "</nav></article></div>";
 }
@@ -789,7 +789,7 @@ function onMilestone(btn) {
   $("[data-msscore]", art).textContent = d + " / " + n;
   $("[data-msbar]", art).style.width = (d / n * 100) + "%";
   renderNav();
-  if (d === n) toast("🎉 " + p.name.split(" — ")[0] + " complete — now write the README");
+  if (d === n) toast("🎉 " + p.name.split(", ")[0] + " complete, now write the README");
 }
 
 function modulePage(id) {
@@ -820,8 +820,8 @@ function modulePage(id) {
 
     '<div class="mark-done' + (state.done[m.id] ? " on" : "") + '" data-markwrap="' + m.id + '">' +
       '<button class="btn ' + (state.done[m.id] ? "btn-ghost" : "btn-primary") + '" type="button" data-markdone="' + m.id + '">' +
-        (state.done[m.id] ? "✓ Completed — mark as not done" : "✓ Mark this module complete") + "</button>" +
-      '<span class="md-note">Answering every question correctly marks it automatically — ' +
+        (state.done[m.id] ? "✓ Completed, mark as not done" : "✓ Mark this module complete") + "</button>" +
+      '<span class="md-note">Answering every question correctly marks it automatically, ' +
       "or tick it here if you only came for the reading.</span></div>" +
 
     '<nav class="pager">' +
@@ -876,7 +876,7 @@ function sheetsPage() {
       "<h1>Cheat sheets</h1>" +
       "<p>Dense, printable references for commands, syntax, collections, concurrency, the runtime, the standard library, " +
       "web &amp; API patterns, testing, production readiness and the gotchas. " +
-      "Each one downloads as a real PDF, plain text or markdown — the PDFs are generated in your browser, " +
+      "Each one downloads as a real PDF, plain text or markdown, the PDFs are generated in your browser, " +
       "A4, monospaced, with page numbers.</p>" +
       '<div class="hero-actions">' +
         '<button class="btn btn-primary" id="pdfAll">⬇ All ' + SHEETS.length + " sheets as one PDF</button>" +
@@ -956,7 +956,7 @@ function siteFooter() {
     "</div>" +
     '<div class="sf-legal">' +
       "<span>© " + year + " <a href='" + AUTHOR.x + "' target='_blank' rel='noopener me'><strong>" +
-      AUTHOR.name + "</strong></a> — course text, diagrams and quizzes all rights reserved; " +
+      AUTHOR.name + "</strong></a>, course text, diagrams and quizzes all rights reserved; " +
       "<strong>the Go code samples are free to use</strong></span>" +
       '<span class="sf-note">No cookies · progress stays in this browser · the hosted site counts anonymous visits</span>' +
     "</div></div></footer>";
@@ -1002,9 +1002,9 @@ function route() {
           : h.startsWith("#/m/") && INDEX.has(h.slice(4)) ? MODULES[INDEX.get(h.slice(4))].title
           : h.startsWith("#/p/") && PINDEX.has(h.slice(4)) ? PROJECTS[PINDEX.get(h.slice(4))].name
           : null;
-  document.title = t ? t + " — Go From Zero"
-    : h === "#/releases" ? "Release notes — Go From Zero"
-    : "Go From Zero — Learn Golang, Beginner to Internals";
+  document.title = t ? t + ", Go From Zero"
+    : h === "#/releases" ? "Release notes, Go From Zero"
+    : "Go From Zero, Learn Golang, Beginner to Internals";
 }
 
 /* #/sheets/<id> and #/glossary/<term> land on that card, not the top of the page. */
@@ -1116,7 +1116,7 @@ function onQuizClick(btn) {
       if (mdBtn) {
         mdBtn.closest("[data-markwrap]").classList.add("on");
         mdBtn.className = "btn btn-ghost";
-        mdBtn.textContent = "✓ Completed — mark as not done";
+        mdBtn.textContent = "✓ Completed, mark as not done";
       }
     }
 
@@ -1124,7 +1124,7 @@ function onQuizClick(btn) {
     const missedLabel = missed.map(i => "Q" + (i + 1)).join(", ");
     const msg = passed ? "Perfect score. 🐹 Nothing left to review here."
               : "Missed " + missedLabel + ". This module stays incomplete until every answer is correct, or you mark it complete yourself.";
-    box.innerHTML = "<b>" + correctN + " / " + qs.length + (passed ? " — module complete ✓" : " — not complete yet") + "</b><p>" + msg + "</p>" +
+    box.innerHTML = "<b>" + correctN + " / " + qs.length + (passed ? ", module complete ✓" : ", not complete yet") + "</b><p>" + msg + "</p>" +
       (passed ? "" : '<button class="btn btn-primary" type="button" data-retry style="margin-top:12px">Try again</button>');
     box.classList.add("show");
   }
@@ -1144,7 +1144,7 @@ const FOLD = {
   "“": '"', "”": '"', "‘": "'", "’": "'", "≈": "~", "≤": "<=", "≥": ">=",
   "×": "x", "µ": "u", "✓": "[x]", "✗": "x", "⏱": "", "❓": "", "√": "v"
 };
-/* Courier has no glyphs for box drawing or emoji — fold to ASCII first. */
+/* Courier has no glyphs for box drawing or emoji, fold to ASCII first. */
 function toAscii(s) {
   let out = "";
   for (const ch of String(s).replace(/\t/g, "    ")) {
@@ -1274,15 +1274,15 @@ function downloadPDF(name, docs, title) {
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     toast("Downloaded " + name);
   } catch (err) {
-    toast("PDF failed — falling back to text");
+    toast("PDF failed, falling back to text");
     download(name.replace(/\.pdf$/, ".txt"), docs.map(d => d.title + "\n\n" + d.body).join("\n\n"));
   }
 }
 
-/* A print window containing ONLY the sheets — never the whole app page. */
+/* A print window containing ONLY the sheets, never the whole app page. */
 function printSheets(sheets, title) {
   const w = window.open("", "_blank");
-  if (!w) { toast("Popup blocked — use the PDF button instead"); return; }
+  if (!w) { toast("Popup blocked, use the PDF button instead"); return; }
   w.document.write(
     "<!doctype html><html><head><meta charset='utf-8'><title>" + esc(title) + "</title>" +
     "<style>@page{size:A4;margin:14mm}body{font:9px/1.45 ui-monospace,Menlo,Consolas,monospace;color:#000;background:#fff;margin:0}" +
@@ -1320,7 +1320,7 @@ function bundleContents() {
 
 function allSheetsText() {
   const bar = "=".repeat(74);
-  return "GO FROM ZERO — COMPLETE CHEAT SHEET BUNDLE\n" + bar + "\n" +
+  return "GO FROM ZERO, COMPLETE CHEAT SHEET BUNDLE\n" + bar + "\n" +
     "Generated " + new Date().toISOString().slice(0, 10) + "\n\nCONTENTS\n" +
     SHEETS.map((s, i) => "  " + (i + 1) + ". " + s.name).join("\n") +
     "\n\n" + SHEETS.map(s => bar + "\n" + s.body).join("\n\n") + "\n";
@@ -1379,7 +1379,7 @@ function buildSearchIndex() {
            m.quiz.map(q => q.q + " " + q.options.join(" ") + " " + q.explain).join(" ")].join("\n")
   }));
   PROJECTS.forEach(p => docs.push({
-    kind: "Project", icon: p.icon, title: p.name.split(" — ")[0], sub: (p.category || "") + " · " + p.level,
+    kind: "Project", icon: p.icon, title: p.name.split(", ")[0], sub: (p.category || "") + " · " + p.level,
     href: "#/p/" + p.id, navId: p.id,
     strong: p.name + " " + p.tagline + " " + p.stack.join(" "),
     text: [p.name, p.tagline, p.stack.join(" "), blocksText(p.blocks),
@@ -1445,7 +1445,7 @@ function searchPage(raw, hits) {
   if (!hits.length) {
     return '<div class="wrap"><div class="empty">' +
       "<h1>No results for “" + esc(raw) + "”</h1>" +
-      "<p>Try fewer or different words — the search covers every module, project, cheat sheet, " +
+      "<p>Try fewer or different words, the search covers every module, project, cheat sheet, " +
       "glossary term and page.</p>" +
       '<p style="margin-top:18px">Popular: ' +
       ["printf", "slices", "goroutine", "install", "testing", "garbage collector", "docker"]
@@ -1540,7 +1540,7 @@ function applyNavFilter(q) {
       note.className = "nav-note";
       $("#nav").appendChild(note);
     }
-    note.textContent = "No section titles match “" + q + "” — see the results on the right.";
+    note.textContent = "No section titles match “" + q + "”, see the results on the right.";
   } else if (note) note.remove();
 }
 
@@ -1968,7 +1968,7 @@ function init() {
       const wrap = md.closest("[data-markwrap]");
       wrap.classList.toggle("on", now);
       md.className = "btn " + (now ? "btn-ghost" : "btn-primary");
-      md.textContent = now ? "✓ Completed — mark as not done" : "✓ Mark this module complete";
+      md.textContent = now ? "✓ Completed, mark as not done" : "✓ Mark this module complete";
       const meta = $(".mod-meta");
       if (meta) {
         const chip = meta.querySelector(".done-chip");
@@ -1976,7 +1976,7 @@ function init() {
           '<span class="done-chip" style="color:var(--ok)">✓ completed</span>');
         if (!now && chip) chip.remove();
       }
-      toast(now ? "Marked complete — " + pct() + "% of the course" : "Marked as not done");
+      toast(now ? "Marked complete, " + pct() + "% of the course" : "Marked as not done");
       return;
     }
 
@@ -2072,7 +2072,7 @@ function init() {
     const all = e.target.closest("#pdfAll");
     if (all) {
       all.textContent = "building…";
-      const docs = [{ title: "Go From Zero — Cheat Sheet Bundle", body: bundleContents() }]
+      const docs = [{ title: "Go From Zero, Cheat Sheet Bundle", body: bundleContents() }]
         .concat(SHEETS.map(s => ({ title: s.name, body: s.body })));
       downloadPDF("go-cheatsheets-complete.pdf", docs, "Go cheat sheets");
       all.textContent = "⬇ All " + SHEETS.length + " sheets as one PDF";
