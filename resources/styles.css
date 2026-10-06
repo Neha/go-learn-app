@@ -146,7 +146,8 @@ code{font-family:var(--mono);font-size:.885em}
   font:700 .68rem var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--fg-3);
 }
 .nav-label i{width:7px;height:7px;border-radius:50%;background:var(--go);font-style:normal;flex:none}
-.nav-group[data-level="Intermediate"] .nav-label i{background:var(--accent)}
+.nav-group[data-level="Intermediate"] .nav-label i{background:#8A6200}
+html[data-theme="dark"] .nav-group[data-level="Intermediate"] .nav-label i{background:#E6C200}
 .nav-group[data-level="Advanced"] .nav-label i{background:#c678dd}
 .nav-group[data-level="Production"] .nav-label i{background:#ff7b72}
 .nav-group[data-level="Projects"] .nav-label i{background:var(--ok)}
@@ -218,7 +219,8 @@ code{font-family:var(--mono);font-size:.885em}
 .card.done::after{content:"✓";position:absolute;top:14px;right:16px;color:var(--ok);font-weight:800}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font:700 .68rem var(--sans);letter-spacing:.05em;text-transform:uppercase}
 .pill.Beginner{background:color-mix(in srgb,var(--go) 18%,transparent);color:var(--go-light)}
-.pill.Intermediate{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent)}
+.pill.Intermediate{background:color-mix(in srgb,#8A6200 16%,transparent);color:#6A4800}
+html[data-theme="dark"] .pill.Intermediate{background:color-mix(in srgb,#E6C200 24%,transparent);color:#E6C200}
 .pill.Advanced{background:rgba(198,120,221,.2);color:#d7a8e6}
 .pill.Production{background:rgba(255,123,114,.18);color:#ff9b94}
 
