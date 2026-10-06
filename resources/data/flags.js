@@ -1,7 +1,7 @@
 /* ──────────────────────────────────────────────────────────────
    Feature flags.
 
-   Flip a value to true/false and reload — nothing else to change.
+   Flip a value to true/false and reload, nothing else to change.
    Anything gated by a flag disappears completely when it is off: its
    nav entry, buttons, routes, footer links, and the sentences in the
    About / How to use / Privacy pages that describe it.

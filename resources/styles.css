@@ -402,6 +402,14 @@ html[data-theme="light"] .dg-t.tok{fill:#fff}
 .dg-work{animation:dgWork 2.6s ease-in-out infinite;animation-delay:calc(var(--i,0) * .5s)}
 .dg-sel{animation:dgSel 6s ease-in-out infinite;animation-delay:calc(var(--i,0) * 2s)}
 .dg-count{animation:dgCountPulse 2s ease-in-out infinite}
+.dg-marked{animation:dgMarked 7.2s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(.5s + var(--i,0) * 1.15s)}
+.dg-pushpop{animation:dgPushPop 8.6s cubic-bezier(.4,0,.2,1) infinite;transform-box:fill-box;transform-origin:center bottom}
+.dg-reclaim{animation:dgReclaim 7.6s cubic-bezier(.4,0,.2,1) infinite;transform-box:fill-box;transform-origin:center}
+.dg-away{animation:dgAway 7.6s cubic-bezier(.4,0,.2,1) infinite}
+.dg-beat{animation:dgBeat 8.6s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(var(--i,0) * 2.5s)}
+.dg-rest{animation:dgRest 6.8s cubic-bezier(.4,0,.2,1) infinite}
+.dg-arrive{animation:dgArrive 6.8s cubic-bezier(.4,0,.2,1) infinite;animation-delay:.9s}
+.dg-arrive.go{animation-delay:1.6s}
 
 @keyframes dgProgress{0%{transform:scaleX(0)}95%,100%{transform:scaleX(1)}}
 @keyframes dgLit{0%,8%{stroke-width:2.25;filter:drop-shadow(0 0 5px var(--go))}20%,100%{stroke-width:1.5;filter:none}}
@@ -414,6 +422,13 @@ html[data-theme="light"] .dg-t.tok{fill:#fff}
 @keyframes dgWork{0%,100%{filter:none}50%{filter:drop-shadow(0 0 7px var(--go))}}
 @keyframes dgSel{0%,20%{opacity:1;filter:drop-shadow(0 0 6px var(--go))}32%,100%{opacity:.45;filter:none}}
 @keyframes dgCountPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes dgMarked{0%,28%{filter:none}46%,70%{filter:drop-shadow(0 0 3px var(--ok))}100%{filter:none}}
+@keyframes dgPushPop{0%{opacity:0;transform:translateY(6px)}18%{opacity:1;transform:none}60%{opacity:1;transform:none}78%{opacity:0;transform:translateY(-8px)}100%{opacity:0;transform:translateY(-8px)}}
+@keyframes dgReclaim{0%,50%{opacity:1;transform:none}72%,86%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:none}}
+@keyframes dgAway{0%,48%{opacity:0}66%,86%{opacity:1}100%{opacity:0}}
+@keyframes dgBeat{0%,10%{filter:none}20%,36%{filter:drop-shadow(0 0 3px var(--go))}52%,100%{filter:none}}
+@keyframes dgRest{0%,42%{opacity:1}64%,82%{opacity:.7}100%{opacity:1}}
+@keyframes dgArrive{0%,34%{filter:none}50%,74%{filter:drop-shadow(0 0 4px var(--go))}100%{filter:none}}
 
 /* animations */
 @keyframes dgRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}

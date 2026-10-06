@@ -11,7 +11,7 @@ window.CURRICULUM_PARTS.push([
   minutes: 20,
   blurb: "What a function returns, how a function can be stored in a variable, and why a closure keeps seeing the same variable.",
   blocks: [
-    { t: "h", text: "A function takes values in and hands values back" },
+    { t: "h", text: "Functions" },
     { t: "p", html: "<code>func</code> starts the definition. <code>add</code> is the name you call. Inside the parentheses are the inputs: <code>a</code> and <code>b</code>, both of type <code>int</code>. The <code>int</code> after the parentheses is the type of the value it gives back. <code>return a + b</code> is that value. <code>add(2, 3)</code> runs the function with those two inputs." },
     { t: "code", title: "The smallest function", code:
 `func add(a int, b int) int {
@@ -23,7 +23,7 @@ fmt.Println(add(2, 3))`,
     },
     { t: "p", html: "When two inputs share a type, you can write the type once: <code>func add(a, b int)</code>. It means the same thing as <code>a int, b int</code>." },
 
-    { t: "h", text: "A function can hand back more than one value" },
+    { t: "h", text: "Multiple results" },
     { t: "p", html: "The parentheses after the name list what comes back. <code>(float64, error)</code> means two values: the answer, then an <code>error</code>. Go uses this instead of exceptions. <code>nil</code> for the error means it worked. If <code>b</code> is 0, there is no answer, so the function returns <code>0</code> and an error, and the caller is expected to look at the error before using the number." },
     { t: "code", title: "Result first, error last", code:
 `func divide(a, b float64) (float64, error) {
@@ -71,7 +71,7 @@ fmt.Println(sum(nums...))`,
     { t: "diagram", id: "func-returns" },
     { t: "note", kind: "tip", title: "Error goes last, and you check it", html: "Convention: <code>(result, error)</code>, with <code>error</code> as the final value. If <code>err != nil</code>, treat every other return as unusable." },
 
-    { t: "h", text: "A function is a value, like an int" },
+    { t: "h", text: "Function values" },
     { t: "p", html: "People say functions in Go are <strong>first-class</strong>. That only means a function is a value you can use the same way you use a number: store it in a variable, pass it into another function, and return it. The type of that value is the shape of the function. <code>func(int, int) int</code> means \"a function that takes two ints and returns an int\". <code>add</code> has that shape, so it can be stored in <code>op</code>. Calling <code>op(2, 3)</code> calls <code>add</code>." },
     { t: "code", title: "Store a function in a variable", code:
 `func add(a, b int) int { return a + b }
@@ -102,7 +102,7 @@ func() { fmt.Println("runs now") }()`,
       out: `runs now`
     },
 
-    { t: "h", text: "A closure keeps the variable, not a copy" },
+    { t: "h", text: "Closures" },
     { t: "p", html: "A <strong>closure</strong> is a function written inside another function, which uses one of the outer function's variables. \"Captures by reference\" means it keeps that variable itself. It does not copy the number that was in the variable at the moment the inner function was created." },
     { t: "p", html: "<code>counter</code> makes <code>count</code>, starting at 0, and returns an inner function. That inner function is what you call later. Each call does <code>count++</code> on the <strong>same</strong> <code>count</code> and returns it. If the closure had copied the value, every call would see 0, add 1, and return 1. It does not. The 1 is still there for the next call, then 2, then 3." },
     { t: "p", html: "<code>counter()</code> has already returned by the time you call <code>c()</code>. A local variable would normally disappear with that return. This one cannot, because the inner function still uses it, so Go keeps <code>count</code> on the heap for as long as <code>c</code> exists. Call <code>counter()</code> again and you get a new function with a new <code>count</code>. The two counters do not share." },
@@ -130,7 +130,7 @@ fmt.Println(c2())`,
     },
     { t: "note", kind: "tip", title: "Loop variables", html: "Before Go 1.22, a <code>for</code> loop had one <code>i</code> reused every pass. A function created inside the loop saw whatever <code>i</code> held at the end, usually the last value. From Go 1.22 each pass has its own <code>i</code>, so the function sees the value from that pass." },
 
-    { t: "h", text: "Optional settings, without default arguments" },
+    { t: "h", text: "Functional options" },
     { t: "p", html: "Go has no <code>port int = 8080</code>. Libraries that need optional settings often take extra functions. <code>WithPort(9000)</code> returns a function. <code>NewServer</code> calls each of those functions on the server it is building, and anything you did not pass keeps the default. Adding a new option later does not change the calls that already exist." },
     { t: "code", title: "Pass only the settings you want to change", code:
 `type Server struct {
@@ -167,7 +167,7 @@ fmt.Println(srv.host, srv.port, srv.timeout)`,
     ]}
   ],
   summary: [
-    "Multiple return values make `(value, error)` the universal idiom — error last, always checked.",
+    "Multiple return values make `(value, error)` the universal idiom, error last, always checked.",
     "Shared parameter types collapse: `func f(a, b int)`.",
     "Variadic `...T` arrives as a slice; spread an existing slice with `slice...`.",
     "A function is a value. You can store it, pass it, and return it. `func(int, int) int` is the type of that value.",
@@ -182,7 +182,7 @@ fmt.Println(srv.host, srv.port, srv.timeout)`,
     { q: "Inside `func sum(nums ...int)`, what is `nums`?",
       options: ["An array", "A `[]int` slice", "A pointer to int", "An interface"],
       answer: 1,
-      explain: "Variadic parameters are received as a slice — possibly nil when called with no args." },
+      explain: "Variadic parameters are received as a slice, possibly nil when called with no args." },
     { q: "`c := counter()` returning a closure over `count := 0`. Calling c() three times yields?",
       options: ["1, 1, 1", "1, 2, 3", "0, 1, 2", "Undefined"],
       answer: 1,
@@ -207,9 +207,9 @@ fmt.Println(srv.host, srv.port, srv.timeout)`,
   minutes: 18,
   blurb: "Import forms, initialisation order, what init() is really for, doc comments that render, and runnable examples.",
   blocks: [
-    { t: "p", html: "A package is Go's unit of compilation, visibility and documentation. This module covers the mechanics most people pick up by accident — the import forms, <em>when</em> your package-level code actually runs, and how to write comments that become real documentation." },
+    { t: "p", html: "A package is Go's unit of compilation, visibility and documentation. This module covers the mechanics most people pick up by accident, the import forms, <em>when</em> your package-level code actually runs, and how to write comments that become real documentation." },
 
-    { t: "h", text: "Imports: four forms" },
+    { t: "h", text: "Imports" },
     { t: "p", html: "A normal import uses the last part of the path as the name: <code>net/http</code> is called <code>http</code>. An alias renames it when two packages would otherwise share a name. A blank import, <code>_</code>, runs the package only for its startup side effect, such as registering a database driver. A dot import dumps the names into your file; avoid it." },
     { t: "code", title: "Only one of them is unusual", code:
 `import (
@@ -225,18 +225,18 @@ fmt.Println(srv.host, srv.port, srv.timeout)`,
                                            // You never reference it; you want its
                                            // init() to register the SQL driver.
     . "math"                               // DOT: dumps names into your scope.
-)                                          // Almost never do this — it destroys
+)                                          // Almost never do this, it destroys
                                            // readability. Tests only, rarely.
 
 // gofmt groups stdlib first, then everything else, separated by a blank line;
 // goimports and gofumpt maintain that grouping for you.
 //
-// Import CYCLES are a compile error — Go has no forward declarations. If A and
+// Import CYCLES are a compile error, Go has no forward declarations. If A and
 // B need each other, extract the shared types into a third package, or move an
 // interface to the consumer side (which is the usual right answer).`
     },
 
-    { t: "h", text: "Initialisation order — a real guarantee" },
+    { t: "h", text: "Initialisation order" },
     { t: "p", html: "Package-level variables are set before <code>main</code> runs, and a variable is set after the ones it depends on. <code>init</code> functions run after that, once per file, and you cannot call them yourself. Put fallible startup in <code>main</code>, not in <code>init</code>, because <code>init</code> can only panic." },
     { t: "code", title: "Dependency order, not declaration order", code:
 `var a = b + 1    // 3   <- initialised SECOND, because it depends on b
@@ -246,7 +246,7 @@ func f() int { return 2 }
 // The rules, in order:
 //  1. Every IMPORTED package is fully initialised before yours starts
 //     (each package exactly once, however many times it is imported).
-//  2. Package-level variables are initialised in DEPENDENCY order — the
+//  2. Package-level variables are initialised in DEPENDENCY order, the
 //     compiler sorts them. Declaration order only breaks ties.
 //  3. Then every init() in the package runs.
 //  4. Finally, for package main: func main().
@@ -256,11 +256,11 @@ func init() { /* several per file and per package are allowed */ }
 
 // init() functions run in the order they appear within a file; the order of
 // FILES is the order the toolchain presents them (in practice, alphabetical).
-// Never depend on cross-file ordering — if order matters, use a single init()
+// Never depend on cross-file ordering, if order matters, use a single init()
 // or an exported Setup() that the caller invokes explicitly.`
     },
     { t: "code", title: "What init() is legitimately for", code:
-`// 1. REGISTRATION — the pattern behind every blank import
+`// 1. REGISTRATION, the pattern behind every blank import
 func init() { sql.Register("postgres", &Driver{}) }
 func init() { gob.Register(MyType{}) }
 func init() { prometheus.MustRegister(requestsTotal) }
@@ -279,7 +279,7 @@ func init() {
 
 // WHEN NOT TO USE IT
 //  - reading config, opening a database, dialling a service: these fail, and
-//    init() has nowhere to return an error — only panic. Do them in run(),
+//    init() has nowhere to return an error, only panic. Do them in run(),
 //    where you can report the failure and test it.
 //  - anything you may want to skip in tests: init() ALWAYS runs, including
 //    under "go test", and you cannot stub it.
@@ -288,9 +288,9 @@ func init() {
 GODEBUG=inittrace=1 ./app     # one line per package: time and bytes
 # init internal/cpu @0.004 ms, 0.006 ms clock, 0 bytes, 0 allocs`
     },
-    { t: "note", kind: "warn", title: "init() is action at a distance", html: "A reader of <code>main.go</code> cannot see that importing a package mutated global state. That is precisely why the driver-registration pattern needs the loud <code>_ \"…/pq\"</code> blank import as a signal. Prefer explicit construction — <code>pq.New()</code>, or a <code>Register…()</code> call from <code>run()</code> — unless you are deliberately implementing a plugin-style registry." },
+    { t: "note", kind: "warn", title: "init() is action at a distance", html: "A reader of <code>main.go</code> cannot see that importing a package mutated global state. That is precisely why the driver-registration pattern needs the loud <code>_ \"…/pq\"</code> blank import as a signal. Prefer explicit construction, <code>pq.New()</code>, or a <code>Register…()</code> call from <code>run()</code>, unless you are deliberately implementing a plugin-style registry." },
 
-    { t: "h", text: "Doc comments that actually render" },
+    { t: "h", text: "Doc comments" },
     { t: "p", html: "A comment immediately above a name, starting with that name, becomes its documentation. <code>go doc</code> and pkg.go.dev show it. An <code>Example</code> function in a test file is documentation that the test runner actually compiles and checks." },
     { t: "code", title: "The conventions, and the syntax gofmt understands", code:
 `// Package user provides storage and validation for application accounts.
@@ -315,8 +315,8 @@ func (s *Service) Create(ctx context.Context, u *User) error { /* ... */ }
 //  - Start with the identifier's name: "Create validates…", not "This method…".
 //    Doc tooling and revive's "exported" rule both expect it.
 //  - Write complete sentences; the first is the summary shown in listings.
-//  - Say what it DOES and what the caller must know — errors returned, whether
-//    it blocks, concurrency safety, who owns the arguments — not how it works.
+//  - Say what it DOES and what the caller must know, errors returned, whether
+//    it blocks, concurrency safety, who owns the arguments, not how it works.
 //  - Unexported identifiers deserve comments too; they just are not published.
 
 // gofmt (1.19+) understands structure inside doc comments:
@@ -339,7 +339,7 @@ func (s *Service) Create(ctx context.Context, u *User) error { /* ... */ }
 // Deprecated: Use [NewService] instead. This will be removed in v3.
 func New() *Service { /* ... */ }    // <- editors grey out the call site`
     },
-    { t: "code", title: "Runnable examples — documentation that cannot rot", code:
+    { t: "code", title: "Runnable examples, documentation that cannot rot", code:
 `// In user_test.go, declared as "package user_test" so it reads like a caller:
 
 func ExampleService_Create() {
@@ -357,7 +357,7 @@ func ExampleService_Create() {
 //   ExampleService_Create()         for the Create method on Service
 //   ExampleService_Create_withTag() a second, labelled variant
 //
-// Omit the "// Output:" comment and it is compiled but not run — useful when
+// Omit the "// Output:" comment and it is compiled but not run, useful when
 // output is nondeterministic. "// Unordered output:" allows any line order.
 // These are the best docs you can write: compiled and asserted by CI.
 
@@ -367,13 +367,13 @@ go doc net/http.Handler          # anything in the module graph or stdlib
 go doc -src sync.Once            # straight to the source
 # Published modules are rendered automatically at pkg.go.dev.`
     },
-    { t: "note", kind: "tip", title: "A package's name is part of its API", html: "Short, lowercase, singular, no underscores: <code>user</code>, <code>store</code>, <code>http</code>. The name is a prefix at every call site, so avoid stutter (<code>user.New()</code>, not <code>user.NewUser()</code>) and avoid non-names like <code>utils</code>, <code>helpers</code>, <code>common</code>, <code>base</code> or <code>misc</code> — a package you cannot name precisely is usually a missing abstraction. Put anything you don't want outsiders importing under <code>internal/</code>." },
+    { t: "note", kind: "tip", title: "A package's name is part of its API", html: "Short, lowercase, singular, no underscores: <code>user</code>, <code>store</code>, <code>http</code>. The name is a prefix at every call site, so avoid stutter (<code>user.New()</code>, not <code>user.NewUser()</code>) and avoid non-names like <code>utils</code>, <code>helpers</code>, <code>common</code>, <code>base</code> or <code>misc</code>, a package you cannot name precisely is usually a missing abstraction. Put anything you don't want outsiders importing under <code>internal/</code>." },
 
-    { t: "h", text: "Semicolons, and why brace placement is not negotiable" },
+    { t: "h", text: "Semicolons" },
     { t: "p", html: "You rarely type a semicolon. Go inserts one at the end of a line when the line looks finished. That is why the <code>{</code> must stay on the same line as <code>if</code> or <code>func</code>: a newline before the brace inserts a semicolon and the program does not compile." },
     { t: "code", title: "The scanner inserts semicolons for you", code:
 `// Go's grammar wants semicolons; the scanner inserts one at the end of any line
-// whose final token could end a statement — an identifier, a literal,
+// whose final token could end a statement, an identifier, a literal,
 // break/continue/fallthrough/return, ++ or --, or one of ) ] }.
 //
 // So this:
@@ -397,31 +397,31 @@ if v, err := f(); err == nil { }`
     { t: "note", kind: "deep", title: "This is why gofmt could win", html: "Because the grammar permits only one brace style, the biggest formatting argument in C-family languages was settled by the <em>language</em> rather than by a style guide. <code>gofmt</code> then removed everything that was left. It is a small design decision with an outsized effect on what Go code review feels like." }
   ],
   summary: [
-    "Import forms: plain, aliased, blank (`_` for init side effects — the SQL-driver pattern) and dot (avoid). Import cycles are a compile error; break them with a third package or a consumer-side interface.",
+    "Import forms: plain, aliased, blank (`_` for init side effects, the SQL-driver pattern) and dot (avoid). Import cycles are a compile error; break them with a third package or a consumer-side interface.",
     "Initialisation order is guaranteed: imported packages first, then package-level vars in **dependency** order, then every `init()`, then `main()`.",
     "`init()` takes no arguments and returns nothing; several are allowed. Never depend on cross-file ordering.",
-    "Use `init()` for registration, precomputed tables and invariant checks — not for config or I/O, which must return errors and stay testable.",
+    "Use `init()` for registration, precomputed tables and invariant checks, not for config or I/O, which must return errors and stay testable.",
     "`GODEBUG=inittrace=1` shows what each package's initialisation costs at startup.",
     "Doc comments begin with the identifier's name, are complete sentences, and support headings, lists, indented code and `[Symbol]` links; `Deprecated:` is a recognised marker.",
     "`ExampleXxx` functions with an `// Output:` comment are documentation that `go test` verifies.",
     "Package names are short, lowercase and singular with no stutter; `utils`/`helpers`/`common` signal a missing abstraction.",
-    "Automatic semicolon insertion is why `{` stays on the same line and `} else {` must be one line — the language settled brace placement, not a style guide."
+    "Automatic semicolon insertion is why `{` stays on the same line and `} else {` must be one line, the language settled brace placement, not a style guide."
   ],
   quiz: [
     { q: "`var a = b + 1` is declared above `var b = f()` where f returns 2. What is `a`?",
-      options: ["1 — b is still zero", "A compile error: use before declaration", "3 — package vars initialise in dependency order", "Undefined"],
+      options: ["1, b is still zero", "A compile error: use before declaration", "3, package vars initialise in dependency order", "Undefined"],
       answer: 2,
       explain: "The compiler sorts package-level initialisation by dependency, so `b` is set first; declaration order only breaks ties." },
     { q: "What does `import _ \"github.com/lib/pq\"` achieve?",
-      options: ["Imports it without compiling it", "Runs the package's init() for its side effects — registering the SQL driver — without referencing any identifier", "Marks the import optional", "Silences the unused-import error for a dependency you do use"],
+      options: ["Imports it without compiling it", "Runs the package's init() for its side effects, registering the SQL driver, without referencing any identifier", "Marks the import optional", "Silences the unused-import error for a dependency you do use"],
       answer: 1,
       explain: "The blank name suppresses the unused-import error while still linking the package and running its init()." },
     { q: "Which job does NOT belong in `init()`?",
       options: ["Registering a driver or a metric", "Precomputing a lookup table", "Checking a compile-time invariant", "Loading configuration and connecting to the database"],
       answer: 3,
-      explain: "init() can only panic, always runs — including under `go test` — and cannot be stubbed. Fallible startup work belongs in a `run() error`." },
+      explain: "init() can only panic, always runs, including under `go test`, and cannot be stubbed. Fallible startup work belongs in a `run() error`." },
     { q: "How does Go make sure a documented example still works?",
-      options: ["It doesn't — comments aren't checked", "`ExampleXxx` functions with an `// Output:` comment are executed by `go test` and their stdout compared", "`go doc` runs code blocks", "A linter diffs comments against code"],
+      options: ["It doesn't, comments aren't checked", "`ExampleXxx` functions with an `// Output:` comment are executed by `go test` and their stdout compared", "`go doc` runs code blocks", "A linter diffs comments against code"],
       answer: 1,
       explain: "That is what makes examples the most reliable documentation in Go: CI compiles and asserts them." },
     { q: "Why does putting `else` on its own line fail to compile?",
@@ -436,14 +436,14 @@ if v, err := f(); err == nil { }`
   id: "collections",
   level: "Intermediate",
   icon: "🗂️",
-  title: "Arrays, Slices, Maps & Structs — With Internals",
+  title: "Arrays, Slices, Maps & Structs, With Internals",
   minutes: 22,
   blurb: "The slice header, capacity growth, the aliasing bug everyone hits, and map internals.",
   blocks: [
-    { t: "h", text: "Arrays: fixed size, and the size is part of the type" },
+    { t: "h", text: "Arrays" },
     { t: "p", html: "An array's length is part of its type, so <code>[3]int</code> and <code>[4]int</code> are different types. Assigning an array copies every element. Almost all Go code uses a slice instead, which is a view onto an array and can grow." },
     { t: "code", title: "You'll rarely use these directly", code:
-`var a [5]int                  // [0 0 0 0 0] — length is part of the type
+`var a [5]int                  // [0 0 0 0 0], length is part of the type
 b := [3]string{"x","y","z"}
 c := [...]int{1, 2, 3}        // compiler counts: [3]int
 
@@ -451,12 +451,12 @@ c := [...]int{1, 2, 3}        // compiler counts: [3]int
 // Arrays are VALUES: assigning or passing copies every element.
 d := b
 d[0] = "changed"
-fmt.Println(b[0])             // "x" — b is untouched`,
+fmt.Println(b[0])             // "x", b is untouched`,
       out: `x`
     },
 
-    { t: "h", text: "Slices: the workhorse — and a 3-word header" },
-    { t: "p", html: "A slice is <strong>not</strong> a container. It is a small struct — a <em>view</em> — that points at a backing array:" },
+    { t: "h", text: "Slices" },
+    { t: "p", html: "A slice is <strong>not</strong> a container. It is a small struct, a <em>view</em>, that points at a backing array:" },
     { t: "code", title: "runtime.slice", code:
 `type slice struct {
     array unsafe.Pointer  // start of the backing array
@@ -469,23 +469,23 @@ fmt.Println(b[0])             // "x" — b is untouched`,
 `var s []int                   // nil: len 0, cap 0, no backing array
 s = []int{1, 2, 3}            // literal
 s = make([]int, 5)            // len 5, cap 5, zeroed
-s = make([]int, 0, 100)       // len 0, cap 100 — PREALLOCATE when you know the size
+s = make([]int, 0, 100)       // len 0, cap 100, PREALLOCATE when you know the size
 
 s = append(s, 4)              // may reallocate; ALWAYS reassign the result
 s = append(s, 5, 6)
 s = append(s, other...)       // concatenate
 
-// Slicing: s[low:high] — low included, high excluded, shares memory
+// Slicing: s[low:high], low included, high excluded, shares memory
 t := s[1:3]
 u := s[:2]
 v := s[2:]
-w := s[1:3:4]                 // three-index: low:high:max — caps the new slice
+w := s[1:3:4]                 // three-index: low:high:max, caps the new slice
 
 // Copy, which does not alias
 dst := make([]int, len(src))
 n := copy(dst, src)           // copies min(len(dst), len(src))
 
-// Delete index i (order not preserved — cheap)
+// Delete index i (order not preserved, cheap)
 s[i] = s[len(s)-1]
 s = s[:len(s)-1]
 
@@ -493,10 +493,10 @@ s = s[:len(s)-1]
 s = append(s[:i], s[i+1:]...)
 // or, Go 1.21+:  s = slices.Delete(s, i, i+1)`
     },
-    { t: "note", kind: "deep", title: "How append grows capacity", html: "If <code>len &lt; cap</code>, <code>append</code> writes in place and returns a slice sharing the same array. If <code>len == cap</code>, it allocates a <strong>new, bigger</strong> array, copies everything, and returns a slice pointing at the new one — so the old slice no longer sees your change. Growth doubles while the slice is under <strong>256</strong> elements, then tapers geometrically toward ~1.25× (and the result is rounded up to a size class, so <code>cap</code> is often slightly larger than the arithmetic suggests). This amortises to O(1) per append but means <strong>you must use the return value</strong>, and that reallocation is why aliasing bugs are intermittent." },
+    { t: "note", kind: "deep", title: "How append grows capacity", html: "If <code>len &lt; cap</code>, <code>append</code> writes in place and returns a slice sharing the same array. If <code>len == cap</code>, it allocates a <strong>new, bigger</strong> array, copies everything, and returns a slice pointing at the new one, so the old slice no longer sees your change. Growth doubles while the slice is under <strong>256</strong> elements, then tapers geometrically toward ~1.25× (and the result is rounded up to a size class, so <code>cap</code> is often slightly larger than the arithmetic suggests). This amortises to O(1) per append but means <strong>you must use the return value</strong>, and that reallocation is why aliasing bugs are intermittent." },
     { t: "code", title: "The aliasing bug, demonstrated", code:
 `a := []int{1, 2, 3, 4, 5}
-b := a[1:3]                   // len 2, cap 4 — SHARES a's array
+b := a[1:3]                   // len 2, cap 4, SHARES a's array
 b[0] = 99
 fmt.Println(a)                // [1 99 3 4 5]  <- a changed!
 
@@ -508,18 +508,18 @@ b = append([]int(nil), a[1:3]...)   // or slices.Clone(a[1:3])`,
       out: `[1 99 3 4 5]
 [1 99 3 100 5]`
     },
-    { t: "note", kind: "warn", title: "The slice memory leak", html: "<code>small := huge[:10]</code> keeps the <strong>entire</strong> backing array alive — the GC can't free a 1 GB array because one 10-element view points into it. If you're holding a small piece of something big for a long time, copy it: <code>small := slices.Clone(huge[:10])</code>." },
+    { t: "note", kind: "warn", title: "The slice memory leak", html: "<code>small := huge[:10]</code> keeps the <strong>entire</strong> backing array alive, the GC can't free a 1 GB array because one 10-element view points into it. If you're holding a small piece of something big for a long time, copy it: <code>small := slices.Clone(huge[:10])</code>." },
 
-    { t: "h", text: "new vs make vs a composite literal" },
+    { t: "h", text: "new and make" },
     { t: "p", html: "<code>new(T)</code> allocates a <code>T</code> and returns a pointer to its zero value. It does not say whether that memory is on the stack or the heap. <code>make</code> is only for slices, maps, and channels, because those need extra setup beyond zeros. <code>T{...}</code> builds a value and fills the fields you name." },
     { t: "code", title: "Three ways to get memory, and they are not interchangeable", code:
-`// new(T) — allocates ZEROED storage for a T and returns a *T.
+`// new(T), allocates ZEROED storage for a T and returns a *T.
 //           It never initialises anything beyond zeroing.
 p := new(int)              // *int, *p == 0
 u := new(User)             // *User, every field zeroed  (same as &User{})
-s := new([]int)            // *[]int pointing at a NIL slice — rarely useful
+s := new([]int)            // *[]int pointing at a NIL slice, rarely useful
 
-// make(T, …) — ONLY for slices, maps and channels. It builds the internal
+// make(T, …), ONLY for slices, maps and channels. It builds the internal
 //              data structure (backing array / hash table / ring buffer) and
 //              returns a T, not a pointer.
 s2 := make([]int, 0, 100)  // len 0, cap 100
@@ -528,14 +528,14 @@ ch := make(chan int, 10)
 // make([]int, 5) is NOT the same as new([]int): the first is a usable
 // five-element slice, the second is a pointer to an unusable nil slice.
 
-// COMPOSITE LITERAL — allocate and initialise in one expression.
+// COMPOSITE LITERAL, allocate and initialise in one expression.
 u2 := User{Name: "Ada", Age: 30}     // a value
 u3 := &User{Name: "Ada"}             // a pointer; the idiomatic constructor body
 m2 := map[string]int{"a": 1}
 s3 := []int{1, 2, 3}
 a3 := [...]string{"x", "y"}
 
-// Returning a pointer to a local is FINE — escape analysis moves it to the heap.
+// Returning a pointer to a local is FINE, escape analysis moves it to the heap.
 func NewUser(name string) *User {
     return &User{Name: name, Created: time.Now()}   // no "new", no ceremony
 }
@@ -543,11 +543,11 @@ func NewUser(name string) *User {
 // Field names in struct literals are optional but ALWAYS use them: a positional
 // literal breaks silently when someone reorders or inserts a field.`
     },
-    { t: "note", kind: "tip", title: "Which one do I reach for?", html: "Slice, map or channel → <strong><code>make</code></strong>. Anything with values to set → <strong>composite literal</strong> (<code>&amp;T{…}</code>). <code>new</code> is genuinely rare in idiomatic Go — mostly <code>new(bytes.Buffer)</code> inside a <code>sync.Pool</code>, or when you need a <code>*int</code>/<code>*bool</code> to represent \"set\" in a JSON payload." },
+    { t: "note", kind: "tip", title: "Which one do I reach for?", html: "Slice, map or channel → <strong><code>make</code></strong>. Anything with values to set → <strong>composite literal</strong> (<code>&amp;T{…}</code>). <code>new</code> is genuinely rare in idiomatic Go, mostly <code>new(bytes.Buffer)</code> inside a <code>sync.Pool</code>, or when you need a <code>*int</code>/<code>*bool</code> to represent \"set\" in a JSON payload." },
 
-    { t: "h", text: "Slices of slices (2-D data)" },
+    { t: "h", text: "Nested slices" },
     { t: "p", html: "A slice of slices is not one rectangle. Each inner slice has its own length and its own backing array. If you want a grid that shares one block of memory, use one slice and compute the index yourself." },
-    { t: "code", title: "Rows are independent — unless you make them share", code:
+    { t: "code", title: "Rows are independent, unless you make them share", code:
 `// Go has no built-in 2-D slice: you build a slice of slices. Each row is a
 // separate allocation, so rows may have different lengths (a jagged array).
 grid := make([][]int, rows)
@@ -556,7 +556,7 @@ for i := range grid {
 }
 
 // For a fixed rectangle, ONE allocation is faster and far kinder to the GC and
-// to cache locality — a single backing array sliced into rows:
+// to cache locality, a single backing array sliced into rows:
 flat := make([]int, rows*cols)
 grid2 := make([][]int, rows)
 for i := range grid2 {
@@ -564,20 +564,20 @@ for i := range grid2 {
 }
 // grid2[r][c] now lives at flat[r*cols+c]: contiguous memory, 2 allocations.
 
-// Or skip the row headers entirely and index arithmetic yourself — the fastest
+// Or skip the row headers entirely and index arithmetic yourself, the fastest
 // option, and what you want for images, matrices and game boards:
 at := func(r, c int) int { return flat[r*cols+c] }`
     },
 
-    { t: "h", text: "Maps: hash tables with explicit presence checks" },
+    { t: "h", text: "Maps" },
     { t: "p", html: "A map looks up a value by a key. Reading a missing key returns the zero value, so use <code>v, ok := m[k]</code> when zero could be a real stored value. A nil map can be read and panics if you write to it. Ranging a map visits keys in a random order." },
     { t: "code", title: "Everything you need", code:
 `m := make(map[string]int)
 m2 := map[string]int{"a": 1, "b": 2}
-var m3 map[string]int         // nil — reads OK, writes PANIC
+var m3 map[string]int         // nil, reads OK, writes PANIC
 
 m["key"] = 42
-v := m["missing"]            // 0 — no error, no panic
+v := m["missing"]            // 0, no error, no panic
 
 // The comma-ok idiom: distinguishes "zero value" from "absent"
 v, ok := m["key"]
@@ -600,9 +600,9 @@ if _, ok := seen["a"]; ok { }
 // Preallocate when you know the rough size
 counts := make(map[string]int, 1000)`
     },
-    { t: "note", kind: "deep", title: "Map internals (and two hard rules)", html: "Classically (Go ≤1.23) a map was an array of <em>buckets</em> holding 8 key/value pairs each, plus the top 8 bits of every key's hash for fast rejection, with overflow buckets chaining on collision and an incremental rehash once the load factor passed ~6.5 per bucket. <strong>Go 1.24 replaced that with <em>Swiss tables</em></strong> — flat groups of 8 slots with an SIMD-friendly control word — which made lookups and deletes measurably faster and shrank small maps. The implementation changes; the <em>contract</em> never does: <strong>(1)</strong> <code>&amp;m[k]</code> is illegal because growth relocates entries — store pointers as values if you need in-place mutation; <strong>(2)</strong> maps are <strong>not</strong> safe for concurrent use, and a concurrent read+write triggers a deliberate runtime throw (\"concurrent map writes\") rather than silent corruption. Use a <code>sync.RWMutex</code> or <code>sync.Map</code>." },
+    { t: "note", kind: "deep", title: "Map internals (and two hard rules)", html: "Classically (Go ≤1.23) a map was an array of <em>buckets</em> holding 8 key/value pairs each, plus the top 8 bits of every key's hash for fast rejection, with overflow buckets chaining on collision and an incremental rehash once the load factor passed ~6.5 per bucket. <strong>Go 1.24 replaced that with <em>Swiss tables</em></strong>, flat groups of 8 slots with an SIMD-friendly control word, which made lookups and deletes measurably faster and shrank small maps. The implementation changes; the <em>contract</em> never does: <strong>(1)</strong> <code>&amp;m[k]</code> is illegal because growth relocates entries, store pointers as values if you need in-place mutation; <strong>(2)</strong> maps are <strong>not</strong> safe for concurrent use, and a concurrent read+write triggers a deliberate runtime throw (\"concurrent map writes\") rather than silent corruption. Use a <code>sync.RWMutex</code> or <code>sync.Map</code>." },
 
-    { t: "h", text: "Structs: your own types" },
+    { t: "h", text: "Structs" },
     { t: "p", html: "A struct is one value made of named fields. You read a field with a dot. A struct literal can name the fields, which still compiles if you later add a field, or it can list values in order, which breaks when the order changes. Tags such as <code>json:\"name\"</code> are text the encoding packages read." },
     { t: "code", title: "Declaring, embedding, tagging, comparing", code:
 `type User struct {
@@ -620,7 +620,7 @@ var u3 User                             // all fields zeroed
 type Address struct { City, Country string }
 
 type Customer struct {
-    User                                // EMBEDDED (anonymous) — promotes fields
+    User                                // EMBEDDED (anonymous), promotes fields
     Address Address                     // named field
     Tags    []string
 }
@@ -644,18 +644,18 @@ done := make(chan struct{})             // the idiomatic "notify only" channel`
     temp  string  // unexported: invisible to encoding/json
 }
 // Tags are just strings. encoding/json, sql drivers and validators read them
-// at runtime via reflection — the compiler does not check them, so typos are
+// at runtime via reflection, the compiler does not check them, so typos are
 // silent bugs. Keep them simple and test your marshalling.`
     },
-    { t: "note", kind: "tip", title: "Field order affects struct size", html: "Fields are aligned, so <code>struct{a bool; b int64; c bool}</code> occupies 24 bytes while <code>struct{b int64; a, c bool}</code> occupies 16. Group same-sized fields together — largest first — when you have millions of instances." }
+    { t: "note", kind: "tip", title: "Field order affects struct size", html: "Fields are aligned, so <code>struct{a bool; b int64; c bool}</code> occupies 24 bytes while <code>struct{b int64; a, c bool}</code> occupies 16. Group same-sized fields together, largest first, when you have millions of instances." }
   ],
   summary: [
     "Arrays are fixed-size values; their length is part of the type and assignment copies.",
-    "A slice is a 3-word header (pointer, len, cap) viewing a backing array — always `s = append(s, …)`.",
+    "A slice is a 3-word header (pointer, len, cap) viewing a backing array, always `s = append(s, …)`.",
     "append writes in place while len < cap and reallocates (≈2× then ≈1.25×) when full; that's the source of aliasing bugs.",
-    "Sub-slices share memory — clone to isolate, and clone small views of huge arrays to avoid leaks.",
+    "Sub-slices share memory, clone to isolate, and clone small views of huge arrays to avoid leaks.",
     "Maps: `v, ok := m[k]` distinguishes absent from zero; iteration order is random; `&m[k]` is illegal; not concurrency-safe.",
-    "`make` builds slices/maps/channels; `new(T)` returns a zeroed `*T`; a composite literal (`&T{…}`) allocates *and* initialises — and is what idiomatic constructors return.",
+    "`make` builds slices/maps/channels; `new(T)` returns a zeroed `*T`; a composite literal (`&T{…}`) allocates *and* initialises, and is what idiomatic constructors return.",
     "Always name fields in struct literals; positional literals break silently when fields are reordered.",
     "2-D data is a slice of slices; for a fixed rectangle, carve rows out of one flat backing array for contiguity and fewer allocations.",
     "Structs compare with == only if all fields are comparable; embedding promotes fields; `struct{}` costs zero bytes."
@@ -678,7 +678,7 @@ done := make(chan struct{})             // the idiomatic "notify only" channel`
       answer: 1,
       explain: "The comma-ok form is the only reliable way; 0 could be a real stored value." },
     { q: "Two goroutines write to the same map with no synchronisation. What happens?",
-      options: ["Last write wins", "It's safe — maps are internally locked", "The runtime detects it and throws 'concurrent map writes'", "Silent corruption only"],
+      options: ["Last write wins", "It's safe, maps are internally locked", "The runtime detects it and throws 'concurrent map writes'", "Silent corruption only"],
       answer: 2,
       explain: "The runtime has a cheap check that crashes the program on purpose. Use a mutex or sync.Map." }
   ]
@@ -693,12 +693,12 @@ done := make(chan struct{})             // the idiomatic "notify only" channel`
   minutes: 18,
   blurb: "Where your data actually lives, why Go has no pointer arithmetic, and value vs pointer semantics.",
   blocks: [
-    { t: "h", text: "Pointers, minus the footguns" },
+    { t: "h", text: "Pointers" },
     { t: "p", html: "A pointer holds the address of a value. <code>&amp;x</code> takes the address. <code>*p</code> reads or writes the value at that address. Go has no pointer arithmetic, so you cannot walk off an array by adding to a pointer. A nil pointer panics if you dereference it." },
     { t: "code", title: "& takes an address, * dereferences", code:
 `x := 42
-p := &x              // p is *int — a pointer to x
-fmt.Println(*p)      // 42 — dereference to read
+p := &x              // p is *int, a pointer to x
+fmt.Println(*p)      // 42, dereference to read
 *p = 100             // write through the pointer
 fmt.Println(x)       // 100
 
@@ -715,7 +715,7 @@ q := new(int)        // *q == 0
       out: `42
 100`
     },
-    { t: "note", kind: "tip", title: "Go is pass-by-value, always", html: "Every argument is copied. Passing a pointer copies the <em>pointer</em> (8 bytes), which is how the callee mutates the caller's data. Slices, maps and channels <em>feel</em> like references because their copied headers point at the same underlying data — but the header itself is still a copy, which is exactly why <code>append</code> inside a function can't change the caller's length." },
+    { t: "note", kind: "tip", title: "Go is pass-by-value, always", html: "Every argument is copied. Passing a pointer copies the <em>pointer</em> (8 bytes), which is how the callee mutates the caller's data. Slices, maps and channels <em>feel</em> like references because their copied headers point at the same underlying data, but the header itself is still a copy, which is exactly why <code>append</code> inside a function can't change the caller's length." },
     { t: "code", title: "Value vs pointer receivers and parameters", code:
 `type Counter struct{ n int }
 
@@ -733,10 +733,10 @@ func addItem3(s []int) []int { return append(s, 1) }  // idiomatic: return it`,
       out: `0
 1`
     },
-    { t: "p", html: "<strong>When to use a pointer receiver:</strong> the method mutates the receiver; the struct is large (copying costs more than 8 bytes of indirection); or the type contains a <code>sync.Mutex</code> (copying a mutex is a bug). <strong>Be consistent</strong> — if any method on a type needs a pointer receiver, give them all pointer receivers." },
+    { t: "p", html: "<strong>When to use a pointer receiver:</strong> the method mutates the receiver; the struct is large (copying costs more than 8 bytes of indirection); or the type contains a <code>sync.Mutex</code> (copying a mutex is a bug). <strong>Be consistent</strong>, if any method on a type needs a pointer receiver, give them all pointer receivers." },
 
-    { t: "h", text: "Stack vs heap — and who decides" },
-    { t: "p", html: "The stack is the function's scratch space. It disappears when the function returns. The heap is memory that can outlive the function, and the garbage collector frees it later. You do not choose. The compiler does, based on whether a value must stay alive after the function returns." },
+    { t: "h", text: "Stack and heap" },
+    { t: "p", html: "A value lives in one of two places. The <strong>stack</strong> belongs to one goroutine. It holds the function that is running, and it disappears when that function returns. The <strong>heap</strong> is shared memory that can outlive the function. Only the heap is freed by the garbage collector, the search from lesson 1." },
     { t: "table", head: ["", "Stack", "Heap"],
       rows: [
         ["Allocation cost", "~free (bump a pointer)", "allocator work + GC bookkeeping"],
@@ -746,8 +746,13 @@ func addItem3(s []int) []int { return append(s, 1) }  // idiomatic: return it`,
         ["Chosen by", "the compiler", "the compiler"]
       ]
     },
+    { t: "h", text: "Stack frames" },
+    { t: "p", html: "When <code>main</code> calls <code>score</code>, Go pushes a frame for <code>score</code> on top of <code>main</code>. The locals of <code>score</code> are slots in that frame. <code>n = 10</code> writes into the slot <code>n</code> already has. It does not ask for new memory. When <code>score</code> returns, the frame is popped and the next call reuses those bytes. That is why a stack allocation is almost free: it moves a pointer." },
+    { t: "diagram", id: "call-stack" },
+    { t: "h", text: "Escape analysis" },
+    { t: "p", html: "Returning the number copies it into the caller, so the frame can die. Returning <code>&amp;n</code> hands out the address of <code>n</code>. If the frame disappeared, that address would point at reused bytes. The compiler sees this and puts <code>n</code> on the heap instead. That decision is escape analysis. You do not write it. <code>new(int)</code> and <code>&amp;n</code> mean \"I need a pointer\". They do not mean \"put this on the heap\"." },
     { t: "diagram", id: "stack-heap" },
-    { t: "p", html: "In C, <code>malloc</code> means heap and a local means stack. In Go <strong>you don't choose</strong> — the compiler runs <em>escape analysis</em> and places each value wherever is safe and cheap. <code>new()</code> does not imply heap; <code>&amp;x</code> on a local does not imply heap." },
+    { t: "p", html: "In C, <code>malloc</code> means heap and a local means stack. In Go the compiler places each value wherever is safe and cheap." },
     { t: "code", title: "Ask the compiler what it decided", code:
 `$ go build -gcflags="-m" main.go
 ./main.go:8:6:  can inline makeLocal
@@ -755,8 +760,8 @@ func addItem3(s []int) []int { return append(s, 1) }  // idiomatic: return it`,
 ./main.go:9:2:  moved to heap: u
 
 # Value escapes when the compiler can't prove it dies with the frame:
-func stays() int   { x := 42; return x }        // stack — copied out
-func escapes() *int { x := 42; return &x }      // heap — pointer outlives frame
+func stays() int   { x := 42; return x }        // stack, copied out
+func escapes() *int { x := 42; return &x }      // heap, pointer outlives frame
 
 # Common escape triggers:
 #  • returning a pointer to a local
@@ -765,16 +770,16 @@ func escapes() *int { x := 42; return &x }      // heap — pointer outlives fra
 #  • capturing a variable in a closure that outlives the call
 #  • a size the compiler can't determine at compile time (make([]int, n))`
     },
-    { t: "note", kind: "deep", title: "Goroutine stacks grow", html: "A goroutine starts with a tiny <strong>2 KB</strong> stack — which is why a million of them is feasible. When a function needs more room, the runtime allocates a larger stack, <em>copies the frames across</em>, and rewrites the pointers into it. That copying is only possible because Go has no pointer arithmetic and the GC knows precisely where every pointer lives." },
+    { t: "note", kind: "deep", title: "Goroutine stacks grow", html: "A goroutine starts with a tiny <strong>2 KB</strong> stack, which is why a million of them is feasible. When a function needs more room, the runtime allocates a larger stack, <em>copies the frames across</em>, and rewrites the pointers into it. That copying is only possible because Go has no pointer arithmetic and the GC knows precisely where every pointer lives." },
 
-    { t: "h", text: "Writing allocation-light code" },
+    { t: "h", text: "Allocations" },
     { t: "p", html: "A value that does not outlive the function can stay on the stack, which is cheap. If you return a pointer to it, or store it somewhere that lives longer, it moves to the heap and the garbage collector has to free it later. <code>go build -gcflags=\"-m\"</code> prints which choice the compiler made." },
     { t: "code", title: "Measure first, then fix", code:
 `// Benchmark with allocation counts
 // go test -bench=. -benchmem
 // BenchmarkNaive-8   500000   2400 ns/op   1808 B/op   11 allocs/op
 
-// 1. Preallocate with a known capacity — turns ~log2(n) growths into one alloc
+// 1. Preallocate with a known capacity, turns ~log2(n) growths into one alloc
 out := make([]string, 0, len(in))
 
 // 2. Reuse buffers instead of allocating per call
@@ -784,29 +789,29 @@ buf.Reset()
 defer pool.Put(buf)
 
 // 3. Pass small structs by value; they stay on the stack
-// 4. Avoid any/interface{} on hot paths — boxing forces an escape
+// 4. Avoid any/interface{} on hot paths, boxing forces an escape
 // 5. strings.Builder over += ; strconv over fmt.Sprintf for single values`
     },
     { t: "note", kind: "warn", title: "Don't guess", html: "Escape analysis and inlining are smarter than intuition. Prove a problem with <code>-benchmem</code> and <code>pprof</code> before contorting readable code." }
   ],
   summary: [
     "`&` takes an address, `*` dereferences; there is no pointer arithmetic, which eliminates a whole class of memory bugs.",
-    "Go is always pass-by-value — passing a pointer copies the pointer, which is how callees mutate caller state.",
+    "Go is always pass-by-value, passing a pointer copies the pointer, which is how callees mutate caller state.",
     "Pointer receivers for mutation, large structs, or types containing a mutex; keep receivers consistent per type.",
-    "Appending inside a function can't change the caller's slice length — return the slice instead.",
+    "Appending inside a function can't change the caller's slice length, return the slice instead.",
     "The compiler, not you, picks stack or heap via escape analysis; inspect it with `go build -gcflags=\"-m\"`.",
-    "Goroutine stacks start at 2 KB and grow by copying — cheap concurrency depends on it."
+    "Goroutine stacks start at 2 KB and grow by copying, cheap concurrency depends on it."
   ],
   quiz: [
     { q: "What does `x++` do if `x` is a `*int`?",
-      options: ["Advances the pointer one int", "Increments the pointed-to value", "Compile error — no pointer arithmetic", "Undefined behaviour"],
+      options: ["Advances the pointer one int", "Increments the pointed-to value", "Compile error, no pointer arithmetic", "Undefined behaviour"],
       answer: 2,
       explain: "Go has no pointer arithmetic at all. To increment the value: `*x++`." },
     { q: "Who decides whether a value goes on the stack or the heap?",
       options: ["You, via new() vs literal", "The compiler, via escape analysis", "The garbage collector at runtime", "The OS"],
       answer: 1,
       explain: "`new()` says nothing about location. Inspect decisions with `-gcflags=\"-m\"`." },
-    { q: "`func f(s []int) { s = append(s, 1) }` — the caller's slice afterwards?",
+    { q: "`func f(s []int) { s = append(s, 1) }`, the caller's slice afterwards?",
       options: ["Has the new element", "Is unchanged in length", "Panics", "Depends on capacity"],
       answer: 1,
       explain: "The header is a copy, so the caller's len never changes. Return the slice or pass `*[]int`." },
@@ -830,7 +835,7 @@ defer pool.Put(buf)
   minutes: 20,
   blurb: "Implicit satisfaction, small interfaces, embedding instead of inheritance, and the nil-interface trap.",
   blocks: [
-    { t: "h", text: "Methods are functions with a receiver" },
+    { t: "h", text: "Methods" },
     { t: "p", html: "A method is a function with the receiver named before the function name: <code>func (p Point) Abs() float64</code>. A value receiver gets a copy. A pointer receiver can change the original. You can declare methods on any named type in your package, not only structs." },
     { t: "code", title: "You can define methods on any type you own", code:
 `type Rect struct{ W, H float64 }
@@ -839,7 +844,7 @@ func (r Rect) Area() float64      { return r.W * r.H }       // value receiver
 func (r Rect) Perimeter() float64 { return 2 * (r.W + r.H) }
 func (r *Rect) Scale(f float64)   { r.W *= f; r.H *= f }     // pointer receiver
 
-// Not just structs — any named type you declare
+// Not just structs, any named type you declare
 type Celsius float64
 func (c Celsius) Fahrenheit() float64 { return float64(c)*9/5 + 32 }
 
@@ -850,7 +855,7 @@ func (s IntSlice) Sum() int { t := 0; for _, v := range s { t += v }; return t }
 // Define your own type that wraps or embeds theirs instead.`
     },
 
-    { t: "h", text: "Method sets — the rule behind most interface errors" },
+    { t: "h", text: "Method sets" },
     { t: "p", html: "The method set is the list of methods a type has for the purpose of satisfying an interface. A pointer type has both value and pointer methods. A plain value has only the value methods. That is why a value sometimes does not satisfy an interface that its pointer does." },
     { t: "code", title: "T and *T do not have the same method set", code:
 `type Counter struct{ n int }
@@ -867,7 +872,7 @@ var _ Incrementer = &Counter{}    // OK
 // var _ Incrementer = Counter{}  // COMPILE ERROR: Inc has a pointer receiver
 //                                // "method Inc has pointer receiver"
 
-// Calling it directly looks like it works, because Go inserts &c for you —
+// Calling it directly looks like it works, because Go inserts &c for you, 
 // but ONLY when the value is ADDRESSABLE:
 c := Counter{}
 c.Inc()                       // fine: shorthand for (&c).Inc()
@@ -879,15 +884,15 @@ m := map[string]Counter{"a": {}}
 var items []Counter
 items[0].Inc()                // fine: slice elements ARE addressable
 
-// Same trap in a range loop — v is a copy, so mutation is lost:
+// Same trap in a range loop, v is a copy, so mutation is lost:
 for _, v := range items { v.Inc() }        // no effect on items
 for i := range items     { items[i].Inc() } // correct`
     },
     { t: "note", kind: "tip", title: "The practical rule", html: "Pick <strong>one</strong> receiver kind per type and stick to it; if any method needs a pointer, make them all pointers. Then store and pass <code>*T</code> everywhere, and the whole class of \"method has pointer receiver\" and \"not addressable\" errors disappears." },
 
-    { t: "h", text: "Interfaces: a set of method signatures, satisfied implicitly" },
+    { t: "h", text: "Interfaces" },
     { t: "p", html: "An interface is a list of methods. Any type that has those methods satisfies the interface. There is no <code>implements</code> keyword. An interface value is nil only when it holds neither a type nor a value. A nil pointer stored in an interface is not a nil interface." },
-    { t: "code", title: "No `implements` keyword — there is nothing to declare", code:
+    { t: "code", title: "No `implements` keyword, there is nothing to declare", code:
 `type Shape interface {
     Area() float64
     Perimeter() float64
@@ -903,9 +908,9 @@ func describe(s Shape) {
 // costing zero bytes. Put it near your type when the link matters.
 var _ Shape = (*Rect)(nil)`
     },
-    { t: "note", kind: "tip", title: "\"Accept interfaces, return structs\"", html: "Take the smallest interface you need as a parameter — callers can pass anything, including a fake in tests. Return concrete types so callers keep full access and you don't have to guess what they'll want." },
+    { t: "note", kind: "tip", title: "\"Accept interfaces, return structs\"", html: "Take the smallest interface you need as a parameter, callers can pass anything, including a fake in tests. Return concrete types so callers keep full access and you don't have to guess what they'll want." },
 
-    { t: "h", text: "Small interfaces win" },
+    { t: "h", text: "Small interfaces" },
     { t: "p", html: "An interface with one method, such as <code>io.Reader</code>, is easy to implement and easy to fake in a test. Declare the interface in the package that uses it, not in the package that provides the concrete type." },
     { t: "code", title: "The single-method interfaces that hold the stdlib together", code:
 `type Reader interface { Read(p []byte) (n int, err error) }
@@ -928,7 +933,7 @@ fmt.Println(Point{1,2})           // (1,2)
 type ReadWriter interface { Reader; Writer }`
     },
 
-    { t: "h", text: "Type assertions and type switches" },
+    { t: "h", text: "Type assertions" },
     { t: "p", html: "<code>v, ok := i.(string)</code> asks whether the interface <code>i</code> holds a string. If it does not, <code>ok</code> is false and the program does not panic. <code>switch v := i.(type)</code> does the same for several types, and <code>v</code> has the matched type inside each case." },
     { t: "code", title: "Getting the concrete value back out", code:
 `var i any = "hello"
@@ -944,11 +949,11 @@ case Shape:  fmt.Println("area", v.Area())   // interfaces work as cases too
 default:     fmt.Printf("unhandled %T\\n", v)
 }
 
-// Probing for an optional capability — a very common stdlib move
+// Probing for an optional capability, a very common stdlib move
 if f, ok := w.(io.Closer); ok { f.Close() }`
     },
 
-    { t: "h", text: "Embedding instead of inheritance" },
+    { t: "h", text: "Embedding" },
     { t: "p", html: "Writing a type inside a struct with no field name promotes its fields and methods, so you can call them on the outer value. That looks like inheritance. It is not: the outer type does not become the inner type, and there is no automatic call back to the outer type." },
     { t: "code", title: "Composition with method promotion", code:
 `type Animal struct{ Name string }
@@ -981,7 +986,7 @@ func (l LoggingStore) Get(k string) (string, error) {
     { t: "note", kind: "deep", title: "What an interface value actually is" },
     { t: "p", html: "Two words: a pointer to <strong>type information</strong> (the <em>itab</em>, holding the dynamic type plus a method dispatch table) and a pointer to the <strong>data</strong>. An interface is nil only when <em>both</em> words are nil. That detail causes Go's most infamous bug:" },
     { t: "diagram", id: "iface-value" },
-    { t: "code", title: "The nil-interface trap — read this twice", code:
+    { t: "code", title: "The nil-interface trap, read this twice", code:
 `type MyErr struct{}
 func (e *MyErr) Error() string { return "boom" }
 
@@ -1002,35 +1007,35 @@ func good() error {
 }
 
 // Same rule: never declare a function's return type as a concrete
-// error pointer (*MyErr) — return the error interface.`
+// error pointer (*MyErr), return the error interface.`
     }
   ],
   summary: [
     "Methods attach to any type you define, with value or pointer receivers.",
-    "`*T`'s method set includes value *and* pointer methods; `T`'s has only value methods — so a `T` value may fail to satisfy an interface its pointer satisfies.",
-    "Go auto-takes the address for `c.Inc()` only when the value is addressable — map elements and range copies are not.",
-    "Interfaces are satisfied implicitly — no `implements`, no registration, no coupling to the interface.",
+    "`*T`'s method set includes value *and* pointer methods; `T`'s has only value methods, so a `T` value may fail to satisfy an interface its pointer satisfies.",
+    "Go auto-takes the address for `c.Inc()` only when the value is addressable, map elements and range copies are not.",
+    "Interfaces are satisfied implicitly, no `implements`, no registration, no coupling to the interface.",
     "Keep interfaces small (often one method); that's why `io.Reader`/`io.Writer` compose with everything.",
     "Accept interfaces, return concrete types. `var _ I = (*T)(nil)` asserts conformance at compile time.",
     "`v, ok := x.(T)` is the safe assertion; type switches handle many cases including other interfaces.",
-    "Embedding promotes methods but is composition, not inheritance — there's no virtual dispatch to the outer type.",
+    "Embedding promotes methods but is composition, not inheritance, there's no virtual dispatch to the outer type.",
     "An interface holding a nil pointer is **not** nil: return literal `nil`, never a typed nil pointer."
   ],
   quiz: [
     { q: "How does a type declare that it implements an interface?",
-      options: ["`implements Shape`", "Embed the interface", "It doesn't — having the methods is enough", "Register it with the runtime"],
+      options: ["`implements Shape`", "Embed the interface", "It doesn't, having the methods is enough", "Register it with the runtime"],
       answer: 2,
       explain: "Satisfaction is structural and implicit, checked at compile time wherever the value is used as the interface." },
     { q: "`func f() error { var p *MyErr; return p }`. Is `f() != nil`?",
-      options: ["False — p is nil", "True — the interface carries the *MyErr type word", "Compile error", "Panics"],
+      options: ["False, p is nil", "True, the interface carries the *MyErr type word", "Compile error", "Panics"],
       answer: 1,
       explain: "An interface is nil only when both its type and data words are nil. Return literal nil instead." },
     { q: "Best practice for function signatures?",
       options: ["Accept concrete, return interfaces", "Accept interfaces, return concrete types", "Interfaces everywhere", "Concrete everywhere"],
       answer: 1,
-      explain: "Flexible input, maximally useful output — and it keeps tests easy to fake." },
+      explain: "Flexible input, maximally useful output, and it keeps tests easy to fake." },
     { q: "`Dog` embeds `Animal` and defines its own `Speak()`. A function taking an `Animal` value and calling `Speak()` gets?",
-      options: ["Dog's Speak — virtual dispatch", "Animal's Speak — there is no inheritance", "Compile error", "Whichever was defined last"],
+      options: ["Dog's Speak, virtual dispatch", "Animal's Speak, there is no inheritance", "Compile error", "Whichever was defined last"],
       answer: 1,
       explain: "Embedding is composition. Passing a Dog as an Animal copies the embedded struct; Animal knows nothing about Dog." },
     { q: "`Inc()` has a pointer receiver on `Counter`. Which line fails to compile?",
@@ -1049,7 +1054,7 @@ func good() error {
   minutes: 18,
   blurb: "Errors are values. Wrap for context, inspect with errors.Is/As, and panic only for bugs.",
   blocks: [
-    { t: "h", text: "error is just an interface" },
+    { t: "h", text: "Errors" },
     { t: "p", html: "An error is any type with an <code>Error() string</code> method. Returning <code>nil</code> means success. The usual signature is <code>(result, error)</code>, with the error last. Check the error before you use the result." },
     { t: "code", title: "One method, enormous consequences", code:
 `type error interface {
@@ -1077,9 +1082,9 @@ if err != nil {
 }
 use(u)`
     },
-    { t: "note", kind: "tip", title: "Why no exceptions?", html: "Exceptions make failure <em>invisible</em> at the call site — any line might throw, and control flow jumps somewhere you can't see. Go makes failure part of the signature. It's wordier; it's also why Go code tends to handle its errors." },
+    { t: "note", kind: "tip", title: "Why no exceptions?", html: "Exceptions make failure <em>invisible</em> at the call site, any line might throw, and control flow jumps somewhere you can't see. Go makes failure part of the signature. It's wordier; it's also why Go code tends to handle its errors." },
 
-    { t: "h", text: "Wrapping: build a chain of context" },
+    { t: "h", text: "Wrapping errors" },
     { t: "p", html: "<code>fmt.Errorf(\"reading %s: %w\", path, err)</code> adds context and keeps the original error. <code>%w</code> is what lets <code>errors.Is</code> and <code>errors.As</code> walk the chain. <code>%v</code> makes a new error and throws the chain away." },
     { t: "code", title: "%w wraps; errors.Is and errors.As unwrap", code:
 `// %w embeds the original error so it stays inspectable.
@@ -1090,12 +1095,12 @@ if err != nil {
 // Message reads top-down:
 // "starting server: fetching config \\"app.yaml\\": open app.yaml: no such file"
 
-// errors.Is — compare against a sentinel ANYWHERE in the chain
+// errors.Is, compare against a sentinel ANYWHERE in the chain
 if errors.Is(err, os.ErrNotExist)  { /* file missing */ }
 if errors.Is(err, ErrNotFound)     { return http.StatusNotFound }
 if errors.Is(err, context.DeadlineExceeded) { /* timed out */ }
 
-// errors.As — extract a concrete error type from the chain
+// errors.As, extract a concrete error type from the chain
 var pathErr *os.PathError
 if errors.As(err, &pathErr) {
     fmt.Println("failed on path:", pathErr.Path)
@@ -1108,7 +1113,7 @@ err = errors.Join(err1, err2)
 // once it's been wrapped. Always use errors.Is.`
     },
 
-    { t: "h", text: "Custom error types" },
+    { t: "h", text: "Custom errors" },
     { t: "p", html: "A struct with an <code>Error() string</code> method is an error that can carry fields, such as a status code. Callers who need those fields use <code>errors.As</code> to pull the struct back out of the chain." },
     { t: "code", title: "When callers need structured detail", code:
 `type ValidationError struct {
@@ -1135,7 +1140,7 @@ if errors.As(err, &ve) {
 }`
     },
 
-    { t: "h", text: "Panic and recover — not your error handling" },
+    { t: "h", text: "Panic and recover" },
     { t: "p", html: "<code>panic</code> stops the normal flow for a bug you did not expect, such as a nil that must not be nil. <code>recover</code> only works inside a deferred function in the same goroutine. Do not use panic for a bad user request. Return an error." },
     { t: "code", title: "Panic is for \"this program has a bug\"", code:
 `// Panic unwinds the stack, running deferred functions as it goes,
@@ -1147,7 +1152,7 @@ panic("unreachable state")
 //   writing to a nil map         closing a closed channel
 //   integer divide by zero       failed single-value type assertion
 
-// recover() stops a panic — but ONLY inside a deferred function
+// recover() stops a panic, but ONLY inside a deferred function
 func safeDo() (err error) {
     defer func() {
         if r := recover(); r != nil {
@@ -1174,12 +1179,12 @@ func middleware(next http.Handler) http.Handler {
 }`
     },
     { t: "note", kind: "warn", title: "recover() does not cross goroutines", html: "A panic in a goroutine can only be recovered by a deferred function <strong>in that same goroutine</strong>. An unrecovered panic anywhere kills the whole process. Every goroutine that runs untrusted or complex work needs its own recover." },
-    { t: "p", html: "<code>log.Fatal</code> (prints then <code>os.Exit(1)</code>) is appropriate in <code>main</code> for unrecoverable startup failures — but note it skips deferred functions. Never call it from a library." },
+    { t: "p", html: "<code>log.Fatal</code> (prints then <code>os.Exit(1)</code>) is appropriate in <code>main</code> for unrecoverable startup failures, but note it skips deferred functions. Never call it from a library." },
 
-    { t: "h", text: "Patterns worth adopting" },
+    { t: "h", text: "Error handling patterns" },
     { t: "p", html: "These are the shapes you will see in the standard library: wrap errors with context, check them at the boundary, and keep interfaces small. Copy the shape, not a framework." },
     { t: "code", title: "Three habits", code:
-`// 1. Handle once. Either wrap-and-return OR log — doing both duplicates noise.
+`// 1. Handle once. Either wrap-and-return OR log, doing both duplicates noise.
 if err != nil { return fmt.Errorf("saving user: %w", err) }
 
 // 2. Add context the caller can't infer: what you were doing, which input.
@@ -1208,9 +1213,9 @@ default:                            w.WriteHeader(500)
     "Wrap with `%w` to add context while preserving the cause; `%v` flattens and loses the chain.",
     "`errors.Is` compares against sentinels through the chain; `errors.As` extracts a concrete type. Never `==` across a wrap.",
     "Custom error types carry structured data; implement `Unwrap()` to stay in the chain.",
-    "Panic means programmer bug — nil deref, index out of range, write to nil map — not an expected failure.",
+    "Panic means programmer bug, nil deref, index out of range, write to nil map, not an expected failure.",
     "`recover()` only works in a deferred function in the *same* goroutine; use it at server/library boundaries.",
-    "Handle an error once: wrap and return, or log — not both."
+    "Handle an error once: wrap and return, or log, not both."
   ],
   quiz: [
     { q: "Difference between `%w` and `%v` in `fmt.Errorf`?",
@@ -1230,7 +1235,7 @@ default:                            w.WriteHeader(500)
       answer: 2,
       explain: "Nil-map writes panic. The other three are all well-defined and safe." },
     { q: "When should a library panic?",
-      options: ["On any invalid input", "On network failure", "Essentially never — return an error; panic signals a programmer bug", "Instead of returning errors, for speed"],
+      options: ["On any invalid input", "On network failure", "Essentially never, return an error; panic signals a programmer bug", "Instead of returning errors, for speed"],
       answer: 2,
       explain: "Panics escape the caller's control flow. Reserve them for impossible states, and recover at your public boundary if internals panic." }
   ]
