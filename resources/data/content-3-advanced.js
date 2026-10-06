@@ -233,7 +233,7 @@ id, _ := ctx.Value(ctxKey{}).(string)`
 
     { t: "h", text: "Memory model" },
     { t: "p", html: "\"<strong>Don't communicate by sharing memory; share memory by communicating.</strong>\" Channels transfer both data and <em>happens-before</em> ordering: a send happens before the corresponding receive completes, so whatever you wrote before the send is visible after the receive. Mutex unlock happens before a later lock. Without one of these synchronisation points, there is <strong>no</strong> guarantee another goroutine ever sees your write." },
-    { t: "p", html: "Rule of thumb: use <strong>channels</strong> to pass ownership of data and to orchestrate pipelines; use a <strong>mutex</strong> to protect a single piece of state that many goroutines touch. Reaching for a channel where a mutex would do is a common over-correction." }
+    { t: "p", html: "Rule of thumb: use <strong>channels</strong> to pass ownership of data and to orchestrate pipelines; use a <strong>mutex</strong> to protect a single piece of state that many goroutines touch. Reaching for a channel where a mutex would do is a common over-correction." },
   ],
   summary: [
     "Goroutines are runtime-scheduled, ~2 KB to start, and multiplexed onto threads, hundreds of thousands are fine.",
@@ -425,7 +425,7 @@ go tool pprof -http=:8080 http://host:6060/debug/pprof/profile?seconds=30
     },
 
     { t: "h", text: "Goroutine stacks" },
-    { t: "p", html: "Each goroutine starts with a 2 KB <em>contiguous</em> stack. Every function prologue checks the stack bound; on overflow the runtime allocates a stack twice the size, copies the frames, and <strong>rewrites every pointer that referenced the old stack</strong>. That is only possible because the compiler emits precise pointer maps and Go forbids pointer arithmetic. Default maximum: 1 GB on 64-bit, infinite recursion produces \"stack overflow\", not a segfault." }
+    { t: "p", html: "Each goroutine starts with a 2 KB <em>contiguous</em> stack. Every function prologue checks the stack bound; on overflow the runtime allocates a stack twice the size, copies the frames, and <strong>rewrites every pointer that referenced the old stack</strong>. That is only possible because the compiler emits precise pointer maps and Go forbids pointer arithmetic. Default maximum: 1 GB on 64-bit, infinite recursion produces \"stack overflow\", not a segfault." },
   ],
   summary: [
     "The scheduler is M:N over G (goroutine), M (OS thread), P (run-queue context, count = GOMAXPROCS).",
@@ -582,7 +582,7 @@ cmp.Or(userVal, envVal, "default")        // first non-zero value`
 //    generic code grows binaries and build times.`
     },
     { t: "note", kind: "warn", title: "When NOT to use generics", html: "<strong>Do not</strong> reach for a type parameter when an <code>interface</code> with a method already expresses the idea, <code>io.Writer</code> needs no generics. Don't genericise a function that only ever has one instantiation. The official guidance is: write the concrete version first, and introduce type parameters only when you're genuinely duplicating a body for several types. Generics are for <em>container types and algorithms over them</em>, not for abstraction in general." },
-    { t: "p", html: "<strong>Interface vs type parameter, decided:</strong> if you need to call <em>behaviour</em> that each type implements differently → interface. If you need to work with <em>values of a type you don't care about</em> while keeping the exact type (containers, sort, min/max, map/filter) → type parameter." }
+    { t: "p", html: "<strong>Interface vs type parameter, decided:</strong> if you need to call <em>behaviour</em> that each type implements differently → interface. If you need to work with <em>values of a type you don't care about</em> while keeping the exact type (containers, sort, min/max, map/filter) → type parameter." },
   ],
   summary: [
     "Generics landed in Go 1.18: `func F[T any](...)` and `type S[T any] struct{...}`.",
