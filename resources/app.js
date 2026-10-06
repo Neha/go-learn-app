@@ -56,7 +56,7 @@ const PPOS = new Map(PORDER.map((p, i) => [p.id, i]));
 const KEY = "gofromzero.v1";
 let state = load();
 function load() {
-  const base = { done: {}, scores: {}, theme: null, text: 16, ms: {}, animPaused: false, collapsed: {} };
+  const base = { done: {}, scores: {}, theme: null, text: 16, ms: {}, animPaused: false, collapsed: {}, hl: {} };
   try { return Object.assign(base, JSON.parse(localStorage.getItem(KEY) || "{}")); }
   catch { return base; }
 }
@@ -989,6 +989,7 @@ function route() {
     $$("article > p, article > ul, article > ol, .note, .summary li, .milestones .d, .tbl-wrap td", main)
       .forEach(el => linkifyGlossary(el, seen));
   }
+  applyHighlights();
   markActive();
   closeDrawer();
   window.scrollTo(0, 0);
@@ -1543,6 +1544,275 @@ function applyNavFilter(q) {
   } else if (note) note.remove();
 }
 
+/* ---------- reader highlights (saved in this browser) ---------- */
+const HL_CTX = 40;
+let hlPending = null;
+let hlTimer = 0;
+
+function pageKey() {
+  return location.hash || "#/";
+}
+
+function highlightList(key) {
+  const all = state.hl;
+  if (!all || typeof all !== "object" || Array.isArray(all)) return [];
+  const list = all[key];
+  if (!Array.isArray(list)) return [];
+  return list.filter(item => item && typeof item.q === "string" && item.q.trim());
+}
+
+/* Reading text only. Quiz options are shuffled on every render, so a saved
+   offset in there would land on a different answer next time. */
+function acceptHighlightText(node) {
+  if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
+  const el = node.parentElement;
+  if (!el || !el.closest("#main")) return NodeFilter.FILTER_REJECT;
+  if (el.closest(".quiz, .pager, .mark-done, nav.toc, .site-foot, .crumbs, .hl-pop, svg")) {
+    return NodeFilter.FILTER_REJECT;
+  }
+  const btn = el.closest("button");
+  if (btn && !btn.classList.contains("gloss")) return NodeFilter.FILTER_REJECT;
+  return NodeFilter.FILTER_ACCEPT;
+}
+
+function textIndex(root) {
+  const nodes = [];
+  let pos = 0;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: acceptHighlightText });
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    const len = n.nodeValue.length;
+    if (!len) continue;
+    nodes.push({ node: n, start: pos, end: pos + len });
+    pos += len;
+  }
+  let text = "";
+  nodes.forEach(rec => { text += rec.node.nodeValue; });
+  return { nodes, text };
+}
+
+function pointOffset(nodes, container, offset) {
+  if (!container) return null;
+  if (container.nodeType === Node.TEXT_NODE) {
+    const rec = nodes.find(n => n.node === container);
+    if (!rec) return null;
+    return rec.start + Math.min(offset, rec.node.nodeValue.length);
+  }
+  if (container.nodeType !== Node.ELEMENT_NODE) return null;
+  if (offset < container.childNodes.length) {
+    const child = container.childNodes[offset];
+    const rec = nodes.find(n => n.node === child || (child.nodeType === 1 && child.contains(n.node)));
+    return rec ? rec.start : null;
+  }
+  const inside = nodes.filter(n => container.contains(n.node));
+  return inside.length ? inside[inside.length - 1].end : null;
+}
+
+function findQuote(text, item) {
+  const q = item.q;
+  if (!q || q.length > 8000 || !text) return -1;
+  const pre = item.pre || "";
+  const post = item.post || "";
+  const hint = typeof item.at === "number" ? item.at : -1;
+  let bestAt = -1, bestScore = -1, bestDist = Infinity;
+  let i = 0;
+  while (i < text.length) {
+    const at = text.indexOf(q, i);
+    if (at < 0) break;
+    let score = 0;
+    if (pre && text.slice(Math.max(0, at - pre.length), at) === pre) score += 2;
+    if (post && text.slice(at + q.length, at + q.length + post.length) === post) score += 2;
+    const dist = hint < 0 ? 0 : Math.abs(at - hint);
+    if (score > bestScore || (score === bestScore && score > 0 && dist < bestDist)) {
+      bestScore = score;
+      bestAt = at;
+      bestDist = dist;
+    }
+    if (score >= 2 && dist === 0) break;
+    i = at + q.length;
+  }
+  if (bestScore >= 2) return bestAt;
+  let count = 0, only = -1, j = 0;
+  while (j < text.length) {
+    const at = text.indexOf(q, j);
+    if (at < 0) break;
+    count++;
+    only = at;
+    if (count > 1) return -1;
+    j = at + q.length;
+  }
+  return count === 1 ? only : -1;
+}
+
+function rememberSpan(text, start, end) {
+  return {
+    q: text.slice(start, end),
+    pre: text.slice(Math.max(0, start - HL_CTX), start),
+    post: text.slice(end, end + HL_CTX),
+    at: start
+  };
+}
+
+function unwrapHighlights(root) {
+  root.querySelectorAll("mark.reader-hl").forEach(mark => {
+    const parent = mark.parentNode;
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    parent.removeChild(mark);
+  });
+  root.normalize();
+}
+
+function wrapSpan(rec, start, end, id) {
+  const localA = Math.max(0, start - rec.start);
+  const localB = Math.min(rec.node.nodeValue.length, end - rec.start);
+  if (localB <= localA) return;
+  let node = rec.node;
+  if (localA > 0) node = node.splitText(localA);
+  const len = localB - localA;
+  if (node.nodeValue.length > len) node.splitText(len);
+  const mark = document.createElement("mark");
+  mark.className = "reader-hl";
+  mark.dataset.hl = String(id);
+  node.parentNode.insertBefore(mark, node);
+  mark.appendChild(node);
+}
+
+function wrapRange(nodes, start, end, id) {
+  const hits = nodes.filter(rec => rec.end > start && rec.start < end);
+  for (let i = hits.length - 1; i >= 0; i--) wrapSpan(hits[i], start, end, id);
+}
+
+function applyHighlights() {
+  const root = $("#main");
+  if (!root || searching) return;
+  unwrapHighlights(root);
+  const items = highlightList(pageKey());
+  if (!items.length) return;
+  const indexed = textIndex(root);
+  const spans = items.map((item, id) => {
+    const at = findQuote(indexed.text, item);
+    return at < 0 ? null : { id, start: at, end: at + item.q.length };
+  }).filter(Boolean);
+  spans.sort((a, b) => b.start - a.start);
+  spans.forEach(span => wrapRange(indexed.nodes, span.start, span.end, span.id));
+}
+
+function hideHighlightPop() {
+  const pop = $("#hlPop");
+  if (!pop || pop.hidden) { hlPending = null; return; }
+  pop.hidden = true;
+  hlPending = null;
+}
+
+function showHighlightPop(rect, pending) {
+  const pop = $("#hlPop");
+  if (!pop || !rect) return;
+  hlPending = pending;
+  const btn = $("button", pop);
+  const removing = pending.mode === "remove";
+  btn.textContent = removing ? "Remove highlight" : "Highlight";
+  btn.setAttribute("aria-label", removing ? "Remove highlight" : "Highlight selection");
+  pop.hidden = false;
+  const width = pop.offsetWidth || 140;
+  const height = pop.offsetHeight || 40;
+  let left = rect.left;
+  let top = rect.bottom + 8;
+  if (left + width > innerWidth - 8) left = innerWidth - width - 8;
+  if (left < 8) left = 8;
+  if (top + height > innerHeight - 8) top = Math.max(8, rect.top - height - 8);
+  pop.style.left = left + "px";
+  pop.style.top = top + "px";
+}
+
+function selectionInsideHighlight(key, text, start, end) {
+  const hits = [];
+  highlightList(key).forEach((item, i) => {
+    const at = findQuote(text, item);
+    if (at < 0) return;
+    if (start >= at && end <= at + item.q.length) hits.push(i);
+  });
+  return hits;
+}
+
+function syncHighlightPopover() {
+  const pop = $("#hlPop");
+  if (pop && pop.contains(document.activeElement)) return;
+  if (searching) { hideHighlightPop(); return; }
+  const sel = getSelection();
+  const root = $("#main");
+  if (!sel || !sel.rangeCount || sel.isCollapsed || !root || !root.contains(sel.anchorNode)) {
+    hideHighlightPop();
+    return;
+  }
+  const range = sel.getRangeAt(0);
+  if (!root.contains(range.startContainer) || !root.contains(range.endContainer)) {
+    hideHighlightPop();
+    return;
+  }
+  const indexed = textIndex(root);
+  const start = pointOffset(indexed.nodes, range.startContainer, range.startOffset);
+  const end = pointOffset(indexed.nodes, range.endContainer, range.endOffset);
+  if (start == null || end == null || end <= start) { hideHighlightPop(); return; }
+  const q = indexed.text.slice(start, end);
+  if (!q.trim() || q.length > 8000) { hideHighlightPop(); return; }
+  const key = pageKey();
+  const inside = selectionInsideHighlight(key, indexed.text, start, end);
+  const rect = range.getBoundingClientRect();
+  if (inside.length) {
+    showHighlightPop(rect, { mode: "remove", key, indexes: inside });
+  } else {
+    showHighlightPop(rect, { mode: "add", key, q, pre: indexed.text.slice(Math.max(0, start - HL_CTX), start), post: indexed.text.slice(end, end + HL_CTX), at: start });
+  }
+}
+
+function addHighlight(pending) {
+  const root = $("#main");
+  if (!root) return;
+  const indexed = textIndex(root);
+  const at = findQuote(indexed.text, pending);
+  if (at < 0) return;
+  const start = at, end = at + pending.q.length;
+  const resolved = [];
+  const lost = [];
+  highlightList(pending.key).forEach(old => {
+    const pos = findQuote(indexed.text, old);
+    if (pos < 0) lost.push(old);
+    else resolved.push([pos, pos + old.q.length]);
+  });
+  resolved.push([start, end]);
+  resolved.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const merged = [];
+  resolved.forEach(span => {
+    const last = merged[merged.length - 1];
+    if (last && span[0] <= last[1]) last[1] = Math.max(last[1], span[1]);
+    else merged.push([span[0], span[1]]);
+  });
+  if (!state.hl || typeof state.hl !== "object" || Array.isArray(state.hl)) state.hl = {};
+  state.hl[pending.key] = merged.map(([s, e]) => rememberSpan(indexed.text, s, e)).concat(lost);
+  save();
+}
+
+function removeHighlights(pending) {
+  const list = highlightList(pending.key).slice();
+  (pending.indexes || []).slice().sort((a, b) => b - a).forEach(i => {
+    if (i >= 0 && i < list.length) list.splice(i, 1);
+  });
+  if (!state.hl || typeof state.hl !== "object" || Array.isArray(state.hl)) state.hl = {};
+  if (list.length) state.hl[pending.key] = list;
+  else delete state.hl[pending.key];
+  save();
+}
+
+function onHighlightAction() {
+  const pending = hlPending;
+  if (!pending) return;
+  if (pending.mode === "remove") removeHighlights(pending);
+  else addHighlight(pending);
+  hideHighlightPop();
+  const sel = getSelection();
+  if (sel) sel.removeAllRanges();
+  applyHighlights();
+}
+
 /* ---------- legacy card filter (home / sheets / projects pages) ---------- */
 function applySearch(raw) {
   const q = (raw || "").trim().toLowerCase();
@@ -1577,6 +1847,21 @@ function init() {
   buildSearchIndex();
   renderNav();
   paintProgress();
+  const hlPop = document.createElement("div");
+  hlPop.id = "hlPop";
+  hlPop.className = "hl-pop";
+  hlPop.hidden = true;
+  hlPop.setAttribute("role", "toolbar");
+  hlPop.setAttribute("aria-label", "Highlight");
+  hlPop.innerHTML = '<button type="button"></button>';
+  document.body.appendChild(hlPop);
+  hlPop.addEventListener("mousedown", e => e.preventDefault());
+  $("button", hlPop).addEventListener("click", onHighlightAction);
+  document.addEventListener("selectionchange", () => {
+    clearTimeout(hlTimer);
+    hlTimer = setTimeout(syncHighlightPopover, 60);
+  });
+
   route();
   trackVisit();
   if (!storageWorks()) warnNoStorage();
@@ -1638,13 +1923,28 @@ function init() {
   });
 
   $("#resetProgress").addEventListener("click", () => {
-    if (!confirm("Clear all completed modules, quiz scores and project milestones?")) return;
-    state.done = {}; state.scores = {}; state.ms = {}; save();
+    if (!confirm("Clear completed modules, quiz scores, project milestones and highlights from this browser?")) return;
+    state.done = {}; state.scores = {}; state.ms = {}; state.hl = {}; save();
     renderNav(); paintProgress(); route(); toast("Progress cleared");
   });
 
   /* one delegated click handler for everything inside main */
   $("#main").addEventListener("click", async e => {
+    const hlMark = e.target.closest("mark.reader-hl");
+    if (hlMark && !e.target.closest(".gloss")) {
+      const sel = getSelection();
+      if (!sel || sel.isCollapsed) {
+        e.preventDefault();
+        e.stopPropagation();
+        showHighlightPop(hlMark.getBoundingClientRect(), {
+          mode: "remove",
+          key: pageKey(),
+          indexes: [Number(hlMark.dataset.hl)]
+        });
+        return;
+      }
+    }
+
     const opt = e.target.closest(".opt");
     if (opt && !opt.disabled) { onQuizClick(opt); return; }
 
@@ -1793,8 +2093,15 @@ function init() {
     }
     if (e.target.closest("[data-gclose]") || e.target.classList.contains("gloss-scrim")) { closeGloss(); return; }
     if (!e.target.closest(".gloss, .gloss-pop, .gloss-sheet")) closeGloss();
+    if (e.target.closest(".hl-pop, mark.reader-hl")) return;
+    const sel = getSelection();
+    if (sel && !sel.isCollapsed && $("#main") && $("#main").contains(sel.anchorNode)) return;
+    hideHighlightPop();
   });
-  addEventListener("scroll", () => { if (glossOpen && innerWidth > 820) closeGloss(); }, { passive: true });
+  addEventListener("scroll", () => {
+    hideHighlightPop();
+    if (glossOpen && innerWidth > 820) closeGloss();
+  }, { passive: true });
 
   /* keyboard shortcuts */
   addEventListener("keydown", e => {
@@ -1802,7 +2109,7 @@ function init() {
     const typing = !!(el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
     const inControl = !!(el && (el.isContentEditable || el.closest("button, a, summary, [role='button'], [role='link']")));
     if (e.key === "/" && !typing) { e.preventDefault(); $("#search").focus(); return; }
-    if (e.key === "Escape") { closeGloss(); $("#search").blur(); closeDrawer(); return; }
+    if (e.key === "Escape") { hideHighlightPop(); closeGloss(); $("#search").blur(); closeDrawer(); return; }
     if (typing || inControl || e.metaKey || e.ctrlKey || e.altKey) return;
     const h = location.hash;
     const list = h.startsWith("#/m/") ? MODULES : h.startsWith("#/p/") ? PORDER : null;

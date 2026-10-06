@@ -724,6 +724,27 @@ article.page h2{margin-top:32px}
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- reader highlights ---------- */
+mark.reader-hl{
+  background:color-mix(in srgb,var(--go) 46%,transparent);
+  color:inherit;border-radius:2px;padding:0 .04em;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+}
+html[data-theme="dark"] mark.reader-hl{background:color-mix(in srgb,var(--go) 32%,transparent)}
+.code mark.reader-hl{background:color-mix(in srgb,var(--go) 34%,#0a0f16)}
+.hl-pop{
+  position:fixed;z-index:60;display:flex;padding:4px;
+  background:var(--bg-2);border:1px solid var(--line);border-radius:10px;
+  box-shadow:var(--shadow);
+}
+.hl-pop[hidden]{display:none}
+.hl-pop button{
+  font:700 .82rem var(--sans);color:var(--fg);cursor:pointer;
+  background:var(--bg-3);border:1px solid var(--line);border-radius:8px;
+  padding:6px 10px;white-space:nowrap;
+}
+.hl-pop button:hover{border-color:var(--go);color:var(--go)}
+
 .only-mobile{display:none}
 
 /* ---------- responsive ---------- */
@@ -753,7 +774,7 @@ article.page h2{margin-top:32px}
 
 @media print{
   .mark-done{display:none!important}
-  .topbar,.sidebar,.scrim,.quiz,.pager,.toast,.dg-replay,.gloss-pop,.gloss-sheet,.gloss-scrim,.read-rail,.scroll-progress{display:none!important}
+  .topbar,.sidebar,.scrim,.quiz,.pager,.toast,.dg-replay,.gloss-pop,.gloss-sheet,.gloss-scrim,.read-rail,.scroll-progress,.hl-pop{display:none!important}
   .dg-stage svg{min-width:0}
   button.gloss{border:none}
   button.gloss::after{content:""}
