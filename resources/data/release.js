@@ -1,8 +1,16 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.2",
+  version: "0.1.3",
   notes: [
+    {
+      version: "0.1.3",
+      date: "2026-10-08",
+      items: [
+        "The control flow lesson explains if, for, switch, and defer in plain language, then shows a short program that prints.",
+        "Pictures show []string as a list of names, Close running after the function is done, and defer 1, 2, 3 printing last to first."
+      ]
+    },
     {
       version: "0.1.2",
       date: "2026-10-08",

@@ -1348,145 +1348,219 @@ fmt.Println(d, m)`,
   icon: "🔀",
   title: "Control Flow: if, for, switch, defer",
   minutes: 14,
-  blurb: "One loop keyword, a switch with superpowers, and `defer` for guaranteed cleanup.",
+  blurb: "How if, for, switch, and defer decide what runs next, each shown by a line it prints.",
   blocks: [
-    { t: "p", html: "Control flow decides what runs next. <code>if</code> picks one branch. <code>for</code> repeats. <code>switch</code> picks one case and stops. <code>defer</code> saves a call until the function returns." },
-    { t: "h", text: "if" },
-    { t: "p", html: "<code>if</code> tests a condition. When the test is true, that block runs. When it is false, <code>else</code> runs, if you wrote one. In the picture, <code>err == nil</code> means the call worked, so <code>use(v)</code> runs. Any other result takes <code>return err</code>." },
-    { t: "diagram", id: "control-if" },
-    { t: "p", html: "The condition does not use parentheses, and the braces are required. The useful form is <code>if v, err := f(); err != nil</code>: <code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>. A guard clause returns early on the bad case so the rest of the function stays flat." },
-    { t: "code", title: "Scope errors to the branch that handles them", code:
-`if x > 10 {
-    // no parentheses around the condition; braces are mandatory
-} else if x > 5 {
-} else {
-}
+    { t: "p", html: "Control flow decides what runs next." },
+    { t: "list", items: [
+      "<code>if</code> picks one branch.",
+      "<code>for</code> repeats.",
+      "<code>switch</code> picks one case.",
+      "<code>defer</code> saves a call until the function returns."
+    ]},
 
-// The idiomatic form: declare and test in one statement.
-// v and err exist ONLY inside the if/else.
-if v, err := strconv.Atoi(input); err == nil {
+    { t: "h", text: "if" },
+    { t: "p", html: "<code>if</code> tests a condition. When the test is true, that block runs. When it is false, <code>else</code> runs, if you wrote one." },
+    { t: "list", items: [
+      "The condition sits on the <code>if</code> line. Braces are required.",
+      "A common form is <code>if v, err := f(); err != nil</code>.",
+      "<code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>.",
+      "When a check fails, return then. The rest of the function stays at the left margin."
+    ]},
+    { t: "diagram", id: "control-if" },
+    { t: "p", html: "In the picture, <code>err == nil</code> means the call worked, so <code>use(v)</code> runs. Any other result takes <code>return err</code>. <code>strconv.Atoi</code> turns text into a whole number. It gives a value and an error." },
+    { t: "code", title: "Parse two strings", code:
+`if v, err := strconv.Atoi("42"); err == nil {
     fmt.Println("parsed", v)
 } else {
     fmt.Println("bad input:", err)
 }
-
-// Guard clauses keep the happy path at indent level 1
-func process(data []byte) error {
-    if len(data) == 0 {
-        return errors.New("empty input")
-    }
-    if !valid(data) {
-        return errors.New("invalid input")
-    }
-    return doWork(data)   // no nesting
-}`
+if v, err := strconv.Atoi("no"); err == nil {
+    fmt.Println("parsed", v)
+} else {
+    fmt.Println("bad input:", err)
+}`,
+      out: `parsed 42
+bad input: strconv.Atoi: parsing "no": invalid syntax`
     },
+    { t: "p", html: "<code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>." },
 
     { t: "h", text: "for" },
-    { t: "p", html: "<code>for</code> is the only loop. Go has no <code>while</code> and no <code>foreach</code>. The same keyword has four shapes: a counter, a condition, a loop that runs until <code>break</code>, and <code>range</code>. The boxes light up in that order." },
+    { t: "p", html: "<code>for</code> is the only loop keyword. The same word has four shapes." },
+    { t: "list", items: [
+      "A counter: <code>for i := 0; i &lt; 5; i++</code>.",
+      "A condition: <code>for n &gt; 0</code>.",
+      "Until you <code>break</code>: <code>for { }</code>.",
+      "<code>range</code> goes through each item in a list, a map, a string, or the numbers from 0 up to a count."
+    ]},
     { t: "diagram", id: "control-for" },
-    { t: "p", html: "<code>range</code> walks a slice, a map, a string, a channel, or (since Go 1.22) the integers from 0 up to a number. Map keys come out in a random order on purpose." },
-    { t: "code", title: "Five shapes, one keyword", code:
-`for i := 0; i < 5; i++ { }            // classic three-clause
-
-for n > 0 { n-- }                      // while
-
-for { break }                          // infinite (for-ever)
-
-for i, v := range slice { }            // index, value
-for k, v := range myMap { }            // key, value, ORDER IS RANDOMISED
-for i, r := range str { }              // byte index, rune
-for v := range ch { }                  // receive until the channel closes
-for i := range 10 { }                  // Go 1.22+: 0..9
-
-// Labels, for when you need to escape more than one level
-outer:
-for i := 0; i < 3; i++ {
-    for j := 0; j < 3; j++ {
-        if j == 2 { continue outer }
-        if i == 2 { break outer }
-    }
-}`
+    { t: "p", html: "A counter prints 0 through 4." },
+    { t: "code", title: "Count up", code:
+`for i := 0; i < 5; i++ {
+    fmt.Println(i)
+}`,
+      out: `0
+1
+2
+3
+4`
     },
-    { t: "note", kind: "warn", title: "Map iteration order is intentionally random", html: "Go randomises it on every run so you can never accidentally depend on it. To iterate deterministically, collect the keys, <code>sort.Strings(keys)</code>, then loop over the sorted slice." },
-    { t: "note", kind: "deep", title: "Go 1.22 fixed the loop-variable trap", html: "Before 1.22, <code>i</code> was <strong>one variable reused</strong> every iteration, so <code>go func(){ print(i) }()</code> inside a loop usually printed the final value. Since Go 1.22 (with <code>go 1.22+</code> in go.mod) each iteration gets a <strong>fresh</strong> variable, and the bug is gone. You'll still see the old workaround <code>i := i</code> in older code." },
+    { t: "p", html: "A condition counts down. The body changes <code>n</code> each time, until the test is false." },
+    { t: "code", title: "Count down", code:
+`n := 3
+for n > 0 {
+    fmt.Println(n)
+    n--
+}`,
+      out: `3
+2
+1`
+    },
+    { t: "p", html: "<code>[]string{\"Ada\", \"Lin\", \"Max\"}</code> builds a list of three names. Go calls this list a slice." },
+    { t: "list", items: [
+      "<code>[]</code> means a list.",
+      "<code>string</code> means each item in the list is text.",
+      "<code>{\"Ada\", \"Lin\", \"Max\"}</code> are the three names, in order.",
+      "Counting starts at 0, so Ada is at <code>[0]</code>, Lin at <code>[1]</code>, Max at <code>[2]</code>."
+    ]},
+    { t: "diagram", id: "range-names" },
+    { t: "p", html: "<code>range names</code> goes through that list, one name at a time. <code>i</code> is the place in the list. <code>name</code> is the text at that place." },
+    { t: "code", title: "Each name in the list", code:
+`names := []string{"Ada", "Lin", "Max"}
+for i, name := range names {
+    fmt.Println(i, name)
+}`,
+      out: `0 Ada
+1 Lin
+2 Max`
+    },
+    { t: "p", html: "Two extra words change which numbers run." },
+    { t: "list", items: [
+      "<code>continue</code> skips the rest of this pass and starts the next one.",
+      "<code>break</code> leaves the loop."
+    ]},
+    { t: "p", html: "This loop would count 0 through 5. It skips 2, and it stops at 4, so 4 and 5 never print." },
+    { t: "code", title: "Skip 2, stop at 4", code:
+`for i := 0; i < 6; i++ {
+    if i == 2 {
+        continue
+    }
+    if i == 4 {
+        break
+    }
+    fmt.Println(i)
+}`,
+      out: `0
+1
+3`
+    },
+    { t: "note", kind: "warn", title: "Map keys come out in a random order", html: "Go picks a new order on every run, on purpose. To print in a stable order, collect the keys, sort them, then loop over that list." },
+    { t: "p", html: "The keys below print as <code>a</code>, then <code>b</code>, then <code>c</code>, even though they were written in a different order." },
+    { t: "code", title: "Sort the keys, then print", code:
+`m := map[string]int{"c": 3, "a": 1, "b": 2}
+keys := make([]string, 0, len(m))
+for k := range m {
+    keys = append(keys, k)
+}
+sort.Strings(keys)
+for _, k := range keys {
+    fmt.Println(k, m[k])
+}`,
+      out: `a 1
+b 2
+c 3`
+    },
+    { t: "note", kind: "deep", title: "Go 1.22 and the loop variable", html: "Before 1.22, <code>i</code> in a loop was one variable reused every pass. A goroutine started inside the loop often printed the last value. From Go 1.22, each pass gets a fresh <code>i</code>. Older code may still write <code>i := i</code>." },
 
     { t: "h", text: "switch" },
-    { t: "p", html: "<code>switch</code> takes one value and runs the case that matches. In the picture, <code>day</code> is <code>Mon</code>, so that case runs and the others are skipped. A case does not fall into the next one. You do not write <code>break</code>." },
+    { t: "p", html: "<code>switch</code> takes one value and runs the case that matches. A case runs, then the switch is done." },
+    { t: "list", items: [
+      "One case can list several values, separated by commas.",
+      "A <code>switch</code> with no value is a chain of conditions.",
+      "Write <code>fallthrough</code> if the next case should run as well."
+    ]},
     { t: "diagram", id: "control-switch" },
-    { t: "p", html: "One case can list several values. A <code>switch</code> with no value after it is a chain of conditions. <code>switch v := i.(type)</code> asks an interface value what concrete type it holds, and <code>v</code> has that type inside the matching case." },
-    { t: "code", title: "No fallthrough, no break, and conditions allowed", code:
-`switch day {
-case "Sat", "Sun":            // multiple values per case
+    { t: "p", html: "In the picture, <code>day</code> is <code>Mon</code>, so that case runs. Here <code>day</code> is <code>Sat</code>, so the first case runs." },
+    { t: "code", title: "Saturday is a weekend", code:
+`day := "Sat"
+switch day {
+case "Sat", "Sun":
     fmt.Println("weekend")
 case "Mon":
     fmt.Println("ugh")
 default:
     fmt.Println("weekday")
-}
-// Cases do NOT fall through. You never write "break".
-// Opt in explicitly with the fallthrough keyword if you really want it.
-
-// Tagless switch = a clean if/else-if chain
-switch {
-case score >= 90: grade = "A"
-case score >= 80: grade = "B"
-default:          grade = "F"
-}
-
-// With an initialiser
-switch hour := time.Now().Hour(); {
-case hour < 12: fmt.Println("morning")
-default:        fmt.Println("later")
-}
-
-// Type switch, switch on the dynamic type inside an interface
-func describe(i any) string {
-    switch v := i.(type) {
-    case nil:      return "nil"
-    case int:      return fmt.Sprintf("int %d", v*2)     // v is an int here
-    case string:   return "string of length " + strconv.Itoa(len(v))
-    case []int:    return fmt.Sprintf("%d ints", len(v))
-    case error:    return "error: " + v.Error()
-    default:       return fmt.Sprintf("unknown %T", v)
-    }
-}`
+}`,
+      out: `weekend`
     },
+    { t: "p", html: "A <code>switch</code> with no value after it tests each condition in order. The first one that is true runs. A score of 85 prints <code>B</code>." },
+    { t: "code", title: "A grade from a score", code:
+`score := 85
+var grade string
+switch {
+case score >= 90:
+    grade = "A"
+case score >= 80:
+    grade = "B"
+default:
+    grade = "F"
+}
+fmt.Println(grade)`,
+      out: `B`
+    },
+    { t: "p", html: "<code>fallthrough</code> runs the next case as well. The extra line it prints is <code>two</code>." },
+    { t: "code", title: "fallthrough runs the next case", code:
+`n := 1
+switch n {
+case 1:
+    fmt.Println("one")
+    fallthrough
+case 2:
+    fmt.Println("two")
+}`,
+      out: `one
+two`
+    },
+    { t: "p", html: "A type switch, <code>switch v := i.(type)</code>, is in <a href=\"#/m/methods-interfaces\">Methods, Interfaces &amp; Composition</a>." },
 
     { t: "h", text: "defer" },
-    { t: "p", html: "<code>defer</code> saves a call and runs it when the function returns, including when it panics. Write Close, then Unlock, then log, and the stack puts log on top. Return runs them last to first: log, then Unlock, then Close. Arguments are saved at the <code>defer</code> line, so <code>defer fmt.Println(i)</code> prints the value <code>i</code> had then. A deferred function with no arguments reads <code>i</code> later, when it actually runs." },
-    { t: "diagram", id: "defer-stack" },
-    { t: "code", title: "Runs when the function returns, whatever happens", code:
-`func readFile(path string) ([]byte, error) {
-    f, err := os.Open(path)
-    if err != nil {
-        return nil, err
-    }
-    defer f.Close()        // guaranteed, on return AND on panic
-    return io.ReadAll(f)
+    { t: "p", html: "<code>defer</code> saves a call and runs it when the function returns, including when it panics. The usual reason is cleanup: you opened something, so you want it closed when you leave, even if the code in the middle fails." },
+    { t: "list", items: [
+      "You open a file. Write <code>defer f.Close()</code> right after a successful <code>os.Open</code>, so the file closes when the function returns.",
+      "You take a lock. Write <code>defer mu.Unlock()</code> right after <code>mu.Lock()</code>, so the lock is released when you leave."
+    ]},
+    { t: "diagram", id: "defer-close" },
+    { t: "p", html: "The program below prints the same order. Open runs, then the read, then Close. Close is written second, and it still runs last." },
+    { t: "code", title: "Close runs after the function is done", code:
+`func readNotes() {
+    fmt.Println("open notes.txt")
+    defer fmt.Println("close notes.txt")
+    fmt.Println("read the file")
 }
-
-// LIFO: deferred calls run in reverse order
-func order() {
+readNotes()`,
+      out: `open notes.txt
+read the file
+close notes.txt`
+    },
+    { t: "p", html: "Several <code>defer</code> lines stack up. The last one you write runs first." },
+    { t: "list", items: [
+      "The last <code>defer</code> you write runs first.",
+      "Arguments are saved at the <code>defer</code> line. <code>defer fmt.Println(i)</code> prints the value <code>i</code> had then.",
+      "A function with no arguments, written as <code>defer func() { ... }()</code>, reads <code>i</code> later, when it actually runs."
+    ]},
+    { t: "diagram", id: "defer-stack" },
+    { t: "p", html: "You write 1, then 2, then 3. They print 3, then 2, then 1. The 0 is saved at the <code>defer</code> line, so it still prints 0 after <code>i</code> becomes 1." },
+    { t: "code", title: "Last in runs first, and the 0 is saved", code:
+`func order() {
     defer fmt.Println("1")
     defer fmt.Println("2")
     defer fmt.Println("3")
-}  // prints 3, 2, 1
-
-// Arguments are evaluated AT DEFER TIME, the body runs later
-func trap() {
-    i := 0
-    defer fmt.Println("captured:", i)       // prints 0
-    defer func() { fmt.Println("closure:", i) }()  // prints 1, reads i later
-    i++
 }
 
-// A deferred closure can modify named return values
-func withTiming() (elapsed time.Duration) {
-    start := time.Now()
-    defer func() { elapsed = time.Since(start) }()
-    heavyWork()
-    return    // elapsed is set by the deferred func
+func trap() {
+    i := 0
+    defer fmt.Println("captured:", i)
+    defer func() { fmt.Println("closure:", i) }()
+    i++
 }
 
 order()
@@ -1497,15 +1571,18 @@ trap()`,
 closure: 1
 captured: 0`
     },
-    { t: "note", kind: "warn", title: "Never `defer` inside a loop body", html: "Deferred calls fire when the <strong>function</strong> returns, not at the end of each iteration, so looping over 10,000 files with <code>defer f.Close()</code> holds 10,000 handles open. Either close explicitly at the end of the iteration, or move the body into its own function (or a closure you call immediately)." }
+    { t: "note", kind: "warn", title: "`defer` inside a loop waits until the function returns", html: "A <code>defer</code> runs when the <strong>function</strong> returns. Looping over 10,000 files with <code>defer f.Close()</code> keeps 10,000 files open. Close at the end of each pass, or move the body into its own function." }
   ],
   summary: [
-    "`if` takes an initialiser: `if v, err := f(); err != nil` scopes both to the branch.",
-    "Prefer guard clauses and early returns over nesting.",
-    "`for` is the only loop keyword, it covers while, infinite, range, and `range N` (1.22+).",
-    "Map iteration order is randomised by design; sort the keys for determinism.",
-    "`switch` has no implicit fallthrough, allows multiple values and bare conditions, and `switch v := x.(type)` branches on dynamic type.",
-    "`defer` is LIFO, evaluates arguments immediately, runs even on panic, and never belongs in a loop body."
+    "`if v, err := f(); err != nil` makes `v` and `err` exist only inside that `if` and its `else`.",
+    "When a check fails, return then. The rest of the function stays at the left margin.",
+    "`for` is the only loop keyword. It covers a counter, a condition, a loop until `break`, and `range`.",
+    "`continue` skips this pass. `break` leaves the loop.",
+    "Map keys come out in a random order. Sort the keys for a stable order.",
+    "`switch` runs one matching case, then it is done. `fallthrough` runs the next case as well.",
+    "`defer` runs cleanup when the function returns, such as `f.Close()` after you open a file.",
+    "`defer` runs last to first. Arguments are saved at the `defer` line.",
+    "A `defer` inside a loop waits until the function returns."
   ],
   quiz: [
     { q: "How many loop keywords does Go have?",
