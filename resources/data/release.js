@@ -1,8 +1,16 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.0",
+  version: "0.1.1",
   notes: [
+    {
+      version: "0.1.1",
+      date: "2026-10-08",
+      items: [
+        "The data types lesson explains int, float64, bool, string, byte, and rune in plain language, then shows a short program.",
+        "Pictures show what %T, v and ok, and []rune(s) each mean."
+      ]
+    },
     {
       version: "0.1.0",
       date: "2026-10-05",

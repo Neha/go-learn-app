@@ -878,6 +878,150 @@ select: {
     <rect class="dg-box" x="680" y="340" width="256" height="90" rx="16"/>
     <text class="dg-t lg" x="808" y="394" text-anchor="middle">default: no wait</text>
   </svg>`
+},
+
+/* ─────────────── %T and v, ok ─────────────── */
+"percent-t": {
+  title: "%T prints the type name",
+  caption: "T means type. Printf writes the type name of the value you pass, and \\n starts a new line. 30 prints as int. Ada prints as string.",
+  svg: `<svg viewBox="0 0 960 420" role="img" aria-label="Printf, percent T, backslash n, and v. Percent T prints the type. 30 prints as int. Ada prints as string.">
+    <defs><marker id="dgArrPT" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Each piece of Printf("%T\\n", v)</text>
+
+    <rect class="dg-box" x="24" y="56" width="210" height="150" rx="16"/>
+    <text class="dg-t mono lg" x="129" y="125" text-anchor="middle">Printf</text>
+    <text class="dg-t lg" x="129" y="172" text-anchor="middle">the call</text>
+
+    <rect class="dg-box accent dg-beat" x="258" y="56" width="210" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="363" y="130" text-anchor="middle">%T</text>
+    <text class="dg-t lg" x="363" y="178" text-anchor="middle">means type</text>
+
+    <rect class="dg-box" x="492" y="56" width="210" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="597" y="130" text-anchor="middle">\\n</text>
+    <text class="dg-t lg" x="597" y="178" text-anchor="middle">new line</text>
+
+    <rect class="dg-box" x="726" y="56" width="210" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="831" y="130" text-anchor="middle">v</text>
+    <text class="dg-t lg" x="831" y="178" text-anchor="middle">the value</text>
+
+    <text class="dg-t lg" x="24" y="256">2. The name that prints</text>
+
+    <rect class="dg-box" x="24" y="276" width="190" height="110" rx="16"/>
+    <text class="dg-t lg" x="119" y="318" text-anchor="middle">age</text>
+    <text class="dg-t mono xl" x="119" y="362" text-anchor="middle">30</text>
+    <path class="dg-arrow" d="M222 331 L268 331" marker-end="url(#dgArrPT)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M222 331 L268 331')"/>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="276" y="276" width="190" height="110" rx="16"/>
+    <text class="dg-t lg" x="371" y="318" text-anchor="middle">prints</text>
+    <text class="dg-t mono xl" x="371" y="362" text-anchor="middle">int</text>
+
+    <rect class="dg-box" x="520" y="276" width="190" height="110" rx="16"/>
+    <text class="dg-t lg" x="615" y="318" text-anchor="middle">name</text>
+    <text class="dg-t mono xl" x="615" y="362" text-anchor="middle">Ada</text>
+    <path class="dg-arrow" d="M718 331 L764 331" marker-end="url(#dgArrPT)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M718 331 L764 331'); --i:1"/>
+    <rect class="dg-box ok dg-beat" style="--i:2" x="772" y="276" width="164" height="110" rx="16"/>
+    <text class="dg-t lg" x="854" y="318" text-anchor="middle">prints</text>
+    <text class="dg-t mono lg" x="854" y="358" text-anchor="middle">string</text>
+  </svg>`
+},
+
+"comma-ok": {
+  title: "v and ok",
+  caption: "x is the slot. (string) is the question. v is the value when the type matches. ok is true or false, and the program keeps running either way.",
+  svg: `<svg viewBox="0 0 960 560" role="img" aria-label="v, ok asks whether x holds a string. Ada and true when it does. Zero and false when the question is int.">
+    <defs><marker id="dgArrOK" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Each piece of v, ok := x.(string)</text>
+
+    <rect class="dg-box" x="24" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="132" y="120" text-anchor="middle">x</text>
+    <text class="dg-t lg" x="132" y="164" text-anchor="middle">the slot</text>
+
+    <rect class="dg-box accent dg-beat" x="256" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="364" y="118" text-anchor="middle">(string)</text>
+    <text class="dg-t lg" x="364" y="164" text-anchor="middle">the question</text>
+
+    <rect class="dg-box" x="488" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="596" y="120" text-anchor="middle">v</text>
+    <text class="dg-t lg" x="596" y="164" text-anchor="middle">the value</text>
+
+    <rect class="dg-box" x="720" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="828" y="120" text-anchor="middle">ok</text>
+    <text class="dg-t lg" x="828" y="164" text-anchor="middle">yes or no</text>
+
+    <text class="dg-t lg" x="24" y="240">2. x holds Ada. Ask for a string.</text>
+    <rect class="dg-box" x="24" y="258" width="200" height="110" rx="16"/>
+    <text class="dg-t lg" x="124" y="300" text-anchor="middle">x holds</text>
+    <text class="dg-t mono xl" x="124" y="344" text-anchor="middle">Ada</text>
+    <path class="dg-arrow" d="M232 313 L276 313" marker-end="url(#dgArrOK)"/>
+    <rect class="dg-box" x="284" y="258" width="200" height="110" rx="16"/>
+    <text class="dg-t mono lg" x="384" y="322" text-anchor="middle">(string)</text>
+    <path class="dg-arrow" d="M492 313 L536 313" marker-end="url(#dgArrOK)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M492 313 L536 313')"/>
+    <rect class="dg-box ok" x="544" y="258" width="180" height="110" rx="16"/>
+    <text class="dg-t lg" x="634" y="300" text-anchor="middle">v is</text>
+    <text class="dg-t mono xl" x="634" y="344" text-anchor="middle">Ada</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="740" y="258" width="196" height="110" rx="16"/>
+    <text class="dg-t lg" x="838" y="300" text-anchor="middle">ok is</text>
+    <text class="dg-t mono xl" x="838" y="344" text-anchor="middle">true</text>
+
+    <text class="dg-t lg" x="24" y="412">3. Same slot. Ask for an int.</text>
+    <rect class="dg-box" x="24" y="430" width="200" height="110" rx="16"/>
+    <text class="dg-t lg" x="124" y="472" text-anchor="middle">x holds</text>
+    <text class="dg-t mono xl" x="124" y="516" text-anchor="middle">Ada</text>
+    <path class="dg-arrow" d="M232 485 L276 485" marker-end="url(#dgArrOK)"/>
+    <rect class="dg-box" x="284" y="430" width="200" height="110" rx="16"/>
+    <text class="dg-t mono lg" x="384" y="494" text-anchor="middle">(int)</text>
+    <path class="dg-arrow" d="M492 485 L536 485" marker-end="url(#dgArrOK)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M492 485 L536 485'); --i:1"/>
+    <rect class="dg-box bad" x="544" y="430" width="180" height="110" rx="16"/>
+    <text class="dg-t lg" x="634" y="472" text-anchor="middle">v is</text>
+    <text class="dg-t mono xl" x="634" y="516" text-anchor="middle">0</text>
+    <rect class="dg-box bad" x="740" y="430" width="196" height="110" rx="16"/>
+    <text class="dg-t lg" x="838" y="472" text-anchor="middle">ok is</text>
+    <text class="dg-t mono xl" x="838" y="516" text-anchor="middle">false</text>
+  </svg>`
+},
+
+"rune-list": {
+  title: "[]rune(s) is the characters",
+  caption: "s is the string. []rune means a list of characters. (s) converts the string into that list. Counting starts at 0, so chars[1] is é.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[]rune converts the string s into a list of characters. Index 1 of Héllo is é.">
+    <defs><marker id="dgArrRN" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Each piece of []rune(s)</text>
+
+    <rect class="dg-box" x="24" y="56" width="250" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="149" y="120" text-anchor="middle">s</text>
+    <text class="dg-t lg" x="149" y="168" text-anchor="middle">the string</text>
+    <path class="dg-arrow" d="M282 131 L348 131" marker-end="url(#dgArrRN)"/>
+
+    <rect class="dg-box accent dg-beat" x="356" y="56" width="250" height="150" rx="16"/>
+    <text class="dg-t mono lg" x="481" y="118" text-anchor="middle">[]rune</text>
+    <text class="dg-t lg" x="481" y="168" text-anchor="middle">list of characters</text>
+    <path class="dg-arrow" d="M614 131 L680 131" marker-end="url(#dgArrRN)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M614 131 L680 131')"/>
+
+    <rect class="dg-box" x="688" y="56" width="248" height="150" rx="16"/>
+    <text class="dg-t mono xl" x="812" y="120" text-anchor="middle">(s)</text>
+    <text class="dg-t lg" x="812" y="168" text-anchor="middle">convert s</text>
+
+    <text class="dg-t lg" x="24" y="252">2. chars, five characters. [1] is é.</text>
+    <rect class="dg-box" x="40" y="272" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="120" y="340" text-anchor="middle">H</text>
+    <text class="dg-t lg" x="120" y="384" text-anchor="middle">[0]</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="220" y="272" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="300" y="340" text-anchor="middle">é</text>
+    <text class="dg-t lg" x="300" y="384" text-anchor="middle">[1]</text>
+    <rect class="dg-box" x="400" y="272" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="480" y="340" text-anchor="middle">l</text>
+    <text class="dg-t lg" x="480" y="384" text-anchor="middle">[2]</text>
+    <rect class="dg-box" x="580" y="272" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="660" y="340" text-anchor="middle">l</text>
+    <text class="dg-t lg" x="660" y="384" text-anchor="middle">[3]</text>
+    <rect class="dg-box" x="760" y="272" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="840" y="340" text-anchor="middle">o</text>
+    <text class="dg-t lg" x="840" y="384" text-anchor="middle">[4]</text>
+  </svg>`
 }
 
 };

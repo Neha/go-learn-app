@@ -859,79 +859,147 @@ Grace
   icon: "🔢",
   title: "Data Types, Strings, Runes & Conversion",
   minutes: 18,
-  blurb: "The basic types, why Go will not convert a number for you, how to check a type, and why a string is bytes.",
+  blurb: "What an int, a float, a string, and a bool are, how to change a type, and why text counts bytes.",
   blocks: [
-    { t: "h", text: "Basic types" },
-    { t: "p", html: "These are the types built into the language. <code>int</code>, <code>float64</code>, <code>string</code>, and <code>bool</code> cover almost everything. The sized types exist for binary formats and bit work. A <code>byte</code> is one raw 8-bit value. A <code>rune</code> is one Unicode character, stored as a 32-bit number." },
-    { t: "table", head: ["Group", "Types", "Notes"],
+    { t: "h", text: "What a type is" },
+    { t: "p", html: "A type is the kind of value a name holds. Go remembers that kind. If <code>age</code> is a whole number, Go will not let you store the text <code>\"Ada\"</code> in it." },
+
+    { t: "h", text: "The types you will use" },
+    { t: "p", html: "Six types cover almost every program. Learn these first." },
+    { t: "list", items: [
+      "<code>int</code> is a whole number, such as a count or an age. <code>30</code> is an int. It can be negative.",
+      "<code>float64</code> is a number that can have a fraction, such as a price. <code>1.5</code> is a float64.",
+      "<code>bool</code> is yes or no. The only two values are <code>true</code> and <code>false</code>.",
+      "<code>string</code> is text. <code>\"Ada\"</code> is a string.",
+      "<code>byte</code> is one small number, from 0 to 255. A file or a network message is a row of bytes.",
+      "<code>rune</code> is one character, such as <code>A</code> or <code>é</code>. Go stores that character as a number."
+    ]},
+    { t: "p", html: "A byte and a rune print as numbers. <code>%c</code> prints the character those numbers stand for. A condition has to be a bool. The number <code>1</code> is not <code>true</code> or <code>false</code>, so <code>if 1 {}</code> does not compile." },
+    { t: "code", title: "One value of each type", code:
+`count := 30
+price := 1.5
+ok := true
+name := "Ada"
+raw := byte('A')
+letter := 'é'
+
+fmt.Println(count)
+fmt.Println(price)
+fmt.Println(ok)
+fmt.Println(name)
+fmt.Println(raw)
+fmt.Printf("%c\\n", raw)
+fmt.Printf("%c\\n", letter)`,
+      out: `30
+1.5
+true
+Ada
+65
+A
+é`
+    },
+    { t: "code", title: "A condition must be true or false", code:
+`if 1 {
+}`,
+      out: `non-boolean condition in if statement`
+    },
+
+    { t: "h", text: "Other number sizes" },
+    { t: "p", html: "Go also has numbers of a fixed size. Leave them until a file format or a size limit asks for one. <code>int</code> and <code>float64</code> are the ones to reach for." },
+    { t: "table", head: ["Kind", "Types", "What it is"],
       rows: [
-        ["Signed int", "int8, int16, int32, int64, <strong>int</strong>", "<code>int</code> is 64-bit on modern platforms. <strong>Default choice.</strong>"],
-        ["Unsigned int", "uint8, uint16, uint32, uint64, uint, uintptr", "Careful: <code>uint(0)-1</code> wraps to a huge number"],
-        ["Float", "float32, <strong>float64</strong>", "<code>float64</code> is the default and what you should use"],
-        ["Complex", "complex64, complex128", "Real, built in, rarely needed"],
-        ["Text", "string, <strong>byte</strong> (uint8), <strong>rune</strong> (int32)", "byte = raw octet; rune = one Unicode code point"],
-        ["Bool", "bool", "Only <code>true</code> and <code>false</code>. <code>if 1 {}</code> does not compile"]
+        ["Whole number, can be negative", "int8, int16, int32, int64, <strong>int</strong>", "<code>int</code> is the everyday one"],
+        ["Whole number, from 0 up", "uint8, uint16, uint32, uint64, uint, uintptr", "Stepping below 0 wraps to a huge number. <code>uintptr</code> holds an address"],
+        ["Fraction", "float32, <strong>float64</strong>", "Use <code>float64</code>"],
+        ["Real and imaginary", "complex64, complex128", "Rare in everyday programs"],
+        ["Text", "string, <strong>byte</strong>, <strong>rune</strong>", "<code>byte</code> is a uint8. <code>rune</code> is an int32"]
       ]
     },
-    { t: "note", kind: "tip", title: "Default picks", html: "Use <code>int</code> for counts and indexes, <code>float64</code> for real numbers, <code>string</code> for text, <code>byte</code> for binary data. Reach for sized types only for wire formats, bit manipulation, or measured memory pressure." },
+    { t: "p", html: "An unsigned number cannot be negative. <code>uint</code> starts at 0. Take one away from 0 and it wraps to the biggest value that type can hold. On a 64-bit computer that value is 18446744073709551615." },
+    { t: "p", html: "<code>uint8</code> only holds 0 through 255. Put 300 in one and Go keeps what is left after filling 256, which is 44. It does not return an error. You asked for the conversion, so it does it." },
+    { t: "code", title: "Below zero, and a number that does not fit", code:
+`var u uint = 0
+fmt.Println(u - 1)
 
-    { t: "h", text: "Conversion" },
-    { t: "p", html: "<strong>Implicit conversion</strong> means the language changes the type for you. In C, Java, and many other languages, <code>float f = someInt</code> is legal: the compiler inserts the conversion. Go will not. If <code>i</code> is an <code>int</code>, this line does not compile:" },
+n := 300
+fmt.Println(uint8(n))`,
+      out: `18446744073709551615
+44`
+    },
+
+    { t: "h", text: "Changing a type" },
+    { t: "p", html: "Some languages quietly turn an int into a float. Go does not. If <code>i</code> is an int, this line does not compile:" },
     { t: "code", title: "Go refuses to convert this for you", code:
 `var i int = 42
 var f float64 = i   // does not compile`,
       out: `cannot use i (variable of type int) as float64 value in variable declaration`
     },
-    { t: "p", html: "<strong>Explicit conversion</strong> means you write the conversion yourself. The Go spelling is the type name, then the value in parentheses: <code>float64(i)</code>. That says \"make a float64 from this int\". It is not a C cast, <code>(float64)i</code>, and it is not <code>i.(float64)</code>. That last form is a type assertion. It only works when the value is an interface, which an <code>int</code> is not. The next section shows when to use it." },
+    { t: "p", html: "You write the new type yourself. <code>float64(i)</code> means \"make a float64 from this int\". The spelling <code>(float64)i</code> is from C, and Go does not accept it. <code>i.(float64)</code> is a different question: it asks a stored value what it holds. An int is not that kind of value. The next section shows when to use it." },
     { t: "code", title: "You name the type you want", code:
 `var i int = 42
 var f float64 = float64(i)
 fmt.Println(f)`,
       out: `42`
     },
-    { t: "p", html: "Because you asked for the conversion, Go does it even when the value does not fit, and it does not return an error. A fraction is cut off toward zero, not rounded: <code>int(3.99)</code> is <code>3</code>. An integer that is too big for the destination wraps. <code>uint8</code> only holds 0 through 255, so <code>uint8(300)</code> keeps the remainder after 256, which is 44." },
-    { t: "code", title: "A variable conversion cuts or wraps, with no error", code:
+    { t: "p", html: "A conversion does not check that the value fits, and it does not return an error. A fraction is cut toward zero. <code>int(3.99)</code> is <code>3</code>, not 4." },
+    { t: "code", title: "The fraction is cut off", code:
 `x := 3.99
-fmt.Println(int(x))
-
-n := 300
-fmt.Println(uint8(n))`,
-      out: `3
-44`
+fmt.Println(int(x))`,
+      out: `3`
     },
-    { t: "note", kind: "warn", title: "A constant is checked. A variable is not.", html: "Write the number in the source and Go can see that it does not fit. <code>int(3.99)</code> fails with \"cannot convert 3.99 (untyped float constant) to type int\". <code>uint8(300)</code> fails with \"constant 300 overflows uint8\". Put those numbers in variables first, as above, and the same conversion compiles and quietly cuts or wraps." },
-    { t: "p", html: "Dividing two integers follows the same rule. Both sides are <code>int</code>, so the result is an <code>int</code> and the fraction is dropped. <code>float64(7) / 2</code> works because that <code>2</code> is an untyped constant: Go may use it as a <code>float64</code>. An <code>int</code> variable is not flexible. <code>float64(7) / two</code> does not compile when <code>two</code> has type <code>int</code>. Convert it yourself: <code>float64(7) / float64(two)</code>." },
+    { t: "note", kind: "warn", title: "A number written in the source is checked", html: "<code>int(3.99)</code> does not compile: Go can see that 3.99 is not a whole number. <code>uint8(300)</code> does not compile: 300 does not fit. Put the number in a variable first, as the examples above do, and the same conversion compiles and cuts or wraps." },
+    { t: "p", html: "Dividing two ints gives an int. The fraction is dropped, so <code>7 / 2</code> is <code>3</code>. Write <code>7.0 / 2.0</code> when you want <code>3.5</code>. If the divisor is an int variable, convert both sides: <code>float64(7) / float64(two)</code>." },
     { t: "code", title: "Integer division drops the fraction", code:
 `fmt.Println(7 / 2)
 fmt.Println(7.0 / 2.0)
-fmt.Println(float64(7) / 2)`,
+two := 2
+fmt.Println(float64(7) / float64(two))`,
       out: `3
 3.5
 3.5`
     },
-    { t: "p", html: "<code>string(72)</code> is also an explicit conversion, and it does <strong>not</strong> mean the digits 72. It means \"the character whose Unicode number is 72\", which is <code>H</code>. To turn a number into decimal text, or text into a number, use <code>strconv</code>." },
+    { t: "p", html: "<code>string(72)</code> means the character whose number is 72, which is <code>H</code>. It does not mean the digits 72. Use <code>strconv</code> to turn a number into decimal text, or text into a number." },
     { t: "code", title: "string(n) is a character; strconv is the decimal text", code:
 `fmt.Println(string(72))
 fmt.Println(strconv.Itoa(72))
 
 n, err := strconv.Atoi("42")
-fmt.Println(n, err)
-
-fmt.Println(strconv.FormatInt(255, 16))`,
+fmt.Println(n, err)`,
       out: `H
 72
-42 <nil>
-ff`
+42 <nil>`
     },
-    { t: "note", kind: "warn", title: "Floats are not decimals", html: "<code>0.1 + 0.2 == 0.3</code> is <code>false</code>. IEEE-754 binary floats can't represent those exactly. Compare with a tolerance (<code>math.Abs(a-b) &lt; 1e-9</code>), and for <strong>money, use integer cents</strong> or a decimal library. Never store currency in a float." },
+    { t: "h", text: "Floats" },
+    { t: "p", html: "A float64 cannot store 0.1 exactly. Add 0.1 and 0.2 and the result is a tiny bit off 0.3, so a direct comparison is false. Compare the gap instead. For money, store a whole number of cents in an int." },
+    { t: "code", title: "0.1 plus 0.2 is not exactly 0.3", code:
+`a := 0.1
+b := 0.2
+c := 0.3
+fmt.Println(a + b == c)
+fmt.Println(math.Abs((a + b) - c) < 1e-9)`,
+      out: `false
+true`
+    },
 
     { t: "h", text: "How to check a type" },
-    { t: "p", html: "A named variable already has a type. <code>var age int</code> is an <code>int</code> for the whole program. The compiler stops the build if you store a string in it. You look a type up only when you want to see it, or when the value was stored as <code>any</code>." },
-    { t: "p", html: "<code>any</code> is a slot that can hold a value of any type. A string now, an int later. The concrete type is known when the program runs. There are two ways to look." },
+    { t: "p", html: "A name such as <code>var age int</code> already has a type. You do not look it up. You look a type up in two cases: you want to see the name while debugging, or the value was stored in an <code>any</code> slot." },
+    { t: "p", html: "<code>any</code> can hold a string now and an int later. Go learns which one it is when the program runs." },
+    { t: "p", html: "<code>fmt.Printf(\"%T\\n\", v)</code> prints the type's name. Each piece of that call does one job." },
     { t: "list", items: [
-      "<code>fmt.Printf(\"%T\\n\", v)</code> prints the type name. Use this while you are writing or debugging.",
-      "<code>v, ok := x.(string)</code> asks whether an <code>any</code> value holds a string. <code>ok</code> is true when it does, and <code>v</code> is that string. When it holds something else, <code>ok</code> is false and the program keeps running."
+      "<code>Printf</code> is the call that writes text.",
+      "<code>%T</code> means type. The <code>T</code> tells Printf to write the type's name.",
+      "<code>\\n</code> means start a new line after that name.",
+      "<code>v</code> is the value you pass in. When <code>v</code> is <code>30</code>, the name that prints is <code>int</code>."
     ]},
+    { t: "diagram", id: "percent-t" },
+    { t: "p", html: "<code>v, ok := x.(string)</code> asks one question and gives you two answers." },
+    { t: "list", items: [
+      "<code>x</code> is the slot. It can hold a string, an int, or something else.",
+      "<code>(string)</code> is the question: does this slot hold a string?",
+      "<code>v</code> is the value that comes back. It is that string when the answer is yes.",
+      "<code>ok</code> is the yes or no. <code>true</code> means the type matched. <code>false</code> means it did not, and the program keeps running."
+    ]},
+    { t: "diagram", id: "comma-ok" },
     { t: "code", title: "Print the type, then ask an any value", code:
 `age := 30
 name := "Ada"
@@ -949,7 +1017,8 @@ string
 Ada true
 0 false`
     },
-    { t: "p", html: "The form without <code>ok</code>, written <code>x.(string)</code>, stops the program when <code>x</code> holds a different type. Keep the <code>ok</code> result and check it. Several possible types use a type switch. Inside the matching case, <code>v</code> has that type." },
+    { t: "p", html: "Write <code>x.(string)</code> with the <code>ok</code> result, and check it. Without <code>ok</code>, the program stops when <code>x</code> holds a different type." },
+    { t: "p", html: "When several types are possible, a type switch names each one. Inside the matching case, <code>v</code> has that type." },
     { t: "code", title: "A type switch names each type you accept", code:
 `var x any = "Ada"
 switch v := x.(type) {
@@ -964,75 +1033,88 @@ default:
     },
     { t: "p", html: "The same switch form appears in <a href=\"#/m/control-flow\">Control Flow: if, for, switch, defer</a>, under switch. <a href=\"#/m/methods-interfaces\">Methods, Interfaces &amp; Composition</a> explains both forms in full, under Type assertions. <code>%T</code> is also in the verb table in <a href=\"#/m/printing-fmt\">Printing &amp; Formatting with fmt</a>." },
 
-    { t: "h", text: "Strings" },
-    { t: "p", html: "A Go string is a read-only sequence of bytes, conventionally UTF-8. Under the hood it's a two-word header: a pointer to the bytes and a length. Indexing gives you a <strong>byte</strong>; ranging gives you <strong>runes</strong>." },
+    { t: "h", text: "Text" },
+    { t: "p", html: "A string is text stored as bytes. <code>len</code> counts bytes, not characters. Most English letters are one byte. <code>é</code> is two bytes, so <code>Héllo</code> is 6 bytes and 5 characters. <code>héllo</code> is 6 bytes for the same reason." },
+    { t: "list", items: [
+      "<code>len(s)</code> counts bytes.",
+      "<code>range</code> walks characters. The number it gives you is the byte position, so it can skip.",
+      "<code>s[1]</code> is one byte, not the character <code>é</code>."
+    ]},
     { t: "diagram", id: "string-runes" },
-    { t: "code", title: "Bytes vs runes, the thing everyone gets wrong once", code:
-`s := "Héllo, 世界"
-
-fmt.Println(len(s))                    // 14  <- BYTES, not characters
-fmt.Println(utf8.RuneCountInString(s)) // 9   <- actual characters
-fmt.Println(s[1])                      // 195 <- one byte of the 2-byte 'é'
-
-// range decodes UTF-8 for you: i is the BYTE offset, r is a rune
+    { t: "p", html: "<code>[]rune(s)</code> turns the string into a list of characters, so you can pick one by its place." },
+    { t: "list", items: [
+      "<code>s</code> is the string, still stored as bytes.",
+      "<code>[]rune</code> means a list of characters.",
+      "<code>(s)</code> means convert this string into that list.",
+      "<code>chars[1]</code> is the second character. The first is <code>[0]</code>, so <code>[1]</code> of <code>Héllo</code> is <code>é</code>."
+    ]},
+    { t: "diagram", id: "rune-list" },
+    { t: "code", title: "Héllo is 6 bytes and 5 characters", code:
+`s := "Héllo"
+fmt.Println(len(s))
+fmt.Println(utf8.RuneCountInString(s))
+fmt.Println(s[1])
 for i, r := range s {
-    fmt.Printf("%d:%c ", i, r)         // 0:H 1:é 3:l 4:l 5:o ... (offsets jump)
+    fmt.Printf("%d:%c ", i, r)
 }
-
-// Need character-indexed access? Convert to []rune first.
-r := []rune(s)
-fmt.Println(string(r[7]))              // 世
-fmt.Println(len(r))                    // 9
-
-// Immutable: s[0] = 'h' does not compile. Rebuild instead.
-b := []byte(s); b[0] = 'h'; s = string(b)   // each conversion COPIES
-
-// Efficient concatenation in a loop: never use += on strings
-var sb strings.Builder
-for i := 0; i < 1000; i++ {
-    sb.WriteString("x")                // O(n) total, one growing buffer
-}
-out := sb.String()`,
-      out: `14
-9
+fmt.Println()
+chars := []rune(s)
+fmt.Println(string(chars[1]))
+fmt.Println(len(chars))`,
+      out: `6
+5
 195
-0:H 1:é 3:l 4:l 5:o 6:, 7:  8:世 11:界 
-世
-9`
+0:H 1:é 3:l 4:l 5:o 
+é
+5`
     },
-    { t: "note", kind: "deep", title: "Why `+=` in a loop is quadratic", html: "Strings are immutable, so <code>s += \"x\"</code> allocates a brand-new string and copies everything each iteration, O(n²) and n allocations. <code>strings.Builder</code> amortises growth like <code>append</code> does. For joining a known list, <code>strings.Join</code> is both fastest and clearest." },
+    { t: "p", html: "You cannot change one letter inside a string. <code>s[0] = 'h'</code> does not compile. Build a new string instead." },
+    { t: "p", html: "<code>s += \"x\"</code> copies the whole string on every addition. In a long loop those copies add up. <code>strings.Builder</code> adds onto one buffer. When you already have the pieces in a list, <code>strings.Join</code> is the clearest call." },
+    { t: "code", title: "Build a new string", code:
+`var b strings.Builder
+b.WriteString("go")
+b.WriteString("lang")
+fmt.Println(b.String())`,
+      out: `golang`
+    },
 
-    { t: "h", text: "strings package" },
-    { t: "p", html: "These are the functions you will call most often. <code>Contains</code>, <code>HasPrefix</code>, <code>Split</code>, and <code>Join</code> search and cut text. <code>Fields</code> splits on any whitespace. <code>EqualFold</code> compares letters without caring about case. The <code>fmt</code> verbs below are the codes <code>Printf</code> uses to decide how a value is printed." },
-    { t: "code", title: "strings and fmt", code:
-`strings.Contains("seafood", "foo")      // true
-strings.HasPrefix("golang", "go")       // true
-strings.Split("a,b,c", ",")             // ["a" "b" "c"]
-strings.Join([]string{"a","b"}, "-")    // "a-b"
-strings.ToUpper("go")                   // "GO"
-strings.TrimSpace("  hi \\n")            // "hi"
-strings.ReplaceAll("aaa", "a", "b")     // "bbb"
-strings.Fields(" a  b   c ")            // ["a" "b" "c"], splits on any whitespace
-strings.EqualFold("Go", "GO")           // true, case-insensitive compare
-
-// Formatting verbs worth memorising
-fmt.Printf("%v",  x)   // default representation
-fmt.Printf("%+v", x)   // struct WITH field names
-fmt.Printf("%#v", x)   // Go syntax representation
-fmt.Printf("%T",  x)   // the type itself
-fmt.Printf("%q",  s)   // double-quoted, escaped
-fmt.Printf("%d %s %t %f %.2f %x", 1, "a", true, 1.5, 1.567, 255)
-msg := fmt.Sprintf("user %s has %d items", name, n)   // build, don't print`
+    { t: "h", text: "Searching text" },
+    { t: "p", html: "The <code>strings</code> package looks through text and cuts it up. Each function below does one job." },
+    { t: "list", items: [
+      "<code>Contains</code> asks whether the text includes a piece.",
+      "<code>HasPrefix</code> asks whether the text starts with a piece.",
+      "<code>Split</code> cuts the text on a separator.",
+      "<code>Join</code> sticks pieces together with a separator.",
+      "<code>TrimSpace</code> removes spaces and newlines from both ends.",
+      "<code>Fields</code> cuts on any stretch of whitespace.",
+      "<code>EqualFold</code> compares letters and ignores case."
+    ]},
+    { t: "code", title: "Look through a string", code:
+`fmt.Println(strings.Contains("seafood", "foo"))
+fmt.Println(strings.HasPrefix("golang", "go"))
+fmt.Println(strings.Split("a,b,c", ","))
+fmt.Println(strings.Join([]string{"a", "b"}, "-"))
+fmt.Println(strings.TrimSpace("  hi \\n"))
+fmt.Println(strings.Fields(" a  b   c "))
+fmt.Println(strings.EqualFold("Go", "GO"))`,
+      out: `true
+true
+[a b c]
+a-b
+hi
+[a b c]
+true`
     }
   ],
   summary: [
-    "Default to `int`, `float64`, `string`; sized types are for wire formats and bit work.",
-    "Go will not turn an int into a float64 for you. Write float64(i). That conversion cuts off a fraction or wraps a too-big integer, and it does not return an error.",
-    "`string(65)` is `\"A\"`; use `strconv` for real number↔string conversion.",
-    "Floats are inexact: compare with a tolerance, and represent money as integers.",
-    "Print a type with `%T`. When a value is `any`, `v, ok := x.(string)` asks whether it holds a string.",
-    "`len(s)` counts bytes; `range s` yields runes with byte offsets; `[]rune(s)` for character indexing.",
-    "Strings are immutable, use `strings.Builder` or `strings.Join` instead of `+=` in a loop."
+    "`int` is a whole number, `float64` can have a fraction, `bool` is true or false, and `string` is text.",
+    "`byte` is one value from 0 to 255. `rune` is one character.",
+    "Go will not turn an int into a float64 for you. Write float64(i). A fraction is cut off, and a number that is too big wraps.",
+    "`string(72)` is `H`. `strconv.Itoa(72)` is the text \"72\".",
+    "0.1 + 0.2 is not exactly 0.3. For money, store cents as an int.",
+    "Print a type with `%T`. `v, ok := x.(string)` asks whether an `any` value holds a string.",
+    "`len` counts bytes. `range` walks characters. `[]rune(s)` lets you pick a character by its place.",
+    "A string cannot be changed in place. Use `strings.Builder` or `strings.Join` to build text."
   ],
   quiz: [
     { q: "`s := \"héllo\"`, what does `len(s)` return?",
