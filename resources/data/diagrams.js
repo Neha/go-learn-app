@@ -1022,6 +1022,94 @@ select: {
     <text class="dg-t mono xl" x="840" y="340" text-anchor="middle">o</text>
     <text class="dg-t lg" x="840" y="384" text-anchor="middle">[4]</text>
   </svg>`
+},
+
+/* ─────────────── fmt ─────────────── */
+"fmt-where": {
+  title: "Where it goes, and how it is shaped",
+  caption: "Print writes to the terminal. Sprint builds a string. Fprint writes to a writer you pass in. Println separates the values. Printf follows the format string.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Print goes to the terminal, Sprint builds a string, Fprint writes to a writer. Println separates values. Printf follows the format.">
+    <text class="dg-t lg" x="24" y="36">1. The first letters say where the text goes</text>
+    <rect class="dg-box accent dg-beat" x="24" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="168" y="118" text-anchor="middle">Print</text>
+    <text class="dg-t lg" x="168" y="162" text-anchor="middle">the terminal</text>
+    <rect class="dg-box" x="336" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="118" text-anchor="middle">Sprint</text>
+    <text class="dg-t lg" x="480" y="162" text-anchor="middle">a string you keep</text>
+    <rect class="dg-box" x="648" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="792" y="118" text-anchor="middle">Fprint</text>
+    <text class="dg-t lg" x="792" y="162" text-anchor="middle">a writer you pass</text>
+
+    <text class="dg-t lg" x="24" y="244">2. The ending says how the same values look</text>
+    <rect class="dg-box" x="24" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="168" y="322" text-anchor="middle">Print</text>
+    <text class="dg-t mono xl" x="168" y="370" text-anchor="middle">ab1 2</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="336" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="322" text-anchor="middle">Println</text>
+    <text class="dg-t mono lg" x="480" y="370" text-anchor="middle">a b 1 2</text>
+    <rect class="dg-box" x="648" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="792" y="322" text-anchor="middle">Printf</text>
+    <text class="dg-t mono lg" x="792" y="370" text-anchor="middle">a has 1</text>
+  </svg>`
+},
+
+"fmt-printf": {
+  title: "Printf fills the verbs in order",
+  caption: "%s is a string. %d is a whole number. \\n starts a new line. Ada fills %s, and 2 fills %d.",
+  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="Printf, percent s, percent d, and backslash n. Ada fills the string verb. 2 fills the number verb. The line prints Ada has 2.">
+    <defs><marker id="dgArrPF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Each piece of the call</text>
+    <rect class="dg-box" x="24" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="129" y="120" text-anchor="middle">Printf</text>
+    <text class="dg-t lg" x="129" y="164" text-anchor="middle">the call</text>
+    <rect class="dg-box accent dg-beat" x="258" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="363" y="120" text-anchor="middle">%s</text>
+    <text class="dg-t lg" x="363" y="164" text-anchor="middle">a string</text>
+    <rect class="dg-box accent dg-beat" style="--i:1" x="492" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="597" y="120" text-anchor="middle">%d</text>
+    <text class="dg-t lg" x="597" y="164" text-anchor="middle">a number</text>
+    <rect class="dg-box" x="726" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="831" y="120" text-anchor="middle">\\n</text>
+    <text class="dg-t lg" x="831" y="164" text-anchor="middle">new line</text>
+
+    <text class="dg-t lg" x="24" y="244">2. Values fill those verbs, left to right</text>
+    <rect class="dg-box" x="24" y="264" width="200" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="124" y="332" text-anchor="middle">Ada</text>
+    <path class="dg-arrow" d="M232 319 L300 319" marker-end="url(#dgArrPF)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M232 319 L300 319')"/>
+    <rect class="dg-box" x="308" y="264" width="160" height="110" rx="16"/>
+    <text class="dg-t mono xl" x="388" y="332" text-anchor="middle">2</text>
+    <path class="dg-arrow" d="M476 319 L544 319" marker-end="url(#dgArrPF)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M476 319 L544 319'); --i:1"/>
+    <rect class="dg-box ok dg-beat" style="--i:2" x="552" y="264" width="384" height="110" rx="16"/>
+    <text class="dg-t lg" x="744" y="306" text-anchor="middle">prints</text>
+    <text class="dg-t mono lg" x="744" y="348" text-anchor="middle">Ada has 2</text>
+  </svg>`
+},
+
+"fmt-struct": {
+  title: "Three ways to print a struct",
+  caption: "%v prints the values. %+v adds the field names. %#v prints Go syntax.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Percent v prints Ada and 30. Percent plus v adds the field names. Percent hash v prints Go syntax.">
+    <rect class="dg-box" x="24" y="24" width="180" height="100" rx="16"/>
+    <text class="dg-t mono xl" x="114" y="86" text-anchor="middle">%v</text>
+    <text class="dg-t lg" x="230" y="58">values only</text>
+    <rect class="dg-box" x="230" y="72" width="706" height="52" rx="14"/>
+    <text class="dg-t mono lg" x="250" y="106">{Ada 30}</text>
+
+    <rect class="dg-box accent dg-beat" x="24" y="148" width="180" height="100" rx="16"/>
+    <text class="dg-t mono xl" x="114" y="210" text-anchor="middle">%+v</text>
+    <text class="dg-t lg" x="230" y="182">with the field names</text>
+    <rect class="dg-box ok" x="230" y="196" width="706" height="52" rx="14"/>
+    <text class="dg-t mono lg" x="250" y="230">{Name:Ada Age:30}</text>
+
+    <rect class="dg-box" x="24" y="272" width="180" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="114" y="354" text-anchor="middle">%#v</text>
+    <text class="dg-t lg" x="230" y="306">Go syntax</text>
+    <rect class="dg-box" x="230" y="320" width="706" height="92" rx="14"/>
+    <text class="dg-t mono lg" x="250" y="360">main.User{</text>
+    <text class="dg-t mono lg" x="250" y="394">Name:&quot;Ada&quot;, Age:30}</text>
+  </svg>`
 }
 
 };

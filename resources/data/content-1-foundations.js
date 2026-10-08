@@ -1147,191 +1147,175 @@ true`
   icon: "🖨️",
   title: "Printing & Formatting with fmt",
   minutes: 18,
-  blurb: "Print vs Printf vs Println, every verb worth knowing, Stringer, and the recursion trap that hangs your program.",
+  blurb: "Where Print, Sprint, and Fprint send the text, and how Printf decides the shape.",
   blocks: [
-    { t: "p", html: "You will type <code>fmt</code> more than any other package. It is also where a surprising amount of Go's design shows up: interfaces (<code>Stringer</code>, <code>io.Writer</code>), reflection, and the fact that <code>go vet</code> understands format strings. Learn it properly once." },
+    { t: "p", html: "<code>fmt</code> turns values into text. You will use it more than any other package. The name has two parts. The first letters say where the text goes. The ending says how the text is shaped." },
 
-    { t: "h", text: "fmt" },
-    { t: "p", html: "The name tells you where the result goes. <code>Print</code> writes to the terminal. <code>Sprint</code> builds a string and does not print. <code>Fprint</code> writes to anything that accepts bytes: a file, a buffer, or an HTTP response. <code>Errorf</code> builds an error. <code>Appendf</code> adds onto a byte slice." },
-    { t: "code", title: "Print / Printf / Println × nothing / S / F / Err", code:
-`// 1. To STANDARD OUTPUT
-fmt.Print("a", "b", 1, 2)       // ab1 2   ← see the spacing rule below
-fmt.Println("a", "b", 1, 2)     // a b 1 2\\n
-fmt.Printf("%s has %d\\n", s, n) // you control everything
-
-// 2. To a STRING (the "S" family), build, don't print
-msg := fmt.Sprintf("user %s has %d items", name, n)
-s2  := fmt.Sprint("a", "b")      // "ab"
-s3  := fmt.Sprintln("a", "b")    // "a b\\n"
-
-// 3. To ANY io.Writer (the "F" family), the most useful one
-fmt.Fprintf(w, "status: %d\\n", code)   // http.ResponseWriter, os.Stderr, a file,
-fmt.Fprintln(os.Stderr, "warning")     // a bytes.Buffer, a gzip stream, a socket…
-fmt.Fprint(&buf, "x")
-// This is why your functions should take an io.Writer instead of calling
-// Println directly: it makes output testable with a bytes.Buffer.
-
-// 4. To an ERROR
-err := fmt.Errorf("loading %s: %w", path, cause)   // %w keeps the cause
-
-// 5. Append into a []byte without allocating a string (Go 1.19+)
-b = fmt.Appendf(b, "%d,", n)`
+    { t: "h", text: "Where the text goes" },
+    { t: "list", items: [
+      "<code>Print</code>, <code>Println</code>, and <code>Printf</code> write to the terminal.",
+      "<code>Sprint</code>, <code>Sprintln</code>, and <code>Sprintf</code> build a string. Nothing is printed until you print that string.",
+      "<code>Fprint</code>, <code>Fprintln</code>, and <code>Fprintf</code> write to a writer you pass in: a buffer, a file, or a response."
+    ]},
+    { t: "p", html: "The ending changes the shape. <code>Println</code> puts a space between values and ends with a new line. <code>Print</code> glues neighbouring strings together, and it puts a space only when both sides are not strings. <code>Printf</code> prints only what the format string asks for." },
+    { t: "diagram", id: "fmt-where" },
+    { t: "code", title: "Same values, three shapes", code:
+`fmt.Print("a", "b", 1, 2)
+fmt.Print("\\n")
+fmt.Println("a", "b", 1, 2)
+fmt.Printf("%s has %d\\n", "a", 1)`,
+      out: `ab1 2
+a b 1 2
+a has 1`
     },
-    { t: "note", kind: "warn", title: "The spacing rule people get wrong", html: "<code>Println</code> <strong>always</strong> puts a space between operands and adds a newline. <code>Print</code> and <code>Sprint</code> add a space <strong>only when neither neighbour is a string</strong>, which is why <code>fmt.Print(\"a\", \"b\", 1, 2)</code> gives <code>ab1 2</code>. If you care about the exact output, use <code>Printf</code>." },
+    { t: "p", html: "<code>Sprintf</code> keeps the text in a variable. <code>Fprintf</code> writes the same kind of text into a buffer. A test can pass a <code>bytes.Buffer</code> and read it back, which is why a function that produces output often takes an <code>io.Writer</code>." },
+    { t: "code", title: "A string, and a buffer", code:
+`msg := fmt.Sprintf("%s has %d", "Ada", 2)
+var buf bytes.Buffer
+fmt.Fprintf(&buf, "%s has %d", "Ada", 2)
+fmt.Println(msg)
+fmt.Println(buf.String())`,
+      out: `Ada has 2
+Ada has 2`
+    },
 
-    { t: "h", text: "Format verbs" },
-    { t: "p", html: "A verb is the code after <code>%</code> in a format string. It tells <code>fmt</code> how to turn a value into text. <code>%v</code> is the one to use when you are not sure. <code>%T</code> prints the type name. Asking an <code>any</code> value what it holds is in <a href=\"#/m/data-types\">Data Types, Strings, Runes &amp; Conversion</a>, under How to check a type." },
-    { t: "table", head: ["Verb", "Meaning", "Example output"],
+    { t: "h", text: "The format string" },
+    { t: "p", html: "The text in quotes is the format. A verb is a <code>%</code> plus a letter. The values after the format fill those verbs from left to right." },
+    { t: "list", items: [
+      "<code>%s</code> is a string.",
+      "<code>%d</code> is a whole number, in base 10.",
+      "<code>\\n</code> starts a new line.",
+      "<code>%%</code> prints a percent sign, so <code>100%%</code> prints <code>100%</code>."
+    ]},
+    { t: "diagram", id: "fmt-printf" },
+    { t: "code", title: "Ada fills %s, 2 fills %d", code:
+`fmt.Printf("%s has %d\\n", "Ada", 2)`,
+      out: `Ada has 2`
+    },
+
+    { t: "h", text: "A struct" },
+    { t: "p", html: "A struct is a value with named fields. Three verbs print it three ways. <code>%v</code> is the everyday one. <code>%+v</code> is the one to use while debugging, because the field names are in the text." },
+    { t: "list", items: [
+      "<code>%v</code> prints the values.",
+      "<code>%+v</code> prints the field names as well.",
+      "<code>%#v</code> prints Go syntax."
+    ]},
+    { t: "diagram", id: "fmt-struct" },
+    { t: "code", title: "One user, three verbs", code:
+`type User struct {
+    Name string
+    Age  int
+}
+u := User{"Ada", 30}
+fmt.Printf("%v\\n", u)
+fmt.Printf("%+v\\n", u)
+fmt.Printf("%#v\\n", u)`,
+      out: `{Ada 30}
+{Name:Ada Age:30}
+main.User{Name:"Ada", Age:30}`
+    },
+    { t: "p", html: "Printing a map sorts the keys. Walking the map yourself with <code>range</code> does not. The order below is <code>a</code> then <code>b</code>, even though <code>b</code> was written first." },
+    { t: "code", title: "A printed map has sorted keys", code:
+`fmt.Printf("%v\\n", map[string]int{"b": 2, "a": 1})`,
+      out: `map[a:1 b:2]`
+    },
+    { t: "p", html: "The other verbs are here for when you need them. <code>%T</code>, and how to ask an <code>any</code> value what it holds, are in <a href=\"#/m/data-types\">Data Types, Strings, Runes &amp; Conversion</a>." },
+    { t: "table", head: ["Verb", "What it prints", "Example"],
       rows: [
-        ["<code>%v</code>", "Default format, works for every type", "<code>{Ada 30}</code>"],
-        ["<code>%+v</code>", "Structs <strong>with field names</strong>, your debugging default", "<code>{Name:Ada Age:30}</code>"],
-        ["<code>%#v</code>", "Go syntax: paste it back into code", "<code>main.User{Name:\"Ada\", Age:30}</code>"],
-        ["<code>%T</code>", "The type itself", "<code>main.User</code>, <code>[]int</code>, <code>*os.File</code>"],
-        ["<code>%d %b %o %x %X</code>", "Integer in base 10 / 2 / 8 / 16", "<code>255 11111111 377 ff FF</code>"],
-        ["<code>%f %.2f %e %g</code>", "Float: full, 2 decimals, scientific, compact", "<code>3.141593 3.14 3.1416e+00 3.141593</code>"],
-        ["<code>%s</code>", "String, or anything with <code>String()</code> / <code>Error()</code>", "<code>hello</code>"],
-        ["<code>%q</code>", "Quoted and escaped (strings) or rune-quoted (ints)", "<code>\"hi\\n\"</code>, <code>'A'</code>"],
-        ["<code>%c %U</code>", "The character for a code point / U+ notation", "<code>A</code>, <code>U+0041</code>"],
-        ["<code>%t</code>", "Boolean", "<code>true</code>"],
-        ["<code>%p</code>", "Pointer address, for identity checks, not for logs", "<code>0xc000012345</code>"],
-        ["<code>%w</code>", "Wrap an error (<code>fmt.Errorf</code> only)", "chain preserved for <code>errors.Is</code>"],
-        ["<code>%%</code>", "A literal percent sign", "<code>%</code>"]
+        ["<code>%v</code>", "The values, for any type", "<code>{Ada 30}</code>"],
+        ["<code>%+v</code>", "A struct with its field names", "<code>{Name:Ada Age:30}</code>"],
+        ["<code>%#v</code>", "Go syntax", "<code>main.User{Name:\"Ada\", Age:30}</code>"],
+        ["<code>%T</code>", "The type name", "<code>int</code>, <code>string</code>"],
+        ["<code>%d %b %o %x</code>", "A whole number in base 10, 2, 8, or 16", "<code>255 11111111 377 ff</code>"],
+        ["<code>%f %.2f</code>", "A float, or a float with 2 decimals", "<code>3.141593</code>, <code>3.14</code>"],
+        ["<code>%s</code>", "Text", "<code>hello</code>"],
+        ["<code>%q</code>", "Quoted text, with escapes", "<code>\"hi\\n\"</code>"],
+        ["<code>%t</code>", "A bool", "<code>true</code>"],
+        ["<code>%w</code>", "An error wrapped inside another. The errors lesson covers this.", ""],
+        ["<code>%%</code>", "A percent sign", "<code>%</code>"]
       ]
     },
-    { t: "code", title: "Width, precision, flags, and the quick mental model", code:
-`fmt.Printf("|%6d|",   42)      // |    42|   width 6, right-aligned
-fmt.Printf("|%-6d|",  42)      // |42    |   left-aligned
-fmt.Printf("|%06d|",  42)      // |000042|   zero-padded
-fmt.Printf("|%+d|",   42)      // |+42|     always show the sign
-fmt.Printf("|%8.3f|", 3.14159) // |   3.142| width 8, 3 decimals
-fmt.Printf("|%-12s|", "go")    // |go          | handy for aligned tables
-fmt.Printf("|%*d|", 6, 42)     // |    42|   width taken from an argument
-fmt.Printf("%#x %#o", 255, 8)  // 0xff 010   alternate form
 
-// Byte slices and hashing
-fmt.Printf("%s",   []byte("hi"))   // hi
-fmt.Printf("%x",   []byte("hi"))   // 6869
-fmt.Printf("% x",  []byte("hi"))   // 68 69   (space flag separates bytes)
-fmt.Printf("%x",   sha[:])         // the usual way to show a digest
-
-// Pointers to structs, slices, maps, nil
-fmt.Printf("%v", &User{"Ada", 30}) // &{Ada 30}
-fmt.Printf("%v", []int{1,2})       // [1 2]
-fmt.Printf("%v", map[string]int{"b":2,"a":1})  // map[a:1 b:2]  ← KEYS ARE SORTED
-fmt.Printf("%v", error(nil))       // <nil>`
+    { t: "h", text: "Width" },
+    { t: "p", html: "A number after <code>%</code> sets how wide the text is. <code>%6d</code> uses 6 columns and puts spaces on the left. <code>%-6d</code> puts the spaces on the right. <code>%.2f</code> keeps two digits after the decimal." },
+    { t: "code", title: "Six columns, or two decimals", code:
+`fmt.Printf("|%6d|\\n", 42)
+fmt.Printf("|%-6d|\\n", 42)
+fmt.Printf("|%.2f|\\n", 3.14159)`,
+      out: `|    42|
+|42    |
+|3.14|`
     },
-    { t: "note", kind: "tip", title: "Map printing is deterministic", html: "Since Go 1.12 <code>fmt</code> sorts map keys before printing, so <code>%v</code> on a map produces stable output you can safely use in golden-file tests. Iterating the map yourself is still randomised, only <em>printing</em> is sorted." },
 
-    { t: "h", text: "Stringer" },
-    { t: "p", html: "If your type has a method <code>String() string</code>, then <code>fmt</code>, <code>log</code>, and <code>slog</code> call it whenever they print a value of that type. That is how <code>Temp(21.5)</code> can print <code>21.5°C</code> instead of a bare number. A tool named <code>stringer</code> can write that method for a list of constants so they print as names, not numbers." },
-    { t: "code", title: "One method, and the whole ecosystem cooperates", code:
+    { t: "h", text: "Your own String method" },
+    { t: "p", html: "If your type has a method <code>String() string</code>, then <code>Println</code> calls it. That is how a temperature can print as <code>21.5°C</code> instead of a bare number. A tool named <code>stringer</code> can write that method for a list of constants, so they print as names." },
+    { t: "code", title: "Println calls String", code:
 `type Temp float64
 
-func (t Temp) String() string { return strconv.FormatFloat(float64(t), 'f', 1, 64) + "°C" }
+func (t Temp) String() string {
+    return strconv.FormatFloat(float64(t), 'f', 1, 64) + "°C"
+}
 
-fmt.Println(Temp(21.5))            // 21.5°C
-fmt.Printf("%v %s", Temp(3), x)    // both route through String()
-log.Printf("temp=%v", Temp(3))     // so does log, slog, and anything using fmt
-
-// That interface is tiny and lives in fmt:
-//   type Stringer interface { String() string }
-// error is the same idea:  interface { Error() string }, and Error() wins
-// over String() when both exist.
-
-// Enum + Stringer is THE idiom. Generate it instead of hand-writing:
-//go:generate stringer -type=Status
-type Status int
-const (
-    Pending Status = iota
-    Active
-    Closed
-)
-// stringer writes a String() method, now %v prints "Active", not "1".
-
-// Full control over formatting (rare): implement fmt.Formatter.
-// Control over %#v: implement fmt.GoStringer.`
+fmt.Println(Temp(21.5))`,
+      out: `21.5°C`
     },
-    { t: "note", kind: "warn", title: "The recursion trap, this one hangs your program", html: "Inside a <code>String()</code> method, printing the receiver with <code>%v</code> or <code>%s</code> calls <code>String()</code> again, forever, until the stack overflows." },
-    { t: "code", title: "Why, and the two fixes", code:
+    { t: "p", html: "Do not print the receiver from inside <code>String</code>. <code>%s</code> or <code>%v</code> on that same value calls <code>String</code> again, and the calls continue until the program runs out of stack. Convert to the plain type first. <code>string(m)</code> is a string, so <code>%s</code> prints the text and stops." },
+    { t: "code", title: "Convert first, then print", code:
 `type MyString string
 
-// BROKEN: infinite recursion. %s on m calls String() calls %s on m calls…
 func (m MyString) String() string {
-    return fmt.Sprintf("MyString=%s", m)
+    return fmt.Sprintf("value=%s", string(m))
 }
 
-// FIX 1, convert to the underlying type first, so fmt sees a plain string:
-func (m MyString) String() string {
-    return fmt.Sprintf("MyString=%s", string(m))
-}
-
-// FIX 2, for structs, print the fields, never the whole receiver:
-func (u User) String() string {
-    return fmt.Sprintf("User(%s, %d)", u.Name, u.Age)   // not %v on u
-}
-
-// Related: fmt RECOVERS panics inside String()/Error() so one bad method can't
-// crash your program. You get this instead, which is a strong hint to look at
-// a nil pointer receiver:
-//   %!v(PANIC=String method: runtime error: invalid memory address)`
+fmt.Println(MyString("Ada"))`,
+      out: `value=Ada`
     },
 
-    { t: "h", text: "Bad formats" },
-    { t: "p", html: "A bad verb does not crash. <code>fmt</code> inserts a marker such as <code>%!d(string=hello)</code> into the text, which is easy to miss in a log. <code>go vet</code> finds these mismatches, including in your own functions whose names end in <code>f</code>." },
-    { t: "code", title: "fmt tells you in-band, and go vet catches it first", code:
-`fmt.Printf("%d", "hello")    // %!d(string=hello)      wrong verb for the type
-fmt.Printf("%d %d", 1)       // 1 %!d(MISSING)         too few arguments
-fmt.Printf("%d", 1, 2)       // 1%!(EXTRA int=2)       too many
-fmt.Printf("%z", 1)          // %!z(int=1)             no such verb
-
-// Nothing panics and nothing returns an error, you get a marked-up string,
-// which is easy to miss in a log file. So let the tooling find these:
-go vet ./...        // reports every Printf-style mismatch in the package
-
-// vet also checks YOUR wrappers, as long as you follow the naming convention
-// (a function whose name ends in "f" and whose last args are format, ...any):
-func (l *Logger) Debugf(format string, args ...any) {
-    l.out(fmt.Sprintf(format, args...))
-}
-// Common bug vet catches: a format string with no arguments. Use Print, or
-// escape the percent: fmt.Println("100% done") / fmt.Printf("100%% done\\n")`
-    },
-
-    { t: "h", text: "Input" },
-    { t: "p", html: "<code>Scan</code> reads whitespace-separated values from the keyboard or a string. It is enough for an exercise. For real input, read a line with <code>bufio.Scanner</code> and convert it with <code>strconv</code>, because <code>Scan</code> stops at the first value it cannot parse." },
-    { t: "code", title: "Scan is fine for exercises; bufio for real input", code:
-`var name string; var age int
-fmt.Scan(&name, &age)                      // whitespace-separated from stdin
-fmt.Scanln(&name)                           // stops at the newline
-fmt.Sscanf("21-07", "%d-%d", &d, &m)        // parse from a string
-fmt.Fscan(r, &x)                            // from any io.Reader
-
-// For anything real, lines, large input, CSV, user prompts, use
-// bufio.Scanner (and strconv to convert), which handles long lines and errors
-// properly. fmt.Scan silently stops on the first thing it cannot parse.`
-    },
-
-    { t: "h", text: "fmt performance" },
-    { t: "p", html: "<code>fmt</code> is convenient and slow, because it inspects types while the program runs. On a hot path, <code>strconv</code> is faster. In a service, log with <code>slog</code> rather than <code>Println</code>, and do not put secrets into a format string." },
+    { t: "h", text: "A verb that does not match" },
+    { t: "p", html: "A wrong verb does not stop the program. <code>Printf</code> writes a marker into the text, which is easy to miss in a log. <code>go vet</code> finds these before you run the program. It also checks your own functions when the name ends in <code>f</code> and the last arguments are a format string and <code>...any</code>." },
     { t: "list", items: [
-      "<strong><code>fmt</code> uses reflection</strong>, so it is far slower than direct conversion. On a hot path, <code>strconv.Itoa(n)</code> beats <code>fmt.Sprintf(\"%d\", n)</code> by roughly an order of magnitude, and <code>s1 + s2</code> beats <code>Sprintf(\"%s%s\", …)</code>.",
-      "Passing values to <code>...any</code> <strong>boxes them, forcing a heap allocation</strong>, which is why <code>fmt.Println</code> shows up in escape-analysis output and in allocation profiles.",
-      "<strong>Never log with <code>fmt.Println</code> in a service.</strong> Use <code>slog</code>: structured, levelled, JSON, and filterable. <code>fmt</code> is for CLI output, errors and debugging.",
-      "<strong>Never put a secret or PII in a format string.</strong> Give sensitive types a <code>String()</code> that returns <code>\"[REDACTED]\"</code> and a stray <code>%v</code> can no longer leak it.",
-      "Prefer <code>Fprintf(w, …)</code> with an injected <code>io.Writer</code> over writing to stdout directly, it makes the output unit-testable.",
-      "For building strings in a loop, <code>strings.Builder</code>; for one value, <code>strconv</code>; for a message with several, <code>Sprintf</code> is perfectly idiomatic."
+      "<code>%d</code> with a string writes <code>%!d(string=hello)</code>.",
+      "Too few values writes <code>%!d(MISSING)</code>.",
+      "Too many values writes <code>%!(EXTRA int=2)</code>."
+    ]},
+    { t: "code", title: "The marker is part of the text", code:
+`fmt.Printf("%d\\n", "hello")
+fmt.Printf("%d %d\\n", 1)
+fmt.Printf("%d", 1, 2)
+fmt.Println()`,
+      out: `%!d(string=hello)
+1 %!d(MISSING)
+1%!(EXTRA int=2)`
+    },
+
+    { t: "h", text: "Reading a string" },
+    { t: "p", html: "<code>Sscanf</code> pulls values out of a string you already have. Declare the variables first, and pass their addresses with <code>&amp;</code>. For a line a person types, read the line with <code>bufio.Scanner</code> and convert it with <code>strconv</code>. <code>Scan</code> stops at the first value it cannot read." },
+    { t: "code", title: "Day and month from a string", code:
+`var d, m int
+fmt.Sscanf("21-07", "%d-%d", &d, &m)
+fmt.Println(d, m)`,
+      out: `21 7`
+    },
+
+    { t: "h", text: "When fmt is the slow choice" },
+    { t: "p", html: "<code>fmt</code> looks at the type of each value while the program runs. That is convenient, and it is slower than converting one value yourself." },
+    { t: "list", items: [
+      "One number to text: <code>strconv.Itoa</code>.",
+      "A long string built in a loop: <code>strings.Builder</code>.",
+      "A log line in a service: <code>slog</code>.",
+      "Do not put a password or other secret into a format string. A <code>String</code> method can return <code>[REDACTED]</code> instead."
     ]}
   ],
   summary: [
-    "Four families: `Print*` (stdout), `Sprint*` (string), `Fprint*` (any `io.Writer`), `Errorf` (error), plus `Appendf` into a `[]byte`.",
-    "`Println` always separates with spaces; `Print`/`Sprint` only do so between two non-strings.",
-    "Learn `%v`, `%+v` (field names), `%#v` (Go syntax), `%T`, `%q`, `%d/%x`, `%.2f`, `%s`, `%t`, `%w`, and `%%` for a literal percent.",
-    "Width/precision/flags: `%6d`, `%-6s`, `%06d`, `%+d`, `%8.3f`, `% x`, `%#x`, `%*d`.",
-    "Maps print with **sorted keys** (1.12+), so `%v` output is stable in golden tests even though iteration isn't.",
-    "Implement `String() string` (fmt.Stringer) and every fmt/log/slog call formats your type nicely; generate it for enums with `stringer`.",
-    "Never format the receiver with `%v`/`%s` inside its own `String()`, that recurses forever. Convert to the underlying type or print fields.",
-    "Bad format strings produce `%!d(string=…)` / `%!d(MISSING)` rather than an error, `go vet` is what actually catches them, including in your own `…f` wrappers.",
-    "`fmt` uses reflection and boxes arguments: prefer `strconv` on hot paths, `slog` for service logs, and redact secrets via `String()`."
+    "`Print` writes to the terminal, `Sprint` builds a string, and `Fprint` writes to a writer you pass in.",
+    "`Println` separates values with spaces. `Print` glues neighbouring strings. `Printf` follows the format string.",
+    "`%s` is a string, `%d` is a whole number, and `\\n` starts a new line. Values fill the verbs from left to right.",
+    "`%v` prints values, `%+v` adds field names, and `%#v` prints Go syntax.",
+    "Printing a map sorts the keys. Ranging over the map does not.",
+    "`%6d` pads on the left. `%-6d` pads on the right. `%.2f` keeps two decimals.",
+    "A `String() string` method is what `Println` calls. Printing the receiver from inside that method calls it again until the stack runs out.",
+    "A bad verb writes a marker such as `%!d(string=hello)`. `go vet` finds it.",
+    "`Sscanf` reads values out of a string. For one number, `strconv` is the faster call."
   ],
   quiz: [
     { q: "Which verb prints a struct **with its field names**?",
