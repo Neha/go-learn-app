@@ -764,13 +764,43 @@ middleware: {
   </svg>`
 },
 
-/* ─────────────── multiple returns ─────────────── */
+/* ─────────────── functions ─────────────── */
+"func-parts": {
+  title: "The pieces of a function",
+  caption: "func starts it. add is the name. a and b are the inputs. The last int is what comes back. add(2, 3) prints 5.",
+  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="func starts it. add is the name. a and b are the inputs. The last int is what comes back. add of 2 and 3 prints 5.">
+    <defs><marker id="dgArrFN" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Each piece of the line</text>
+    <rect class="dg-box" x="24" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="129" y="120" text-anchor="middle">func</text>
+    <text class="dg-t lg" x="129" y="164" text-anchor="middle">starts it</text>
+    <rect class="dg-box accent dg-beat" x="258" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="363" y="120" text-anchor="middle">add</text>
+    <text class="dg-t lg" x="363" y="164" text-anchor="middle">the name</text>
+    <rect class="dg-box" x="492" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="597" y="120" text-anchor="middle">(a, b int)</text>
+    <text class="dg-t lg" x="597" y="164" text-anchor="middle">the inputs</text>
+    <rect class="dg-box" x="726" y="56" width="210" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="831" y="120" text-anchor="middle">int</text>
+    <text class="dg-t lg" x="831" y="164" text-anchor="middle">comes back</text>
+
+    <text class="dg-t lg" x="24" y="244">2. You call it with 2 and 3</text>
+    <rect class="dg-box" x="24" y="264" width="360" height="110" rx="16"/>
+    <text class="dg-t mono lg" x="204" y="332" text-anchor="middle">add(2, 3)</text>
+    <path class="dg-arrow" d="M396 319 L468 319" marker-end="url(#dgArrFN)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M396 319 L468 319')"/>
+    <rect class="dg-box ok dg-beat" x="480" y="264" width="456" height="110" rx="16"/>
+    <text class="dg-t lg" x="708" y="306" text-anchor="middle">prints</text>
+    <text class="dg-t mono xl" x="708" y="348" text-anchor="middle">5</text>
+  </svg>`
+},
+
 "func-returns": {
   title: "A number and an error",
-  caption: "divide(10, 2) gives 5 and nil, so you use 5. divide(10, 0) gives 0 and an error, so you stop. A map, a type check, and a channel use the same pair.",
-  svg: `<svg viewBox="0 0 960 520" role="img" aria-label="divide of 10 and 2 returns 5 and nil. divide of 10 and 0 returns 0 and an error. Map, type, and channel reads use the same two-result shape.">
+  caption: "divide(10, 2) gives 5 and nil, so you print 5. divide(10, 0) gives 0 and an error, so you print the error and leave the 0 unused.",
+  svg: `<svg viewBox="0 0 960 400" role="img" aria-label="divide of 10 and 2 returns 5 and nil, so you print 5. divide of 10 and 0 returns 0 and an error, so you stop.">
     <defs><marker id="dgArrFR" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
-    <text class="dg-t lg" x="24" y="40">1. It worked</text>
+    <text class="dg-t lg" x="24" y="36">1. It worked</text>
     <rect class="dg-box" x="24" y="56" width="280" height="120" rx="16"/>
     <text class="dg-t mono lg" x="164" y="128" text-anchor="middle">divide(10, 2)</text>
     <path class="dg-arrow" d="M316 116 L360 116" marker-end="url(#dgArrFR)"/>
@@ -779,7 +809,7 @@ middleware: {
     <text class="dg-t lg" x="497" y="152" text-anchor="middle">nil</text>
     <path class="dg-arrow" d="M634 116 L690 116" marker-end="url(#dgArrFR)"/>
     <rect class="dg-box ok" x="702" y="56" width="234" height="120" rx="16"/>
-    <text class="dg-t lg" x="819" y="128" text-anchor="middle">use it</text>
+    <text class="dg-t lg" x="819" y="128" text-anchor="middle">print 5</text>
 
     <text class="dg-t lg" x="24" y="224">2. It failed</text>
     <rect class="dg-box" x="24" y="240" width="280" height="120" rx="16"/>
@@ -790,17 +820,74 @@ middleware: {
     <text class="dg-t lg" x="497" y="336" text-anchor="middle">error</text>
     <path class="dg-arrow" d="M634 300 L690 300" marker-end="url(#dgArrFR)"/>
     <rect class="dg-box bad" x="702" y="240" width="234" height="120" rx="16"/>
-    <text class="dg-t lg" x="819" y="312" text-anchor="middle">stop</text>
-
-    <text class="dg-t lg" x="24" y="404">3. Same pair, three places</text>
-    <rect class="dg-box" x="24" y="420" width="292" height="80" rx="16"/>
-    <text class="dg-t lg" x="170" y="468" text-anchor="middle">map, v, ok</text>
-    <rect class="dg-box" x="332" y="420" width="292" height="80" rx="16"/>
-    <text class="dg-t lg" x="478" y="468" text-anchor="middle">type, v, ok</text>
-    <rect class="dg-box" x="640" y="420" width="296" height="80" rx="16"/>
-    <text class="dg-t lg" x="788" y="468" text-anchor="middle">channel, v, ok</text>
+    <text class="dg-t lg" x="819" y="312" text-anchor="middle">print the error</text>
   </svg>`
 },
+
+"func-op": {
+  title: "Op holds the add function",
+  caption: "type Op is a name for a function that takes two ints and gives one int back. op holds add, so op(2, 3) prints 5.",
+  svg: `<svg viewBox="0 0 960 280" role="img" aria-label="type Op is a name for add's shape. op holds add. op of 2 and 3 prints 5.">
+    <defs><marker id="dgArrOP" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="dg-box" x="24" y="40" width="220" height="200" rx="16"/>
+    <text class="dg-t mono lg" x="134" y="120" text-anchor="middle">add</text>
+    <text class="dg-t lg" x="134" y="168" text-anchor="middle">the function</text>
+    <path class="dg-arrow" d="M256 140 L312 140" marker-end="url(#dgArrOP)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M256 140 L312 140')"/>
+    <rect class="dg-box accent dg-beat" x="324" y="40" width="280" height="200" rx="16"/>
+    <text class="dg-t mono lg" x="464" y="112" text-anchor="middle">type Op</text>
+    <text class="dg-t lg" x="464" y="160" text-anchor="middle">holds add</text>
+    <path class="dg-arrow" d="M616 140 L672 140" marker-end="url(#dgArrOP)"/>
+    <circle class="dg-run" r="7" style="offset-path: path('M616 140 L672 140'); --i:1"/>
+    <rect class="dg-box ok" x="684" y="40" width="252" height="200" rx="16"/>
+    <text class="dg-t lg" x="810" y="112" text-anchor="middle">op(2, 3)</text>
+    <text class="dg-t mono xl" x="810" y="168" text-anchor="middle">5</text>
+  </svg>`
+},
+
+"func-dots": {
+  title: "...int packs, nums... unpacks",
+  caption: "...int collects 1, 2, and 3 into a list named nums. nums... takes that list apart so each number is its own argument to sum.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Three dots int collects 1, 2, and 3 into nums. nums three dots takes the list apart for sum.">
+    <text class="dg-t lg" x="24" y="36">1. ...int collects the numbers into nums</text>
+    <rect class="dg-box" x="24" y="56" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="124" y="140" text-anchor="middle">1</text>
+    <rect class="dg-box" x="248" y="56" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="348" y="140" text-anchor="middle">2</text>
+    <rect class="dg-box" x="472" y="56" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="572" y="140" text-anchor="middle">3</text>
+    <rect class="dg-box accent dg-beat" x="700" y="56" width="236" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="818" y="118" text-anchor="middle">nums</text>
+    <text class="dg-t lg" x="818" y="162" text-anchor="middle">[1 2 3]</text>
+
+    <text class="dg-t lg" x="24" y="244">2. nums... takes the list apart</text>
+    <rect class="dg-box accent dg-beat" style="--i:1" x="24" y="264" width="236" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="142" y="326" text-anchor="middle">nums...</text>
+    <text class="dg-t lg" x="142" y="370" text-anchor="middle">[1 2 3]</text>
+    <rect class="dg-box" x="284" y="264" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="384" y="348" text-anchor="middle">1</text>
+    <rect class="dg-box" x="508" y="264" width="200" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="608" y="348" text-anchor="middle">2</text>
+    <rect class="dg-box ok" x="732" y="264" width="204" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="834" y="348" text-anchor="middle">3</text>
+  </svg>`
+},
+
+"func-option": {
+  title: "Set the port, two ways",
+  caption: "A struct literal sets the port on the line you write. Extra functions let you add a new setting later without changing the calls that already compiled.",
+  svg: `<svg viewBox="0 0 960 280" role="img" aria-label="A struct literal sets Port to 9000. WithPort also sets 9000, and new settings can be added later.">
+    <rect class="dg-box accent dg-beat" x="24" y="40" width="444" height="200" rx="16"/>
+    <text class="dg-t lg" x="246" y="100" text-anchor="middle">struct literal</text>
+    <text class="dg-t mono lg" x="246" y="148" text-anchor="middle">Port: 9000</text>
+    <text class="dg-t lg" x="246" y="192" text-anchor="middle">set it now</text>
+    <rect class="dg-box ok" x="492" y="40" width="444" height="200" rx="16"/>
+    <text class="dg-t lg" x="714" y="100" text-anchor="middle">WithPort(9000)</text>
+    <text class="dg-t mono lg" x="714" y="148" text-anchor="middle">extra function</text>
+    <text class="dg-t lg" x="714" y="192" text-anchor="middle">add a setting later</text>
+  </svg>`
+},
+
 
 /* ─────────────── closures ─────────────── */
 closure: {
