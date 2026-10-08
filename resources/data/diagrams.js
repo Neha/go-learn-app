@@ -615,7 +615,7 @@ middleware: {
 
 "control-for": {
   title: "One keyword, four shapes",
-  caption: "A counter, a condition, a loop until break, and range. The highlight walks 1, then 2, then 3, then 4.",
+  caption: "A counter, a condition, a loop until break, and range. The highlight moves 1, then 2, then 3, then 4.",
   svg: `<svg viewBox="0 0 960 250" role="img" aria-label="for has four shapes: a counter, a condition, a loop until break, and range.">
     <rect class="dg-box dg-step" style="--i:0" x="28" y="28" width="216" height="196" rx="16"/>
     <text class="dg-t xl" x="48" y="80">1</text>
@@ -637,7 +637,35 @@ middleware: {
     <text class="dg-t xl" x="744" y="80">4</text>
     <text class="dg-t mono lg" x="744" y="124">for i, v :=</text>
     <text class="dg-t mono lg" x="744" y="160">range x</text>
-    <text class="dg-t lg" x="744" y="204">walk</text>
+    <text class="dg-t lg" x="744" y="204">each item</text>
+  </svg>`
+},
+
+"range-names": {
+  title: "[]string is a list of text",
+  caption: "[] means a list. string means each item is text. The braces hold Ada, Lin, and Max. range goes through each one: i is the place, name is the text.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[] means a list. string means text. The braces hold Ada, Lin, and Max. range goes through each name.">
+    <text class="dg-t lg" x="24" y="36">1. Each piece of []string{&quot;Ada&quot;, &quot;Lin&quot;, &quot;Max&quot;}</text>
+    <rect class="dg-box accent dg-beat" x="24" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="168" y="118" text-anchor="middle">[]</text>
+    <text class="dg-t lg" x="168" y="162" text-anchor="middle">a list</text>
+    <rect class="dg-box" x="336" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="118" text-anchor="middle">string</text>
+    <text class="dg-t lg" x="480" y="162" text-anchor="middle">each item is text</text>
+    <rect class="dg-box" x="648" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="792" y="118" text-anchor="middle">{Ada, Lin, Max}</text>
+    <text class="dg-t lg" x="792" y="162" text-anchor="middle">the three names</text>
+
+    <text class="dg-t lg" x="24" y="244">2. range goes through each name. i is the place.</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="24" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="168" y="322" text-anchor="middle">Ada</text>
+    <text class="dg-t lg" x="168" y="370" text-anchor="middle">place 0</text>
+    <rect class="dg-box" x="336" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="480" y="322" text-anchor="middle">Lin</text>
+    <text class="dg-t lg" x="480" y="370" text-anchor="middle">place 1</text>
+    <rect class="dg-box" x="648" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="792" y="322" text-anchor="middle">Max</text>
+    <text class="dg-t lg" x="792" y="370" text-anchor="middle">place 2</text>
   </svg>`
 },
 
@@ -672,70 +700,67 @@ middleware: {
 
 
 /* ─────────────── defer ─────────────── */
+"defer-close": {
+  title: "Close runs when the function is done",
+  caption: "You write open, then defer Close, then read. They run as open, then read, then Close. Close still happens if the read fails.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="You write open, defer Close, then read. They run as open, read, then Close.">
+    <text class="dg-t lg" x="24" y="36">1. You write these lines</text>
+    <rect class="dg-box" x="24" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t lg" x="168" y="118" text-anchor="middle">open</text>
+    <text class="dg-t lg" x="168" y="162" text-anchor="middle">the file</text>
+    <rect class="dg-box accent dg-beat" x="336" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="492" y="118" text-anchor="middle">defer Close</text>
+    <text class="dg-t lg" x="492" y="162" text-anchor="middle">save for later</text>
+    <rect class="dg-box" x="648" y="56" width="288" height="140" rx="16"/>
+    <text class="dg-t lg" x="792" y="118" text-anchor="middle">read</text>
+    <text class="dg-t lg" x="792" y="162" text-anchor="middle">the file</text>
+
+    <text class="dg-t lg" x="24" y="244">2. They run in this order</text>
+    <rect class="dg-box" x="24" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t lg" x="168" y="340" text-anchor="middle">open</text>
+    <rect class="dg-box" x="336" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t lg" x="492" y="340" text-anchor="middle">read</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="648" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t lg" x="792" y="340" text-anchor="middle">Close</text>
+  </svg>`
+},
+
 "defer-stack": {
-  title: "Last in runs first",
-  caption: "Written as Close, then Unlock, then log. The stack puts log on top, so return runs log, then Unlock, then Close. The 0 saved at defer stays 0.",
-  svg: `<svg viewBox="0 0 960 660" role="img" aria-label="Three defers are stacked with log on top. Return runs log, then Unlock, then Close. A saved 0 still prints 0 after i becomes 1.">
+  title: "Last defer runs first",
+  caption: "You write defer 1, then 2, then 3. They run as 3, then 2, then 1. The 0 saved at the defer line still prints 0 after i becomes 1.",
+  svg: `<svg viewBox="0 0 960 520" role="img" aria-label="defer 1, then 2, then 3 run as 3, then 2, then 1. A saved 0 still prints 0 after i becomes 1.">
     <defs><marker id="dgArrDF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
       <path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 
-    <text class="dg-t lg" x="28" y="36">1. Written</text>
-    <rect class="dg-box" x="28" y="56" width="300" height="72" rx="16"/>
-    <text class="dg-t xl" x="48" y="104">1</text>
-    <text class="dg-t mono lg" x="100" y="100">Close()</text>
+    <text class="dg-t lg" x="24" y="36">1. You write defer 1, then 2, then 3</text>
+    <rect class="dg-box" x="24" y="56" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="168" y="132" text-anchor="middle">1</text>
+    <rect class="dg-box" x="336" y="56" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="480" y="132" text-anchor="middle">2</text>
+    <rect class="dg-box accent dg-beat" x="648" y="56" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="792" y="132" text-anchor="middle">3</text>
 
-    <rect class="dg-box" x="28" y="144" width="300" height="72" rx="16"/>
-    <text class="dg-t xl" x="48" y="192">2</text>
-    <text class="dg-t mono lg" x="100" y="188">Unlock()</text>
+    <text class="dg-t lg" x="24" y="212">2. They print last to first</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="24" y="232" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="168" y="308" text-anchor="middle">3</text>
+    <rect class="dg-box" x="336" y="232" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="480" y="308" text-anchor="middle">2</text>
+    <rect class="dg-box" x="648" y="232" width="288" height="120" rx="16"/>
+    <text class="dg-t mono xl" x="792" y="308" text-anchor="middle">1</text>
 
-    <rect class="dg-box" x="28" y="232" width="300" height="72" rx="16"/>
-    <text class="dg-t xl" x="48" y="280">3</text>
-    <text class="dg-t mono lg" x="100" y="276">log()</text>
-
-    <path class="dg-arrow" d="M348 180 L468 180" marker-end="url(#dgArrDF)"/>
-    <text class="dg-t lg" x="408" y="164" text-anchor="middle">push</text>
-    <circle class="dg-run" r="8" style="offset-path: path('M356 180 L456 180')"/>
-
-    <text class="dg-t lg" x="488" y="36">stack, top is last</text>
-    <rect class="dg-box ok dg-beat" x="488" y="56" width="440" height="72" rx="16"/>
-    <text class="dg-t mono lg" x="512" y="100">log()</text>
-    <text class="dg-t lg" x="800" y="100">top</text>
-
-    <rect class="dg-box" x="488" y="144" width="440" height="72" rx="16"/>
-    <text class="dg-t mono lg" x="512" y="188">Unlock()</text>
-
-    <rect class="dg-box" x="488" y="232" width="440" height="72" rx="16"/>
-    <text class="dg-t mono lg" x="512" y="276">Close()</text>
-
-    <text class="dg-t lg" x="28" y="352">2. On return</text>
-    <rect class="dg-box ok dg-step" style="--i:0" x="28" y="372" width="280" height="88" rx="16"/>
-    <text class="dg-t xl" x="48" y="428">1</text>
-    <text class="dg-t mono lg" x="100" y="424">log()</text>
-
-    <rect class="dg-box ok dg-step" style="--i:1" x="340" y="372" width="280" height="88" rx="16"/>
-    <text class="dg-t xl" x="360" y="428">2</text>
-    <text class="dg-t mono lg" x="412" y="424">Unlock()</text>
-
-    <rect class="dg-box ok dg-step" style="--i:2" x="652" y="372" width="280" height="88" rx="16"/>
-    <text class="dg-t xl" x="672" y="428">3</text>
-    <text class="dg-t mono lg" x="724" y="424">Close()</text>
-
-    <text class="dg-t lg" x="28" y="508">3. The number is saved then</text>
-    <rect class="dg-box accent" x="28" y="528" width="200" height="100" rx="16"/>
-    <text class="dg-t lg" x="128" y="564" text-anchor="middle">i is</text>
-    <text class="dg-t mono xl" x="128" y="608" text-anchor="middle">0</text>
-
-    <path class="dg-arrow" d="M244 578 L360 578" marker-end="url(#dgArrDF)"/>
-    <text class="dg-t lg" x="302" y="560" text-anchor="middle">saved</text>
-    <circle class="dg-run" r="8" style="offset-path: path('M252 578 L348 578'); --i: 1"/>
-
-    <rect class="dg-box ok" x="372" y="528" width="280" height="100" rx="16"/>
-    <text class="dg-t lg" x="512" y="564" text-anchor="middle">prints</text>
-    <text class="dg-t mono xl" x="512" y="608" text-anchor="middle">0</text>
-
-    <rect class="dg-box" x="688" y="528" width="244" height="100" rx="16"/>
-    <text class="dg-t lg" x="810" y="568" text-anchor="middle">i = 1</text>
-    <text class="dg-t lg" x="810" y="604" text-anchor="middle">still prints 0</text>
+    <text class="dg-t lg" x="24" y="360">3. The number is saved then</text>
+    <rect class="dg-box accent" x="24" y="380" width="200" height="112" rx="16"/>
+    <text class="dg-t lg" x="124" y="424" text-anchor="middle">i is</text>
+    <text class="dg-t mono xl" x="124" y="468" text-anchor="middle">0</text>
+    <path class="dg-arrow" d="M232 436 L348 436" marker-end="url(#dgArrDF)"/>
+    <text class="dg-t lg" x="290" y="416" text-anchor="middle">saved</text>
+    <circle class="dg-run" r="8" style="offset-path: path('M240 436 L340 436')"/>
+    <rect class="dg-box ok" x="356" y="380" width="280" height="112" rx="16"/>
+    <text class="dg-t lg" x="496" y="424" text-anchor="middle">prints</text>
+    <text class="dg-t mono xl" x="496" y="468" text-anchor="middle">0</text>
+    <rect class="dg-box" x="656" y="380" width="280" height="112" rx="16"/>
+    <text class="dg-t lg" x="796" y="424" text-anchor="middle">i is now 1</text>
+    <text class="dg-t lg" x="796" y="468" text-anchor="middle">still prints 0</text>
   </svg>`
 },
 
