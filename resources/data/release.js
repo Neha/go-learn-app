@@ -1,8 +1,16 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.3",
+  version: "0.1.4",
   notes: [
+    {
+      version: "0.1.4",
+      date: "2026-10-08",
+      items: [
+        "The functions lesson explains what a function is, then shows add, divide, and Op each printing a result.",
+        "Pictures show the pieces of add, Op holding a function, and ...int packing a list that nums... unpacks."
+      ]
+    },
     {
       version: "0.1.3",
       date: "2026-10-08",
