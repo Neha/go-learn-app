@@ -1,8 +1,15 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.4",
+  version: "0.1.5",
   notes: [
+    {
+      version: "0.1.5",
+      date: "2026-10-09",
+      items: [
+        "The site can be verified in Google Search Console."
+      ]
+    },
     {
       version: "0.1.4",
       date: "2026-10-08",
