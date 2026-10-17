@@ -28,48 +28,49 @@ python3 -m http.server 8000
 
 ## What's inside
 
-**24 modules, 120 questions, 13 end-to-end projects, 12 cheat sheets, 18 animated diagrams, an 80-term glossary, 18 runnable programs, ~8 hours of reading.**
+**25 modules, 125 questions, 13 end-to-end projects, 12 cheat sheets, animated diagrams, a glossary, 18 runnable programs, ~8 hours of reading.**
 
 | # | Module | Level |
 |---|--------|-------|
 | 1 | What Is Go, Really? — compiled vs interpreted, the runtime, GC overview | Beginner |
-| 2 | Setup, Modules & Your First Program | Beginner |
-| 3 | Your Dev Environment: IDE, gopls, Linters & Debugger | Beginner |
-| 4 | Variables, Zero Values & Constants | Beginner |
-| 5 | Data Types, Strings, Runes & Conversion | Beginner |
-| 6 | Printing & Formatting with fmt | Beginner |
-| 7 | Control Flow: if, for, switch, defer | Beginner |
-| 8 | Functions, Multiple Returns & Closures | Beginner |
-| 9 | Packages, Imports, init() & Documentation | Intermediate |
-| 10 | Arrays, Slices, Maps & Structs — with internals | Intermediate |
-| 11 | Pointers, Stack vs Heap & Escape Analysis | Intermediate |
-| 12 | Methods, Interfaces & Composition | Intermediate |
-| 13 | Errors, Wrapping, Panic & Recover | Intermediate |
-| 14 | Concurrency: Goroutines, Channels & Context | Advanced |
-| 15 | Runtime Internals: Scheduler, GC & Allocator | Advanced |
-| 16 | Generics & Type Parameters | Advanced |
-| 17 | Iterators & range-over-func | Advanced |
-| 18 | Testing, Benchmarking & Profiling | Advanced |
-| 19 | The Standard Library: Build a Real HTTP Service | Advanced |
-| 20 | Idiomatic Go, Performance & Where to Go Next | Advanced |
-| 21 | Production Readiness: Config, Builds & Deployment | Production |
-| 22 | Reliability & Observability | Production |
-| 23 | Modules, Versioning & the Toolchain | Production |
-| 24 | Security Essentials for Go Services | Production |
+| 2 | Object-Oriented Programming in Go — types, methods, interfaces, embedding | Beginner |
+| 3 | Setup, Modules & Your First Program | Beginner |
+| 4 | Your Dev Environment: IDE, gopls, Linters & Debugger | Beginner |
+| 5 | Variables, Zero Values & Constants | Beginner |
+| 6 | Data Types, Strings, Runes & Conversion | Beginner |
+| 7 | Printing & Formatting with fmt | Beginner |
+| 8 | Control Flow: if, for, switch, defer | Beginner |
+| 9 | Functions, Multiple Returns & Closures | Beginner |
+| 10 | Packages, Imports, init() & Documentation | Intermediate |
+| 11 | Arrays, Slices, Maps & Structs — with internals | Intermediate |
+| 12 | Pointers, Stack vs Heap & Escape Analysis | Intermediate |
+| 13 | Methods, Interfaces & Composition | Intermediate |
+| 14 | Errors, Wrapping, Panic & Recover | Intermediate |
+| 15 | Concurrency: Goroutines, Channels & Context | Advanced |
+| 16 | Runtime Internals: Scheduler, GC & Allocator | Advanced |
+| 17 | Generics & Type Parameters | Advanced |
+| 18 | Iterators & range-over-func | Advanced |
+| 19 | Testing, Benchmarking & Profiling | Advanced |
+| 20 | The Standard Library: Build a Real HTTP Service | Advanced |
+| 21 | Idiomatic Go, Performance & Where to Go Next | Advanced |
+| 22 | Production Readiness: Config, Builds & Deployment | Production |
+| 23 | Reliability & Observability | Production |
+| 24 | Modules, Versioning & the Toolchain | Production |
+| 25 | Security Essentials for Go Services | Production |
 
 Every module ends with a **summary** and **five multiple-choice questions** with explanations.
 
 Coverage is checked against [Effective Go](https://go.dev/doc/effective_go) and the
 [Code Review Comments](https://go.dev/wiki/CodeReviewComments) wiki — including the parts tutorials
-usually skip: `fmt` printing and `Stringer` (module 6), package initialisation order, `init()`, doc
-comments and runnable examples (module 9), `new` vs `make` vs composite literals, 2-D slices, and
+usually skip: `fmt` printing and `Stringer` (module 7), package initialisation order, `init()`, doc
+comments and runnable examples (module 10), `new` vs `make` vs composite literals, 2-D slices, and
 automatic semicolon insertion.
 
-Module 3 is a full developer-environment setup (editor choice, gopls configuration, formatters,
+Module 4 is a full developer-environment setup (editor choice, gopls configuration, formatters,
 which linters to enable and which to skip, Delve, code generators, Makefile and pre-commit hooks).
-Module 18 covers testing in depth — table-driven tests, the test pyramid, fakes without a mocking
+Module 19 covers testing in depth — table-driven tests, the test pyramid, fakes without a mocking
 library, integration tests against real Postgres (testcontainers), end-to-end tests through
-`httptest.NewServer`, fuzzing, benchmarks and pprof. Modules 21–24 cover production: config and
+`httptest.NewServer`, fuzzing, benchmarks and pprof. Modules 22–25 cover production: config and
 secrets, reproducible builds, distroless containers, migrations, CI gates, timeouts, retries with
 jitter, circuit breakers, load shedding, logs/metrics/traces, health checks, graceful shutdown, Minimal
 Version Selection and the full `go.mod` contract, and an application-security module (CSPRNG vs PRNG,
@@ -175,7 +176,7 @@ summary.
   individually tickable; all stored in `localStorage`
 - **Interactive quizzes** — instant right/wrong feedback, an explanation for every answer, and
   option order randomised on each render so position carries no signal
-- **Full-text search** — press <kbd>/</kbd>. It indexes every word of all 24 modules, 13 projects,
+- **Full-text search** — press <kbd>/</kbd>. It indexes every word of all 25 modules, 13 projects,
   12 cheat sheets, 80 glossary terms and 3 pages (132 documents): prose, code blocks, tables, notes,
   summaries, quiz text, milestones. Results are grouped by kind, ranked, and show a highlighted snippet;
   the sidebar filters to matching sections instead of going blank. Searches are shareable as `?q=printf`
@@ -191,11 +192,11 @@ summary.
 index.html                              shell: topbar, sidebar, main
 resources/styles.css                    theming, layout, print styles
 resources/app.js                        router, renderers, quiz logic, highlighter, downloads
-resources/data/content-1-foundations.js modules 1–7
-resources/data/content-2-core.js        modules 8–13
-resources/data/content-3-advanced.js    modules 14–17
-resources/data/content-4-practice.js    modules 18–20
-resources/data/content-5-production.js  modules 21–24
+resources/data/content-1-foundations.js modules 1–8
+resources/data/content-2-core.js        modules 9–14
+resources/data/content-3-advanced.js    modules 15–18
+resources/data/content-4-practice.js    modules 19–21
+resources/data/content-5-production.js  modules 22–25
 resources/data/projects.js              build guides: CLI, systems, first API/web
 resources/data/projects-2.js            build guides: web apps, APIs & services
 resources/data/sheets.js                cheat sheet text

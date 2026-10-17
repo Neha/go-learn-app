@@ -1222,6 +1222,127 @@ select: {
     <text class="dg-t mono lg" x="250" y="360">main.User{</text>
     <text class="dg-t mono lg" x="250" y="394">Name:&quot;Ada&quot;, Age:30}</text>
   </svg>`
+},
+
+/* ─────────────── object-oriented style ─────────────── */
+"oop-ideas": {
+  title: "Four OOP ideas, and where they land in Go",
+  caption: "Encapsulation, abstraction, and polymorphism are in Go. Reuse is composition, including embedding.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Encapsulation is an unexported name. Abstraction and polymorphism are an interface. Reuse is embedding.">
+    <text class="dg-t lg" x="24" y="36">1. What OOP is for</text>
+    <rect class="dg-box dg-step" style="--i:0" x="24" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t lg" x="132" y="112" text-anchor="middle">encapsulation</text>
+    <text class="dg-t lg" x="132" y="156" text-anchor="middle">hide the insides</text>
+    <rect class="dg-box dg-step" style="--i:1" x="256" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t lg" x="364" y="112" text-anchor="middle">abstraction</text>
+    <text class="dg-t lg" x="364" y="156" text-anchor="middle">show a simple surface</text>
+    <rect class="dg-box dg-step" style="--i:2" x="488" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t lg" x="596" y="112" text-anchor="middle">polymorphism</text>
+    <text class="dg-t lg" x="596" y="156" text-anchor="middle">one function, many types</text>
+    <rect class="dg-box dg-step" style="--i:3" x="720" y="56" width="216" height="140" rx="16"/>
+    <text class="dg-t lg" x="828" y="112" text-anchor="middle">reuse</text>
+    <text class="dg-t lg" x="828" y="156" text-anchor="middle">build from smaller types</text>
+
+    <text class="dg-t lg" x="24" y="244">2. How Go does each one</text>
+    <rect class="dg-box ok dg-beat" style="--i:0" x="24" y="264" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="132" y="322" text-anchor="middle">port</text>
+    <text class="dg-t lg" x="132" y="366" text-anchor="middle">unexported name</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="256" y="264" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="364" y="322" text-anchor="middle">Area()</text>
+    <text class="dg-t lg" x="364" y="366" text-anchor="middle">an interface</text>
+    <rect class="dg-box ok dg-beat" style="--i:2" x="488" y="264" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="596" y="322" text-anchor="middle">describe(s)</text>
+    <text class="dg-t lg" x="596" y="366" text-anchor="middle">any Shape</text>
+    <rect class="dg-box ok dg-beat" style="--i:3" x="720" y="264" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="828" y="322" text-anchor="middle">embed</text>
+    <text class="dg-t lg" x="828" y="366" text-anchor="middle">composition</text>
+  </svg>`
+},
+
+"oop-struct-method": {
+  title: "Data in the struct, behaviour on the method",
+  caption: "Rect holds W and H. Area runs on that value and prints 12.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="A Rect holds width 3 and height 4. The Area method runs on that value and prints 12.">
+    <defs><marker id="dgArrOOP1" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. The struct holds the numbers</text>
+    <rect class="dg-box accent dg-step" style="--i:0" x="24" y="56" width="912" height="150" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="100" text-anchor="middle">Rect</text>
+    <rect class="dg-box" x="160" y="120" width="240" height="64" rx="14"/>
+    <text class="dg-t mono lg" x="280" y="160" text-anchor="middle">W: 3</text>
+    <rect class="dg-box" x="560" y="120" width="240" height="64" rx="14"/>
+    <text class="dg-t mono lg" x="680" y="160" text-anchor="middle">H: 4</text>
+
+    <text class="dg-t lg" x="24" y="244">2. Area runs on that value</text>
+    <rect class="dg-box dg-step" style="--i:1" x="24" y="264" width="288" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="168" y="324" text-anchor="middle">box.Area()</text>
+    <text class="dg-t lg" x="168" y="370" text-anchor="middle">the method</text>
+    <path class="dg-arrow" d="M328 334 L440 334" marker-end="url(#dgArrOOP1)"/>
+    <circle class="dg-run" r="8" style="offset-path: path('M328 334 L440 334')"/>
+    <rect class="dg-box dg-step" style="--i:2" x="456" y="264" width="216" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="564" y="324" text-anchor="middle">3 × 4</text>
+    <text class="dg-t lg" x="564" y="370" text-anchor="middle">uses W and H</text>
+    <path class="dg-arrow" d="M688 334 L760 334" marker-end="url(#dgArrOOP1)"/>
+    <circle class="dg-run" r="8" style="offset-path: path('M688 334 L760 334'); --i:1"/>
+    <rect class="dg-box ok dg-beat" x="776" y="264" width="160" height="140" rx="16"/>
+    <text class="dg-t mono xl" x="856" y="328" text-anchor="middle">12</text>
+    <text class="dg-t lg" x="856" y="372" text-anchor="middle">prints</text>
+  </svg>`
+},
+
+"oop-interface": {
+  title: "If it has Area, it is a Shape",
+  caption: "An interface is a list of methods. Rect and Circle both have Area, so describe can take either.",
+  svg: `<svg viewBox="0 0 960 460" role="img" aria-label="Shape wants Area. Rect and Circle both have Area, so describe can take either.">
+    <defs><marker id="dgArrOOP2" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Shape wants one method</text>
+    <rect class="dg-box accent dg-beat" x="24" y="56" width="440" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="244" y="112" text-anchor="middle">Shape</text>
+    <text class="dg-t mono lg" x="244" y="160" text-anchor="middle">Area() float64</text>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="496" y="56" width="440" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="716" y="112" text-anchor="middle">describe(s Shape)</text>
+    <text class="dg-t lg" x="716" y="160" text-anchor="middle">one function, many types</text>
+
+    <text class="dg-t lg" x="24" y="236">2. Rect and Circle both have Area, so both fit</text>
+    <rect class="dg-box dg-sel" style="--i:0" x="24" y="256" width="360" height="160" rx="16"/>
+    <text class="dg-t mono lg" x="204" y="316" text-anchor="middle">Rect</text>
+    <text class="dg-t lg" x="204" y="368" text-anchor="middle">has Area</text>
+    <rect class="dg-box dg-sel" style="--i:1" x="408" y="256" width="360" height="160" rx="16"/>
+    <text class="dg-t mono lg" x="588" y="316" text-anchor="middle">Circle</text>
+    <text class="dg-t lg" x="588" y="368" text-anchor="middle">has Area</text>
+    <path class="dg-arrow" d="M784 336 L860 160" marker-end="url(#dgArrOOP2)"/>
+    <text class="dg-t lg" x="848" y="268" text-anchor="middle">fits</text>
+  </svg>`
+},
+
+"oop-embed": {
+  title: "Dog holds an Animal",
+  caption: "Embedding puts Animal inside Dog with no field name. Name and Speak are then used on Dog.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Animal sits inside Dog. Name and Speak are used on Dog. Breed stays only on Dog.">
+    <defs><marker id="dgArrOOP3" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <text class="dg-t lg" x="24" y="36">1. Animal sits inside Dog</text>
+    <rect class="dg-box accent dg-step" style="--i:0" x="24" y="56" width="560" height="200" rx="16"/>
+    <text class="dg-t mono lg" x="304" y="96" text-anchor="middle">Dog</text>
+    <rect class="dg-box dg-beat" x="64" y="120" width="300" height="110" rx="14"/>
+    <text class="dg-t mono lg" x="214" y="164" text-anchor="middle">Animal</text>
+    <text class="dg-t lg" x="214" y="204" text-anchor="middle">Name, Speak</text>
+    <rect class="dg-box" x="384" y="120" width="168" height="110" rx="14"/>
+    <text class="dg-t mono lg" x="468" y="164" text-anchor="middle">Breed</text>
+    <text class="dg-t lg" x="468" y="204" text-anchor="middle">only Dog</text>
+    <path class="dg-arrow" d="M600 156 L700 156" marker-end="url(#dgArrOOP3)"/>
+    <circle class="dg-run" r="8" style="offset-path: path('M600 156 L700 156')"/>
+    <rect class="dg-box ok dg-beat" style="--i:1" x="716" y="56" width="220" height="200" rx="16"/>
+    <text class="dg-t mono lg" x="826" y="132" text-anchor="middle">d.Name</text>
+    <text class="dg-t mono lg" x="826" y="180" text-anchor="middle">d.Speak()</text>
+    <text class="dg-t lg" x="826" y="224" text-anchor="middle">used on Dog</text>
+
+    <text class="dg-t lg" x="24" y="300">2. The outer type stays Dog</text>
+    <rect class="dg-box" x="24" y="320" width="288" height="96" rx="16"/>
+    <text class="dg-t lg" x="168" y="376" text-anchor="middle">no type hierarchy</text>
+    <rect class="dg-box" x="336" y="320" width="288" height="96" rx="16"/>
+    <text class="dg-t lg" x="480" y="376" text-anchor="middle">Dog is still Dog</text>
+    <rect class="dg-box ok dg-beat" style="--i:2" x="648" y="320" width="288" height="96" rx="16"/>
+    <text class="dg-t lg" x="792" y="376" text-anchor="middle">this is composition</text>
+  </svg>`
 }
 
 };

@@ -844,7 +844,7 @@ function quizHTML(m) {
   const passed = !!(sc && sc.total && sc.correct === sc.total);
   const missedLabel = [...missed].sort((a, b) => a - b).map(i => "Q" + (i + 1)).join(", ");
   return '<section class="quiz" data-quiz="' + m.id + '">' +
-    '<div class="quiz-head"><h2>🧠 Try these five</h2>' +
+    '<div class="quiz-head"><h2>🧠 Try these ' + m.quiz.length + '</h2>' +
     '<span class="score" data-score>' + (sc ? sc.correct + " / " + sc.total : "0 / " + m.quiz.length) + "</span></div>" +
     '<p class="hint">Pick an answer to see whether it is right and why. ' +
     (passed ? "You answered every question correctly."
