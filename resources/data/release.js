@@ -1,8 +1,16 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.7",
+  version: "0.1.8",
   notes: [
+    {
+      version: "0.1.8",
+      date: "2026-10-17",
+      items: [
+        "The functions lesson explains each idea in beginner language, then shows a short program and what it prints.",
+        "OOP stays in its own module. The beginner functions lesson covers add, two results, the blank identifier, named returns, variadic functions, function values, and closures."
+      ]
+    },
     {
       version: "0.1.7",
       date: "2026-10-17",
