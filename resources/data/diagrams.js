@@ -642,13 +642,13 @@ middleware: {
 },
 
 "range-names": {
-  title: "[]string is a list of text",
-  caption: "[] means a list. string means each item is text. The braces hold Ada, Lin, and Max. range goes through each one: i is the place, name is the text.",
-  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[] means a list. string means text. The braces hold Ada, Lin, and Max. range goes through each name.">
+  title: "[]string is a slice of text",
+  caption: "[]string{...} is a composite literal for a slice. range is a range clause: i is the index, name is the element.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[] means a slice. string means text. The braces hold Ada, Lin, and Max. A range clause goes through each name.">
     <text class="dg-t lg" x="24" y="36">1. Each piece of []string{&quot;Ada&quot;, &quot;Lin&quot;, &quot;Max&quot;}</text>
     <rect class="dg-box accent dg-beat" x="24" y="56" width="288" height="140" rx="16"/>
     <text class="dg-t mono xl" x="168" y="118" text-anchor="middle">[]</text>
-    <text class="dg-t lg" x="168" y="162" text-anchor="middle">a list</text>
+    <text class="dg-t lg" x="168" y="162" text-anchor="middle">a slice</text>
     <rect class="dg-box" x="336" y="56" width="288" height="140" rx="16"/>
     <text class="dg-t mono lg" x="480" y="118" text-anchor="middle">string</text>
     <text class="dg-t lg" x="480" y="162" text-anchor="middle">each item is text</text>
@@ -846,10 +846,10 @@ middleware: {
 },
 
 "func-dots": {
-  title: "...int packs, nums... unpacks",
-  caption: "...int collects 1, 2, and 3 into a list named nums. nums... takes that list apart so each number is its own argument to sum.",
-  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="Three dots int collects 1, 2, and 3 into nums. nums three dots takes the list apart for sum.">
-    <text class="dg-t lg" x="24" y="36">1. ...int collects the numbers into nums</text>
+  title: "A variadic parameter",
+  caption: "A variadic parameter ...int collects 1, 2, and 3 into a slice named nums. nums... passes that slice as the variadic argument to sum.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="A variadic parameter three dots int collects 1, 2, and 3 into the slice nums. nums three dots passes that slice to sum.">
+    <text class="dg-t lg" x="24" y="36">1. Variadic ...int, nums is a slice</text>
     <rect class="dg-box" x="24" y="56" width="200" height="140" rx="16"/>
     <text class="dg-t mono xl" x="124" y="140" text-anchor="middle">1</text>
     <rect class="dg-box" x="248" y="56" width="200" height="140" rx="16"/>
@@ -860,7 +860,7 @@ middleware: {
     <text class="dg-t mono lg" x="818" y="118" text-anchor="middle">nums</text>
     <text class="dg-t lg" x="818" y="162" text-anchor="middle">[1 2 3]</text>
 
-    <text class="dg-t lg" x="24" y="244">2. nums... takes the list apart</text>
+    <text class="dg-t lg" x="24" y="244">2. nums... passes the slice</text>
     <rect class="dg-box accent dg-beat" style="--i:1" x="24" y="264" width="236" height="140" rx="16"/>
     <text class="dg-t mono lg" x="142" y="326" text-anchor="middle">nums...</text>
     <text class="dg-t lg" x="142" y="370" text-anchor="middle">[1 2 3]</text>
@@ -1096,9 +1096,9 @@ select: {
 },
 
 "rune-list": {
-  title: "[]rune(s) is the characters",
-  caption: "s is the string. []rune means a list of characters. (s) converts the string into that list. Counting starts at 0, so chars[1] is é.",
-  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[]rune converts the string s into a list of characters. Index 1 of Héllo is é.">
+  title: "[]rune(s) is a slice of runes",
+  caption: "[]rune(s) is a type conversion. s is the string. []rune means a slice of runes. Counting starts at 0, so chars[1] is é.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="[]rune is a type conversion of string s into a slice of runes. Index 1 of Héllo is é.">
     <defs><marker id="dgArrRN" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path class="dg-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
     <text class="dg-t lg" x="24" y="36">1. Each piece of []rune(s)</text>
 
@@ -1109,7 +1109,7 @@ select: {
 
     <rect class="dg-box accent dg-beat" x="356" y="56" width="250" height="150" rx="16"/>
     <text class="dg-t mono lg" x="481" y="118" text-anchor="middle">[]rune</text>
-    <text class="dg-t lg" x="481" y="168" text-anchor="middle">list of characters</text>
+    <text class="dg-t lg" x="481" y="168" text-anchor="middle">slice of runes</text>
     <path class="dg-arrow" d="M614 131 L680 131" marker-end="url(#dgArrRN)"/>
     <circle class="dg-run" r="7" style="offset-path: path('M614 131 L680 131')"/>
 

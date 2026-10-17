@@ -15,7 +15,7 @@ window.CURRICULUM_PARTS.push([
     { t: "note", kind: "tip", title: "Latest stable release: Go 1.27.1", html: "The current stable release is <strong>Go 1.27.1</strong>, published on 28 August 2026 (language version 1.27, August 2026). Installers for every OS are on <a href=\"https://go.dev/dl/\" target=\"_blank\" rel=\"noopener\">go.dev/dl</a>. <code>go version</code> prints the release you actually have." },
 
     { t: "h", text: "Compilation" },
-    { t: "p", html: "<strong>Compiled ahead of time, straight to machine code.</strong> There is no JVM, no bytecode interpreter, no JIT. <code>go build</code> produces a native executable for a specific OS and CPU architecture. You can copy that single file onto a matching machine and run it with nothing else installed." },
+    { t: "p", html: "Go uses <strong>ahead-of-time compilation (AOT)</strong>: source becomes machine code before the program runs. There is no JVM, no bytecode interpreter, no JIT. <code>go build</code> produces a native executable for a specific OS and CPU architecture. You can copy that single file onto a matching machine and run it with nothing else installed." },
     { t: "note", kind: "warn", title: "But what about `go run`?", html: "<code>go run main.go</code> <em>looks</em> interpreted. It is not. Go compiles your program to a temporary binary, executes it, and deletes it. The feel is scripting; the mechanics are compilation." },
 
     { t: "diagram", id: "exec-models" },
@@ -31,7 +31,7 @@ window.CURRICULUM_PARTS.push([
       "<strong>Link.</strong> Your instructions, the packages you imported, and the Go runtime are joined into one file. That file is the program. The runtime is the scheduler (which goroutine runs next), the garbage collector (frees memory nothing can reach), and the memory allocator (hands that memory out). They travel inside the file, so the other machine does not need Go installed."
     ]},
     { t: "diagram", id: "pipeline" },
-    { t: "p", html: "<strong>Cross compiling</strong> means building the program for a different computer than the one you are typing on. <code>GOOS</code> is the operating system (<code>linux</code>, <code>darwin</code> for macOS, <code>windows</code>). <code>GOARCH</code> is the CPU (<code>amd64</code> or <code>arm64</code>). Set those two names and run <code>go build</code>. You do not install a second compiler." },
+    { t: "p", html: "<strong>Cross compilation</strong> means building the program for a different computer than the one you are typing on. <code>GOOS</code> is the operating system (<code>linux</code>, <code>darwin</code> for macOS, <code>windows</code>). <code>GOARCH</code> is the CPU (<code>amd64</code> or <code>arm64</code>). Set those two names and run <code>go build</code>. You do not install a second compiler." },
     { t: "code", title: "Build for this machine, or for another one", code:
 `# Native build
 go build -o app .
@@ -50,7 +50,7 @@ go build -gcflags="-m" .`
     { t: "p", html: "It has a runtime, it just <strong>ships inside your binary</strong> instead of being installed on the machine. The Go runtime is a few megabytes of Go and assembly that provides the things the language promises: the <strong>goroutine scheduler</strong>, the <strong>garbage collector</strong>, the <strong>memory allocator</strong>, channel and map implementations, panic/recover, and reflection metadata. That's why a trivial Go program is ~1.5–2 MB rather than 20 KB. You pay a fixed floor and get managed memory plus cheap concurrency." },
 
     { t: "h", text: "Garbage collection" },
-    { t: "p", html: "Go throws away memory your program has stopped using. You never call <code>free</code>." },
+    { t: "p", html: "Go throws away memory your program has stopped using. That cleanup is garbage collection (GC), a concurrent mark-and-sweep collector. You never call <code>free</code>." },
     { t: "p", html: "A value stays while a name in your program still holds it. In the picture, <code>order</code> still holds dinner. When that name is given a new value, the old one (lunch) is left with no name. Go throws lunch away. That cleanup is garbage collection. Your program keeps running. The pause is usually under a millisecond." },
     { t: "p", html: "Stack and heap, the two places a value can sit, are explained in <a href=\"#/m/variables-constants\">Variables, Zero Values &amp; Constants</a>, under Assignment. The <a href=\"#/m/pointers-memory\">pointers lesson</a> goes further, under Stack and heap." },
     { t: "diagram", id: "gc-reach" },
@@ -63,7 +63,7 @@ go build -gcflags="-m" .`
         ["<strong>Builds in seconds</strong>", "Dependency analysis is designed for speed; a large service compiles faster than most test suites run"],
         ["<strong>Goroutines + channels</strong>", "Concurrency is a language feature, not a library. ~2 KB per goroutine means hundreds of thousands are routine"],
         ["<strong>Garbage collected</strong>", "No <code>malloc</code>/<code>free</code>, no ownership rules to learn, sub-millisecond pauses"],
-        ["<strong>Static typing with inference</strong>", "Compile-time safety, but <code>x := 42</code> instead of ceremony"],
+        ["<strong>Static typing with type inference</strong>", "Compile-time safety, and a short variable declaration <code>x := 42</code> still has a type"],
         ["<strong>Implicit interfaces</strong>", "Types satisfy an interface by having the methods, decoupling without dependency-injection frameworks"],
         ["<strong>One official formatter</strong>", "<code>gofmt</code> ends every style argument; every Go codebase looks the same"],
         ["<strong>Tooling in the box</strong>", "Test runner, benchmarks, fuzzer, race detector, profiler, coverage, doc generator, vulnerability scanner, all <code>go &lt;verb&gt;</code>"],
@@ -133,11 +133,11 @@ go build -gcflags="-m" .`
     { t: "note", kind: "tip", title: "Where Go shines", html: "Network services and APIs, CLI tools, infrastructure (Docker, Kubernetes, Terraform, Prometheus are all Go), data pipelines, anything that needs high concurrency with modest memory. Less of a fit: hard-real-time systems, GPU/numeric kernels, and rich native GUIs." }
   ],
   summary: [
-    "Go compiles ahead of time to native machine code, no VM, no interpreter, no JIT.",
+    "Go uses ahead-of-time compilation (AOT) to native machine code, no VM, no interpreter, no JIT.",
     "`go run` still compiles; it just hides the temporary binary.",
     "The runtime (scheduler, GC, allocator) is linked into your binary, which is why it's statically self-contained and a couple of MB at minimum.",
     "Memory is managed by a concurrent, low-latency, non-generational mark-and-sweep GC.",
-    "Cross compiling is `GOOS=… GOARCH=… go build`, no extra toolchain.",
+    "Cross compilation is `GOOS=… GOARCH=… go build`, no extra toolchain.",
     "Headline features: one static binary, second-long builds, goroutines, GC, implicit interfaces, gofmt, and a test/bench/fuzz/race/pprof toolchain in the box.",
     "Go runs the cloud: Docker, Kubernetes, Terraform, Prometheus, Grafana, etcd, Vault, CockroachDB, the GitHub CLI, plus Cloudflare, Uber, Monzo, Dropbox, Twitch.",
     "Strengths: network services, infrastructure, CLIs. Weak fits: hard real-time, ML/numeric work, rich GUIs, sum-type-heavy domains.",
@@ -255,7 +255,7 @@ func main() {       // the entry point of package main
     { t: "list", items: [
       "<code>package main</code> is special: it tells the linker to build a program. Any other name builds a library.",
       "<code>func main()</code> takes no arguments and returns nothing. When it returns, the program exits, even if goroutines are still running.",
-      "<code>Println</code> is capitalised, and that is <strong>the</strong> visibility rule in Go: an identifier exported from a package starts with an uppercase letter. Lowercase means package-private. There is no <code>public</code>/<code>private</code> keyword.",
+      "<code>Println</code> is capitalised, and that is <strong>the</strong> visibility rule in Go: an exported identifier starts with an uppercase letter, so another package can use it. An unexported identifier starts with a lowercase letter and stays inside this package. There is no <code>public</code> or <code>private</code> keyword.",
       "The opening brace must be on the same line. <code>gofmt</code> enforces it; it is not a style debate."
     ]},
 
@@ -555,12 +555,12 @@ vet:
   blocks: [
     { t: "h", text: "Variables" },
     { t: "p", html: "A variable is a name for a slot. The slot has a type, and it holds one value of that type. <code>age</code> is the name. <code>int</code> is the type. Go will not let you store a string in it. <code>30</code> is the value in the slot." },
-    { t: "p", html: "There are four spellings. The first three can sit at the top of a file. <code>:=</code> only works inside a function." },
+    { t: "p", html: "There are four spellings. The first three can sit at the top of a file. A short variable declaration (<code>:=</code>) only works inside a function." },
     { t: "list", items: [
       "<code>var age int = 30</code> writes the name, the type, and the value.",
-      "<code>var age2 = 30</code> works the type out from 30. It is an <code>int</code>.",
-      "<code>var age3 int</code> sets no value, so Go writes <code>0</code>.",
-      "<code>age4 := 30</code> is the short form, inside a function only."
+      "<code>var age2 = 30</code> uses type inference: Go works the type out from 30. It is an <code>int</code>.",
+      "<code>var age3 int</code> sets no value, so Go writes the zero value, <code>0</code>.",
+      "<code>age4 := 30</code> is a short variable declaration, inside a function only."
     ]},
     { t: "code", title: "Four spellings, inside main", code:
 `package main
@@ -571,13 +571,13 @@ func main() {
     var age int = 30 // name, type, and value
     var age2 = 30    // type worked out from 30: int
     var age3 int     // no value given: 0
-    age4 := 30       // short form, inside a function only
+    age4 := 30       // short variable declaration, inside a function only
 
     fmt.Println(age, age2, age3, age4)
 }`,
       out: `30 30 0 30`
     },
-    { t: "p", html: "The next program swaps two numbers, with no third variable. <code>a, b := 1, 2</code> creates both names. The next line uses <code>=</code>, because those names already exist. Go reads the whole right side first (<code>b</code> is 2 and <code>a</code> is 1), then writes. <code>a</code> becomes 2 and <code>b</code> becomes 1." },
+    { t: "p", html: "The next program swaps two numbers, with no third variable. <code>a, b := 1, 2</code> is a short variable declaration of both names. The next line is a tuple assignment: it uses <code>=</code> because those names already exist. Go reads the whole right side first (<code>b</code> is 2 and <code>a</code> is 1), then writes. <code>a</code> becomes 2 and <code>b</code> becomes 1." },
     { t: "code", title: "Swap two variables", code:
 `package main
 
@@ -698,8 +698,8 @@ hi
     { t: "p", html: "A constant is fixed when the program is compiled." },
     { t: "list", items: [
       "It has to be a boolean, a string, or a number. You cannot make a constant slice, map, or struct.",
-      "<code>Pi</code> and <code>MaxUsers</code> start with a capital letter, so another package can use them.",
-      "A lowercase constant stays inside this package. Same rule as <code>Println</code>. There is no <code>public</code> keyword.",
+      "<code>Pi</code> and <code>MaxUsers</code> are exported identifiers: they start with a capital letter, so another package can use them.",
+      "A lowercase constant is unexported and stays inside this package. Same rule as <code>Println</code>. There is no <code>public</code> keyword.",
       "Leave the type off and <code>Pi</code> can be a <code>float32</code> or a <code>float64</code>.",
       "Write the type and it is locked. <code>MaxUsers</code> is an <code>int</code>, so it does not fit in an <code>int64</code> without a conversion."
     ]},
@@ -730,7 +730,7 @@ fmt.Println(int(Sunday), int(Monday), int(Tuesday))`,
     },
 
     { t: "h", text: "Powers of two" },
-    { t: "p", html: "Read it one line at a time. <code>1 &lt;&lt; n</code> means \"shift the bit 1 left by n places\", which is 2 to the power n. <code>_</code> means \"compute this and throw it away\"." },
+    { t: "p", html: "Read it one line at a time. <code>1 &lt;&lt; n</code> is a left shift: move the bit 1 left by n places, which is 2 to the power n. The blank identifier <code>_</code> means compute this and discard it." },
     { t: "list", ordered: true, items: [
       "Line 0: <code>_ = iota</code>. <code>iota</code> is 0. The value is discarded. If this line were <code>KB</code>, the formula would be <code>1 &lt;&lt; 0</code>, which is 1, not a kilobyte.",
       "Line 1: <code>KB = 1 &lt;&lt; (10 * iota)</code>. <code>iota</code> is 1. <code>10 * 1</code> is 10. <code>1 &lt;&lt; 10</code> is 1024.",
@@ -765,7 +765,7 @@ fmt.Println("outside", x)`,
       out: `inside 20
 outside 10`
     },
-    { t: "p", html: "A local variable you never read is a compile error, not a warning. <code>_</code> is the name you use when you mean to ignore a value, such as an error you have decided not to handle, or the index from <code>range</code>." },
+    { t: "p", html: "A local variable you never read is a compile error, not a warning. The blank identifier <code>_</code> is the name you use when you mean to ignore a value, such as an error you have decided not to handle, or the index from <code>range</code>." },
     { t: "code", title: "An unused local name does not compile", code:
 `func f() {
     count := 5
@@ -820,13 +820,13 @@ Grace
     { t: "p", html: "To see the panic from the nil map section, write <code>m[\"a\"] = 1</code> before <code>make</code>." }
   ],
   summary: [
-    "`var` works anywhere. `:=` only works inside a function, and at least one name on the left must be new.",
+    "`var` works anywhere. A short variable declaration `:=` only works inside a function, and at least one name on the left must be new.",
     "A local number lives on the stack. Reassigning it overwrites the same bytes. The stack slot disappears when the function returns.",
     "The garbage collector frees a heap value only when nothing can still reach it, for example the previous contents of a string or slice you replaced.",
     "Every type has a zero value. A struct's zero value is each field at its own zero value. A nil map can be read; writing to it panics until you `make` it.",
     "A constant with no type can be used as several numeric types. A constant with a type cannot.",
-    "`iota` is 0 on the first line of a const block and increases by 1 each line. A line with no formula repeats the previous formula. `_ = iota` throws away 0 so `KB` lands on `1 << 10`.",
-    "An inner `:=` can hide an outer variable. An unused local variable does not compile. `_` means you are ignoring that value on purpose."
+    "`iota` is 0 on the first line of a const block and increases by 1 each line. A line with no formula repeats the previous formula. The blank identifier `_ = iota` discards 0 so `KB` lands on `1 << 10`.",
+    "An inner `:=` can shadow an outer variable. An unused local variable does not compile. The blank identifier `_` means you are ignoring that value on purpose."
   ],
   quiz: [
     { q: "`var m map[string]int` then `m[\"a\"] = 1`. Result?",
@@ -871,8 +871,8 @@ Grace
       "<code>float64</code> is a number that can have a fraction, such as a price. <code>1.5</code> is a float64.",
       "<code>bool</code> is yes or no. The only two values are <code>true</code> and <code>false</code>.",
       "<code>string</code> is text. <code>\"Ada\"</code> is a string.",
-      "<code>byte</code> is one small number, from 0 to 255. A file or a network message is a row of bytes.",
-      "<code>rune</code> is one character, such as <code>A</code> or <code>é</code>. Go stores that character as a number."
+      "<code>byte</code> is an alias for <code>uint8</code>: one small number from 0 to 255. A file or a network message is a row of bytes.",
+      "<code>rune</code> is an alias for <code>int32</code>: one Unicode code point, such as <code>A</code> or <code>é</code>."
     ]},
     { t: "p", html: "A byte and a rune print as numbers. <code>%c</code> prints the character those numbers stand for. A condition has to be a bool. The number <code>1</code> is not <code>true</code> or <code>false</code>, so <code>if 1 {}</code> does not compile." },
     { t: "code", title: "One value of each type", code:
@@ -927,15 +927,15 @@ fmt.Println(uint8(n))`,
 44`
     },
 
-    { t: "h", text: "Changing a type" },
-    { t: "p", html: "Some languages quietly turn an int into a float. Go does not. If <code>i</code> is an int, this line does not compile:" },
-    { t: "code", title: "Go refuses to convert this for you", code:
+    { t: "h", text: "Type conversions" },
+    { t: "p", html: "Some languages do an implicit conversion: they quietly turn an int into a float. Go does not. If <code>i</code> is an int, this line does not compile:" },
+    { t: "code", title: "Go refuses an implicit conversion", code:
 `var i int = 42
 var f float64 = i   // does not compile`,
       out: `cannot use i (variable of type int) as float64 value in variable declaration`
     },
-    { t: "p", html: "You write the new type yourself. <code>float64(i)</code> means \"make a float64 from this int\". The spelling <code>(float64)i</code> is from C, and Go does not accept it. <code>i.(float64)</code> is a different question: it asks a stored value what it holds. An int is not that kind of value. The next section shows when to use it." },
-    { t: "code", title: "You name the type you want", code:
+    { t: "p", html: "You write an explicit type conversion. <code>float64(i)</code> means make a float64 from this int. The spelling <code>(float64)i</code> is from C, and Go does not accept it. <code>i.(float64)</code> is a type assertion, a different question: it asks an interface value what it holds. An int is not an interface. The next section shows when to use it." },
+    { t: "code", title: "An explicit type conversion", code:
 `var i int = 42
 var f float64 = float64(i)
 fmt.Println(f)`,
@@ -982,7 +982,7 @@ true`
     },
 
     { t: "h", text: "How to check a type" },
-    { t: "p", html: "A name such as <code>var age int</code> already has a type. You do not look it up. You look a type up in two cases: you want to see the name while debugging, or the value was stored in an <code>any</code> slot." },
+    { t: "p", html: "A name such as <code>var age int</code> already has a type. You do not look it up. You look a type up in two cases: you want to see the name while debugging, or the value was stored in an <code>any</code> slot. <code>any</code> is an alias for the empty interface <code>interface{}</code>." },
     { t: "p", html: "<code>any</code> can hold a string now and an int later. Go learns which one it is when the program runs." },
     { t: "p", html: "<code>fmt.Printf(\"%T\\n\", v)</code> prints the type's name. Each piece of that call does one job." },
     { t: "list", items: [
@@ -992,7 +992,7 @@ true`
       "<code>v</code> is the value you pass in. When <code>v</code> is <code>30</code>, the name that prints is <code>int</code>."
     ]},
     { t: "diagram", id: "percent-t" },
-    { t: "p", html: "<code>v, ok := x.(string)</code> asks one question and gives you two answers." },
+    { t: "p", html: "<code>v, ok := x.(string)</code> is a type assertion, written with the comma-ok idiom. It asks one question and gives you two answers." },
     { t: "list", items: [
       "<code>x</code> is the slot. It can hold a string, an int, or something else.",
       "<code>(string)</code> is the question: does this slot hold a string?",
@@ -1041,12 +1041,12 @@ default:
       "<code>s[1]</code> is one byte, not the character <code>é</code>."
     ]},
     { t: "diagram", id: "string-runes" },
-    { t: "p", html: "<code>[]rune(s)</code> turns the string into a list of characters, so you can pick one by its place." },
+    { t: "p", html: "<code>[]rune(s)</code> is a type conversion. It turns the string into a slice of runes, so you can pick one character by its place." },
     { t: "list", items: [
-      "<code>s</code> is the string, still stored as bytes.",
-      "<code>[]rune</code> means a list of characters.",
-      "<code>(s)</code> means convert this string into that list.",
-      "<code>chars[1]</code> is the second character. The first is <code>[0]</code>, so <code>[1]</code> of <code>Héllo</code> is <code>é</code>."
+      "<code>s</code> is the string, still stored as UTF-8 bytes.",
+      "<code>[]rune</code> means a slice of runes, one Unicode code point each.",
+      "<code>(s)</code> converts this string into that slice.",
+      "<code>chars[1]</code> is the second rune. The first is <code>[0]</code>, so <code>[1]</code> of <code>Héllo</code> is <code>é</code>."
     ]},
     { t: "diagram", id: "rune-list" },
     { t: "code", title: "Héllo is 6 bytes and 5 characters", code:
@@ -1108,12 +1108,12 @@ true`
   ],
   summary: [
     "`int` is a whole number, `float64` can have a fraction, `bool` is true or false, and `string` is text.",
-    "`byte` is one value from 0 to 255. `rune` is one character.",
-    "Go will not turn an int into a float64 for you. Write float64(i). A fraction is cut off, and a number that is too big wraps.",
+    "`byte` is an alias for `uint8`. `rune` is an alias for `int32`, one Unicode code point.",
+    "Go has no implicit conversion of an int to a float64. Write the type conversion `float64(i)`. A fraction is cut off, and a number that is too big wraps.",
     "`string(72)` is `H`. `strconv.Itoa(72)` is the text \"72\".",
     "0.1 + 0.2 is not exactly 0.3. For money, store cents as an int.",
-    "Print a type with `%T`. `v, ok := x.(string)` asks whether an `any` value holds a string.",
-    "`len` counts bytes. `range` walks characters. `[]rune(s)` lets you pick a character by its place.",
+    "Print a type with `%T`. A type assertion `v, ok := x.(string)` is the comma-ok idiom: it asks whether an `any` value holds a string.",
+    "`len` counts UTF-8 bytes. `range` walks runes. `[]rune(s)` is a type conversion to a slice of runes.",
     "A string cannot be changed in place. Use `strings.Builder` or `strings.Join` to build text."
   ],
   quiz: [
@@ -1180,7 +1180,7 @@ Ada has 2`
     },
 
     { t: "h", text: "The format string" },
-    { t: "p", html: "The text in quotes is the format. A verb is a <code>%</code> plus a letter. The values after the format fill those verbs from left to right." },
+    { t: "p", html: "The text in quotes is the format string. A format verb is a <code>%</code> plus a letter. The values after the format fill those verbs from left to right. The <code>fmt</code> package documents every verb." },
     { t: "list", items: [
       "<code>%s</code> is a string.",
       "<code>%d</code> is a whole number, in base 10.",
@@ -1206,7 +1206,7 @@ Ada has 2`
     Name string
     Age  int
 }
-u := User{"Ada", 30}
+u := User{"Ada", 30}  // composite literal
 fmt.Printf("%v\\n", u)
 fmt.Printf("%+v\\n", u)
 fmt.Printf("%#v\\n", u)`,
@@ -1247,8 +1247,8 @@ fmt.Printf("|%.2f|\\n", 3.14159)`,
 |3.14|`
     },
 
-    { t: "h", text: "Your own String method" },
-    { t: "p", html: "If your type has a method <code>String() string</code>, then <code>Println</code> calls it. That is how a temperature can print as <code>21.5°C</code> instead of a bare number. A tool named <code>stringer</code> can write that method for a list of constants, so they print as names." },
+    { t: "h", text: "The Stringer interface" },
+    { t: "p", html: "If your type has a method <code>String() string</code>, it satisfies the <code>fmt.Stringer</code> interface, and <code>Println</code> calls it. That is how a temperature can print as <code>21.5°C</code> instead of a bare number. A tool named <code>stringer</code> can write that method for a list of constants, so they print as names." },
     { t: "code", title: "Println calls String", code:
 `type Temp float64
 
@@ -1289,7 +1289,7 @@ fmt.Println()`,
     },
 
     { t: "h", text: "Reading a string" },
-    { t: "p", html: "<code>Sscanf</code> pulls values out of a string you already have. Declare the variables first, and pass their addresses with <code>&amp;</code>. For a line a person types, read the line with <code>bufio.Scanner</code> and convert it with <code>strconv</code>. <code>Scan</code> stops at the first value it cannot read." },
+    { t: "p", html: "<code>Sscanf</code> pulls values out of a string you already have. Declare the variables first, and pass their addresses with <code>&amp;</code>, which is the address operator. For a line a person types, read the line with <code>bufio.Scanner</code> and convert it with <code>strconv</code>. <code>Scan</code> stops at the first value it cannot read." },
     { t: "code", title: "Day and month from a string", code:
 `var d, m int
 fmt.Sscanf("21-07", "%d-%d", &d, &m)
@@ -1309,11 +1309,11 @@ fmt.Println(d, m)`,
   summary: [
     "`Print` writes to the terminal, `Sprint` builds a string, and `Fprint` writes to a writer you pass in.",
     "`Println` separates values with spaces. `Print` glues neighbouring strings. `Printf` follows the format string.",
-    "`%s` is a string, `%d` is a whole number, and `\\n` starts a new line. Values fill the verbs from left to right.",
+    "`%s` and `%d` are format verbs. Values fill those verbs from left to right. `\\n` starts a new line.",
     "`%v` prints values, `%+v` adds field names, and `%#v` prints Go syntax.",
     "Printing a map sorts the keys. Ranging over the map does not.",
     "`%6d` pads on the left. `%-6d` pads on the right. `%.2f` keeps two decimals.",
-    "A `String() string` method is what `Println` calls. Printing the receiver from inside that method calls it again until the stack runs out.",
+    "A `String() string` method satisfies `fmt.Stringer`, which is what `Println` calls. Printing the receiver from inside that method calls it again until the stack runs out.",
     "A bad verb writes a marker such as `%!d(string=hello)`. `go vet` finds it.",
     "`Sscanf` reads values out of a string. For one number, `strconv` is the faster call."
   ],
@@ -1359,10 +1359,10 @@ fmt.Println(d, m)`,
     ]},
 
     { t: "h", text: "if" },
-    { t: "p", html: "<code>if</code> tests a condition. When the test is true, that block runs. When it is false, <code>else</code> runs, if you wrote one." },
+    { t: "p", html: "<code>if</code> tests a condition. When the test is true, that block runs. When it is false, <code>else</code> runs, if you wrote one. An if with a short statement can declare names on the same line as the test." },
     { t: "list", items: [
       "The condition sits on the <code>if</code> line. Braces are required.",
-      "A common form is <code>if v, err := f(); err != nil</code>.",
+      "<code>if v, err := f(); err != nil</code> is an if with a short statement: the short variable declaration runs first, then the condition.",
       "<code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>.",
       "When a check fails, return then. The rest of the function stays at the left margin."
     ]},
@@ -1385,12 +1385,12 @@ bad input: strconv.Atoi: parsing "no": invalid syntax`
     { t: "p", html: "<code>v</code> and <code>err</code> exist only inside that <code>if</code> and its <code>else</code>." },
 
     { t: "h", text: "for" },
-    { t: "p", html: "<code>for</code> is the only loop keyword. The same word has four shapes." },
+    { t: "p", html: "<code>for</code> is Go's only looping construct. The same keyword has four shapes." },
     { t: "list", items: [
-      "A counter: <code>for i := 0; i &lt; 5; i++</code>.",
-      "A condition: <code>for n &gt; 0</code>.",
-      "Until you <code>break</code>: <code>for { }</code>.",
-      "<code>range</code> goes through each item in a list, a map, a string, or the numbers from 0 up to a count."
+      "A three-clause for, like C: <code>for i := 0; i &lt; 5; i++</code>.",
+      "A while-style for: <code>for n &gt; 0</code>.",
+      "An infinite for: <code>for { }</code>, until you <code>break</code>.",
+      "A range clause: <code>for i, name := range names</code> walks a slice, a map, a string, or an integer count."
     ]},
     { t: "diagram", id: "control-for" },
     { t: "p", html: "A counter prints 0 through 4." },
@@ -1415,16 +1415,16 @@ for n > 0 {
 2
 1`
     },
-    { t: "p", html: "<code>[]string{\"Ada\", \"Lin\", \"Max\"}</code> builds a list of three names. Go calls this list a slice." },
+    { t: "p", html: "<code>[]string{\"Ada\", \"Lin\", \"Max\"}</code> is a composite literal for a slice of three names." },
     { t: "list", items: [
-      "<code>[]</code> means a list.",
-      "<code>string</code> means each item in the list is text.",
+      "<code>[]</code> means a slice, a list whose length can change.",
+      "<code>string</code> means each element is text.",
       "<code>{\"Ada\", \"Lin\", \"Max\"}</code> are the three names, in order.",
-      "Counting starts at 0, so Ada is at <code>[0]</code>, Lin at <code>[1]</code>, Max at <code>[2]</code>."
+      "Indexing starts at 0, so Ada is at <code>[0]</code>, Lin at <code>[1]</code>, Max at <code>[2]</code>."
     ]},
     { t: "diagram", id: "range-names" },
-    { t: "p", html: "<code>range names</code> goes through that list, one name at a time. <code>i</code> is the place in the list. <code>name</code> is the text at that place." },
-    { t: "code", title: "Each name in the list", code:
+    { t: "p", html: "A range clause, <code>range names</code>, walks that slice one name at a time. <code>i</code> is the index. <code>name</code> is the element at that index." },
+    { t: "code", title: "Each name in the slice", code:
 `names := []string{"Ada", "Lin", "Max"}
 for i, name := range names {
     fmt.Println(i, name)
@@ -1472,10 +1472,10 @@ c 3`
     { t: "note", kind: "deep", title: "Go 1.22 and the loop variable", html: "Before 1.22, <code>i</code> in a loop was one variable reused every pass. A goroutine started inside the loop often printed the last value. From Go 1.22, each pass gets a fresh <code>i</code>. Older code may still write <code>i := i</code>." },
 
     { t: "h", text: "switch" },
-    { t: "p", html: "<code>switch</code> takes one value and runs the case that matches. A case runs, then the switch is done." },
+    { t: "p", html: "<code>switch</code> takes one value, called the switch expression, and runs the case that matches. Go's switch does not fall through by default: a case runs, then the switch is done." },
     { t: "list", items: [
       "One case can list several values, separated by commas.",
-      "A <code>switch</code> with no value is a chain of conditions.",
+      "A switch with no condition is a chain of boolean tests.",
       "Write <code>fallthrough</code> if the next case should run as well."
     ]},
     { t: "diagram", id: "control-switch" },
@@ -1492,7 +1492,7 @@ default:
 }`,
       out: `weekend`
     },
-    { t: "p", html: "A <code>switch</code> with no value after it tests each condition in order. The first one that is true runs. A score of 85 prints <code>B</code>." },
+    { t: "p", html: "A switch with no condition tests each case in order. The first one that is true runs. A score of 85 prints <code>B</code>." },
     { t: "code", title: "A grade from a score", code:
 `score := 85
 var grade string
@@ -1523,7 +1523,7 @@ two`
     { t: "p", html: "A type switch, <code>switch v := i.(type)</code>, is in <a href=\"#/m/methods-interfaces\">Methods, Interfaces &amp; Composition</a>." },
 
     { t: "h", text: "defer" },
-    { t: "p", html: "<code>defer</code> saves a call and runs it when the function returns, including when it panics. The usual reason is cleanup: you opened something, so you want it closed when you leave, even if the code in the middle fails." },
+    { t: "p", html: "<code>defer</code> schedules a deferred function call and runs it when the surrounding function returns, including when it panics. Several defers run last-in, first-out (LIFO). The usual reason is cleanup: you opened something, so you want it closed when you leave, even if the code in the middle fails." },
     { t: "list", items: [
       "You open a file. Write <code>defer f.Close()</code> right after a successful <code>os.Open</code>, so the file closes when the function returns.",
       "You take a lock. Write <code>defer mu.Unlock()</code> right after <code>mu.Lock()</code>, so the lock is released when you leave."
@@ -1541,7 +1541,7 @@ readNotes()`,
 read the file
 close notes.txt`
     },
-    { t: "p", html: "Several <code>defer</code> lines stack up. The last one you write runs first." },
+    { t: "p", html: "Several deferred calls stack up. They run last-in, first-out: the last one you write runs first." },
     { t: "list", items: [
       "The last <code>defer</code> you write runs first.",
       "Arguments are saved at the <code>defer</code> line. <code>defer fmt.Println(i)</code> prints the value <code>i</code> had then.",
@@ -1574,14 +1574,14 @@ captured: 0`
     { t: "note", kind: "warn", title: "`defer` inside a loop waits until the function returns", html: "A <code>defer</code> runs when the <strong>function</strong> returns. Looping over 10,000 files with <code>defer f.Close()</code> keeps 10,000 files open. Close at the end of each pass, or move the body into its own function." }
   ],
   summary: [
-    "`if v, err := f(); err != nil` makes `v` and `err` exist only inside that `if` and its `else`.",
+    "An if with a short statement, `if v, err := f(); err != nil`, makes `v` and `err` exist only inside that `if` and its `else`.",
     "When a check fails, return then. The rest of the function stays at the left margin.",
-    "`for` is the only loop keyword. It covers a counter, a condition, a loop until `break`, and `range`.",
+    "`for` is Go's only looping construct. It covers a three-clause for, a while-style for, an infinite for, and a range clause.",
     "`continue` skips this pass. `break` leaves the loop.",
     "Map keys come out in a random order. Sort the keys for a stable order.",
-    "`switch` runs one matching case, then it is done. `fallthrough` runs the next case as well.",
-    "`defer` runs cleanup when the function returns, such as `f.Close()` after you open a file.",
-    "`defer` runs last to first. Arguments are saved at the `defer` line.",
+    "`switch` does not fall through by default. `fallthrough` runs the next case as well. A switch with no condition is a chain of tests.",
+    "`defer` schedules a deferred function call for when the function returns, such as `f.Close()` after you open a file.",
+    "Deferred calls run last-in, first-out. Arguments are saved at the `defer` line.",
     "A `defer` inside a loop waits until the function returns."
   ],
   quiz: [
