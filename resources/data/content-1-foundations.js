@@ -1,4 +1,4 @@
-/* Modules 1–7 : Foundations */
+/* Modules 1–8 : Foundations */
 window.CURRICULUM_PARTS = window.CURRICULUM_PARTS || [];
 window.CURRICULUM_PARTS.push([
 
@@ -117,12 +117,13 @@ go build -gcflags="-m" .`
         ["Deploy unit", "1 static binary", "Interpreter + deps", "JAR + JVM", "1 static binary", "1 binary + libc"],
         ["Concurrency", "Goroutines + channels", "GIL / asyncio", "Threads, virtual threads", "async + threads", "pthreads"],
         ["Build speed", "Seconds", "n/a", "Slow-ish", "Slow", "Fast"],
-        ["Learning curve", "Days", "Days", "Weeks", "Months", "Weeks"]
+        ["Learning curve", "Days", "Days", "Weeks", "Months", "Weeks"],
+        ["Object model", "Types, methods, interfaces", "Classes", "Classes", "Structs + traits", "Structs + functions"]
       ]
     },
 
     { t: "h", text: "Design" },
-    { t: "p", html: "The choices that feel strict (no inheritance, unused imports are errors, errors are values) are there so a large program stays readable and builds quickly. Each line below is one of those choices." },
+    { t: "p", html: "The choices that feel strict (no inheritance, unused imports are errors, errors are values) are there so a large program stays readable and builds quickly. Each line below is one of those choices. How object-oriented style works in Go, types, methods, and interfaces, is the next lesson." },
     { t: "list", items: [
       "<strong>Readability over expressiveness.</strong> One obvious way to do things. No inheritance, no operator overloading, no exceptions.",
       "<strong>Fast builds are a feature.</strong> Unused imports are a compile error partly to keep the dependency graph honest and the build fast.",
@@ -169,6 +170,137 @@ go build -gcflags="-m" .`
 },
 
 /* ───────────────────────────── 2 ───────────────────────────── */
+{
+  id: "oop-in-go",
+  level: "Beginner",
+  icon: "🧱",
+  title: "Object-Oriented Programming in Go",
+  minutes: 18,
+  blurb: "What OOP is, why it is useful, and how Go supports that style.",
+  blocks: [
+    { t: "h", text: "What OOP is" },
+    { t: "p", html: "A program is data and the functions that use it. <strong>Object-oriented programming (OOP)</strong> keeps a piece of data next to the functions that know how to use it. Instead of a utilities file full of <code>area(rect)</code> and <code>name(user)</code>, you write <code>rect.Area()</code> and <code>user.Name()</code>." },
+    { t: "p", html: "That grouping is useful as a program grows. A user, an order, a file, and an HTTP handler each carry their own behaviour, so you do not hunt through a thousand functions to find the right one. Callers see a small surface. The insides can change later. One function can work on many types that share a behaviour, such as any shape that has an area." },
+    { t: "p", html: "Some courses write <strong>OOPS</strong>, short for Object Oriented Programming System. The name used in the <a href=\"https://go.dev/doc/faq#Is_Go_an_object-oriented_language\" target=\"_blank\" rel=\"noopener\">Go FAQ</a>, and in this course, is <strong>OOP</strong>." },
+    { t: "p", html: "Four ideas turn up in every OOP language:" },
+    { t: "list", items: [
+      "<strong>Encapsulation.</strong> Hide the insides. Callers use a small public surface, so you can change the insides later.",
+      "<strong>Abstraction.</strong> Show <code>Area</code>, hide the multiplication. Callers need the result, not the formula.",
+      "<strong>Polymorphism.</strong> One function works on many types. <code>describe</code> can print the area of a rectangle or a circle.",
+      "<strong>Inheritance.</strong> A child type is a kind of its parent, and a call on the parent can run the child's method. Java and Python are built this way."
+    ]},
+    { t: "diagram", id: "oop-ideas" },
+
+    { t: "h", text: "Does Go support OOP?" },
+    { t: "p", html: "Yes. You can write object-oriented programs in Go. The FAQ says Go has types and methods, so an object-oriented style is available. Encapsulation is the exported identifier rule. Abstraction and polymorphism are interfaces. Reuse is composition, including embedding. There is no <code>class</code> keyword and no type hierarchy." },
+    { t: "p", html: "The rest of this lesson is those pieces in code: a struct with a method, an interface that several types satisfy, and embedding as the way to reuse fields and methods." },
+
+    { t: "h", text: "Structs and methods" },
+    { t: "p", html: "A <strong>struct</strong> groups named fields, the data. A <strong>method</strong> is a function with a <strong>receiver</strong>, the value the method runs on. Use a method when the behaviour belongs with that data: area on a rectangle, <code>String</code> on a user, <code>ServeHTTP</code> on a handler. You can declare methods on any named type in your package, including a defined numeric type." },
+    { t: "table", head: ["OOP idea", "In Go"],
+      rows: [
+        ["Group data", "A <strong>struct</strong>: named, typed fields"],
+        ["Behaviour on that data", "A <strong>method</strong>, written with a <strong>receiver</strong>"],
+        ["Encapsulation", "An unexported identifier (lowercase name) stays in its package"],
+        ["Abstraction and polymorphism", "An <strong>interface</strong>, satisfied by having the methods"],
+        ["Reuse", "<strong>Composition</strong>, including <strong>embedding</strong>"],
+        ["Make a value", "A <strong>composite literal</strong>, or a function such as <code>NewRect</code>"]
+      ]
+    },
+    { t: "diagram", id: "oop-struct-method" },
+    { t: "p", html: "<code>Rect</code> holds width and height. <code>(r Rect)</code> is the receiver. <code>box.Area()</code> runs that method on <code>box</code> and prints <code>12</code>. The next lesson installs Go so you can run this yourself." },
+    { t: "code", title: "A struct and a method", code:
+`package main
+
+import "fmt"
+
+type Rect struct {
+    W, H float64
+}
+
+func (r Rect) Area() float64 {
+    return r.W * r.H
+}
+
+func main() {
+    box := Rect{W: 3, H: 4}
+    fmt.Println(box.Area())
+}`,
+      out: `12`
+    },
+
+    { t: "h", text: "Interfaces" },
+    { t: "p", html: "An <strong>interface</strong> is a list of method signatures. A type satisfies it by having those methods. There is no <code>implements</code> keyword. Use an interface when one function should work on several types: print any shape's area, copy from any reader, log any value that has <code>String</code>." },
+    { t: "diagram", id: "oop-interface" },
+    { t: "p", html: "<code>Shape</code> wants <code>Area</code>. <code>Rect</code> has <code>Area</code>, so <code>describe</code> can take a <code>Rect</code>. A circle with the same method would fit the same function." },
+    { t: "code", title: "An interface is satisfied by having the methods", code:
+`type Shape interface {
+    Area() float64
+}
+
+func describe(s Shape) {
+    fmt.Println(s.Area())
+}
+
+describe(Rect{W: 3, H: 4})`,
+      out: `12`
+    },
+
+    { t: "h", text: "Composition and embedding" },
+    { t: "p", html: "<strong>Composition</strong> means building a type from smaller types. <strong>Embedding</strong> is the syntax for that: you write an inner type inside a struct with no field name, and its fields and methods are used on the outer value. Use embedding when a dog is an animal plus extra fields, or when a logging store wraps another store. The outer type stays a separate type, and there is no automatic call back to it." },
+    { t: "diagram", id: "oop-embed" },
+    { t: "p", html: "<code>Dog</code> embeds <code>Animal</code>, so <code>d.Name</code> and <code>d.Speak()</code> work. <code>Breed</code> is only on <code>Dog</code>." },
+    { t: "code", title: "Embedding promotes Name and Speak", code:
+`type Animal struct{ Name string }
+func (a Animal) Speak() string { return a.Name + " makes a sound" }
+
+type Dog struct {
+    Animal
+    Breed string
+}
+
+d := Dog{Animal: Animal{Name: "Rex"}, Breed: "Lab"}
+fmt.Println(d.Name, d.Speak())`,
+      out: `Rex Rex makes a sound`
+    },
+    { t: "p", html: "Encapsulation is the exported identifier rule: a name that starts with an uppercase letter is visible to another package. A constructor is an ordinary function, often named <code>NewT</code>. Method sets, the nil-interface trap, and embedding in real APIs are in <a href=\"#/m/methods-interfaces\">Methods, Interfaces &amp; Composition</a>." }
+  ],
+  summary: [
+    "OOP keeps data next to the behaviour that uses it, so a growing program stays organised. Some courses write OOPS; this course and the Go FAQ use OOP.",
+    "Go supports an object-oriented style. Encapsulation, abstraction, and polymorphism are there. Reuse is composition. There is no class keyword and no type hierarchy.",
+    "A struct groups fields. A method is a function with a receiver, used when behaviour belongs with that data.",
+    "An interface is a list of methods. A type satisfies it by having those methods. There is no implements keyword.",
+    "Embedding promotes fields and methods of an inner type. The outer type stays a separate type."
+  ],
+  quiz: [
+    { q: "How does Go handle object-oriented programming?",
+      options: ["A class keyword and inheritance", "Types, methods, and interfaces, with no class keyword and no type hierarchy", "Only Python-style classes on structs", "OOP arrived in Go 1.18 with generics"],
+      answer: 1,
+      explain: "The FAQ is the write-up. Go has types and methods, so you can write in an object-oriented style. There is no class keyword and no type hierarchy. Polymorphism is an interface. Reuse is composition, including embedding." },
+    { q: "What is a method in Go?",
+      options: ["A function inside a class", "A function with a receiver, the value it runs on", "A constructor named New", "A field on a struct"],
+      answer: 1,
+      explain: "A method is a function with a receiver, written before the name: func (r Rect) Area() float64. The receiver is the value the method runs on." },
+    { q: "How does a type satisfy an interface?",
+      options: ["Write implements Shape", "Embed the interface", "Have the methods on the list", "Register it with the runtime"],
+      answer: 2,
+      explain: "Satisfaction is implicit. If the type has the methods, it fits. There is no implements keyword." },
+    { q: "What is embedding for?",
+      options: ["Class inheritance with virtual dispatch", "Composition: an inner type's fields and methods are used on the outer value", "Hiding a field from other packages", "Converting one type to another"],
+      answer: 1,
+      explain: "Embedding puts a type inside a struct with no field name. The outer type stays a separate type. There is no virtual dispatch back to it." },
+    { q: "How do you hide a field from another package?",
+      options: ["The private keyword", "A lowercase name, an unexported identifier", "A leading underscore", "Put it in an interface"],
+      answer: 1,
+      explain: "An exported identifier starts with an uppercase letter. Lowercase stays inside the package. There is no private keyword." },
+    { q: "What is object-oriented programming useful for?",
+      options: ["Making the compiler faster", "Keeping data next to the behaviour that uses it, so a growing program stays organised", "Removing the need for functions", "Replacing the garbage collector"],
+      answer: 1,
+      explain: "OOP groups a piece of data with the functions that know how to use it. Callers see a small surface. One function can work on many types that share a behaviour." }
+  ]
+},
+
+/* ───────────────────────────── 3 ───────────────────────────── */
 {
   id: "setup-first-program",
   level: "Beginner",
@@ -377,7 +509,7 @@ go mod why github.com/google/uuid    # why is this here?`
   ]
 },
 
-/* ───────────────────────────── 3 ───────────────────────────── */
+/* ───────────────────────────── 4 ───────────────────────────── */
 {
   id: "dev-environment",
   level: "Beginner",
@@ -544,7 +676,7 @@ vet:
   ]
 },
 
-/* ───────────────────────────── 4 ───────────────────────────── */
+/* ───────────────────────────── 5 ───────────────────────────── */
 {
   id: "variables-constants",
   level: "Beginner",
@@ -852,7 +984,7 @@ Grace
   ]
 },
 
-/* ───────────────────────────── 5 ───────────────────────────── */
+/* ───────────────────────────── 6 ───────────────────────────── */
 {
   id: "data-types",
   level: "Beginner",
@@ -1140,7 +1272,7 @@ true`
   ]
 },
 
-/* ───────────────────────────── 6 ───────────────────────────── */
+/* ───────────────────────────── 7 ───────────────────────────── */
 {
   id: "printing-fmt",
   level: "Beginner",
@@ -1341,7 +1473,7 @@ fmt.Println(d, m)`,
   ]
 },
 
-/* ───────────────────────────── 7 ───────────────────────────── */
+/* ───────────────────────────── 8 ───────────────────────────── */
 {
   id: "control-flow",
   level: "Beginner",

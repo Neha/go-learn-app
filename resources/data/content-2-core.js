@@ -1,4 +1,4 @@
-/* Modules 8–13 : Core Go */
+/* Modules 9–14 : Core Go */
 window.CURRICULUM_PARTS = window.CURRICULUM_PARTS || [];
 window.CURRICULUM_PARTS.push([
 
@@ -12,8 +12,7 @@ window.CURRICULUM_PARTS.push([
   blurb: "What a function is, how it can return a number and an error, and how a function can be stored in a variable.",
   blocks: [
     { t: "h", text: "What a function is" },
-    { t: "p", html: "You will learn what a function is, and how to write the smallest one." },
-    { t: "p", html: "A function is a named piece of code you can run again. You give it inputs. It can give a value back." },
+    { t: "p", html: "A function is a named piece of code you can run again. You give it inputs. It can give a value back. Write one when the same work happens more than once: add two numbers, load a config, handle a request." },
     { t: "list", items: [
       "<code>func</code> starts the definition.",
       "<code>add</code> is the name you call.",
@@ -37,8 +36,8 @@ fmt.Println(add(2, 3))`,
     ]},
 
     { t: "h", text: "Multiple results" },
-    { t: "p", html: "You will learn how a function can give two values back: the answer, and an error if the work failed." },
-    { t: "p", html: "<code>error</code> is a built-in interface with one method, <code>Error() string</code>. It holds a message when something went wrong, or <code>nil</code> when the work succeeded. Go has no classes. <code>errors</code> is a package in the standard library. Import it, then call <code>errors.New</code> to make an error with a message. <code>fmt</code> is the printing package. Import that too." },
+    { t: "p", html: "A function can give two values back: the answer, and an error if the work failed. That is how Go reports failure. The caller looks at the error before using the number." },
+    { t: "p", html: "<code>error</code> is a built-in interface with one method, <code>Error() string</code>. It holds a message when something went wrong, or <code>nil</code> when the work succeeded. Go has no <code>class</code> keyword. Object-oriented style is types, methods, and interfaces, in <a href=\"#/m/oop-in-go\">Object-oriented programming in Go</a>. <code>errors</code> is a package in the standard library. Import it, then call <code>errors.New</code> to make an error with a message. <code>fmt</code> is the printing package. Import that too." },
     { t: "list", items: [
       "<code>package main</code> makes this file a program.",
       "<code>import \"errors\"</code> brings in the package that builds an error.",
@@ -87,7 +86,7 @@ division by zero`
     { t: "p", html: "The next examples skip <code>package main</code> and the import lines so you can see the new idea. Add those lines the same way when you run them. This <code>divide</code> still needs <code>errors</code> and <code>fmt</code>." },
 
     { t: "h", text: "The blank identifier" },
-    { t: "p", html: "You will learn the blank identifier, the official name for <code>_</code>. It discards a value you must receive but do not use." },
+    { t: "p", html: "The blank identifier is <code>_</code>. Use it when a function gives you a value you must receive and you have no use for it, like the number from <code>divide</code> when you only care whether it failed." },
     { t: "list", items: [
       "<code>divide</code> gives two results: the number, then the error.",
       "The blank identifier <code>_</code> takes the number and discards it.",
@@ -100,7 +99,7 @@ fmt.Println(err)`,
     },
 
     { t: "h", text: "Named return values" },
-    { t: "p", html: "You will learn named return values, the official name for results declared in the signature. A <code>return</code> with no arguments is a naked return, and it sends those named values." },
+    { t: "p", html: "Named return values are results declared in the signature, so they exist as variables from the start of the function. A naked return, <code>return</code> with no arguments, sends those names. They help on a short function that builds two related numbers, like splitting a total." },
     { t: "p", html: "<code>(x, y int)</code> declares <code>x</code> and <code>y</code> at the top of the function, both starting at 0. A naked <code>return</code> then sends whatever is in them." },
     { t: "code", title: "Named return values, and a naked return", code:
 `func split(sum int) (x, y int) {
@@ -114,8 +113,8 @@ fmt.Println(split(9))`,
     },
 
     { t: "h", text: "Variadic functions" },
-    { t: "p", html: "You will learn variadic functions, the official name for a function that can take zero or more arguments of one type. The <a href=\"https://go.dev/tour/basics/15\" target=\"_blank\" rel=\"noopener\">Tour of Go</a> and the <a href=\"https://go.dev/ref/spec#Passing_arguments_to_..._parameters\" target=\"_blank\" rel=\"noopener\">language spec</a> both use this word." },
-    { t: "p", html: "The last parameter may have a type prefixed with <code>...</code>, such as <code>...int</code>. A function with that parameter is variadic. Inside the function, that parameter has type <code>[]int</code>, a slice. If the caller passes no arguments, the slice is <code>nil</code>." },
+    { t: "p", html: "A variadic function takes zero or more arguments of one type. <code>fmt.Println</code> is the one you already use: it prints one value or twenty. Use one when the caller should pass a list without building a slice first: a sum, a log line, a join." },
+    { t: "p", html: "The last parameter is written with a type prefixed by <code>...</code>, such as <code>...int</code>. Inside the function that parameter has type <code>[]int</code>, a slice. If the caller passes no arguments, the slice is <code>nil</code>. The <a href=\"https://go.dev/tour/basics/15\" target=\"_blank\" rel=\"noopener\">Tour of Go</a> and the <a href=\"https://go.dev/ref/spec#Passing_arguments_to_..._parameters\" target=\"_blank\" rel=\"noopener\">language spec</a> both use this word." },
     { t: "list", items: [
       "<code>func sum(nums ...int)</code> is a variadic function.",
       "<code>...</code> may appear only on the last parameter.",
@@ -150,8 +149,7 @@ fmt.Println(sum(nums...))`,
     { t: "note", kind: "tip", title: "There are no default arguments", html: "You cannot write <code>func f(port int = 8080)</code>, and you cannot have two functions with the same name. If some arguments are optional, pass a struct of settings, or use functional options at the end of this lesson." },
 
     { t: "h", text: "Function values" },
-    { t: "p", html: "You will learn function values, function types, and function literals." },
-    { t: "p", html: "A function is a value. You can store it in a variable, pass it into another function, and return it. The type of that value is a function type: the shape of the function." },
+    { t: "p", html: "A function is a value. You can store it in a variable, pass it into another function, and return it. That is useful when the same loop should run a different operation: double each number, or take the absolute value. The type of that value is a function type: the shape of the function. A function written in place, with no name, is a function literal." },
     { t: "list", items: [
       "<code>func(int, int) int</code> means a function that takes two ints and returns an int.",
       "<code>add</code> has that shape, so it can be stored in <code>op</code>.",
@@ -191,8 +189,7 @@ fmt.Println(doubled)`,
     },
 
     { t: "h", text: "Closures" },
-    { t: "p", html: "You will learn what a closure is: a function written inside another function, which keeps a variable from the outer function." },
-    { t: "p", html: "A <strong>closure</strong> is a function written inside another function, which uses one of the outer function's variables. \"Captures by reference\" means it keeps that variable itself. It does not copy the number that was in the variable at the moment the inner function was created." },
+    { t: "p", html: "A <strong>closure</strong> is a function written inside another function that keeps a variable from the outer function. Use one when the inner function needs its own lasting state, like a counter that remembers how many times it has been called. \"Captures by reference\" means it keeps that variable itself. It does not copy the number that was in the variable at the moment the inner function was created." },
     { t: "p", html: "<code>counter</code> makes <code>count</code>, starting at 0, and returns an inner function. That inner function is what you call later. Each call does <code>count++</code> on the <strong>same</strong> <code>count</code> and returns it. If the closure had copied the value, every call would see 0, add 1, and return 1. It does not. The 1 is still there for the next call, then 2, then 3." },
     { t: "p", html: "<code>counter()</code> has already returned by the time you call <code>c()</code>. A local variable would normally disappear with that return. This one cannot, because the inner function still uses it, so Go keeps <code>count</code> on the heap for as long as <code>c</code> exists. Call <code>counter()</code> again and you get a new function with a new <code>count</code>. The two counters do not share." },
     { t: "diagram", id: "closure" },
@@ -220,7 +217,7 @@ fmt.Println(c2())`,
     { t: "note", kind: "tip", title: "Loop variables", html: "Before Go 1.22, a <code>for</code> loop had one <code>i</code> reused every pass. A function created inside the loop saw whatever <code>i</code> held at the end, usually the last value. From Go 1.22 each pass has its own <code>i</code>, so the function sees the value from that pass." },
 
     { t: "h", text: "Functional options" },
-    { t: "p", html: "You will learn two ways to set optional values: a composite literal on a struct, and the functional options pattern, extra functions that change only the settings you pass." },
+    { t: "p", html: "Optional settings can be a composite literal on a struct, or extra functions that change only the fields you pass. The functional options pattern is useful in a library: you can add a new setting later without breaking every existing call." },
     { t: "p", html: "The simple way to set a port is a composite literal. You write the fields you care about, then print them. This example needs <code>import \"fmt\"</code> to print." },
     { t: "diagram", id: "func-option" },
     { t: "code", title: "Set the port on the struct", code:
@@ -958,7 +955,7 @@ defer pool.Put(buf)
   blurb: "Implicit satisfaction, small interfaces, embedding instead of inheritance, and the nil-interface trap.",
   blocks: [
     { t: "h", text: "Methods" },
-    { t: "p", html: "A method is a function with the receiver named before the function name: <code>func (p Point) Abs() float64</code>. A value receiver gets a copy. A pointer receiver can change the original. You can declare methods on any named type in your package, not only structs." },
+    { t: "p", html: "A method is a function with a receiver, the value it runs on: <code>func (p Point) Abs() float64</code>. Use one when behaviour belongs with the data, like area on a rectangle. A value receiver gets a copy. A pointer receiver can change the original. You can declare methods on any named type in your package, not only structs. <a href=\"#/m/oop-in-go\">Object-oriented programming in Go</a> is the beginner map of types, methods, and interfaces. This lesson is the mechanics: method sets, implicit satisfaction, and embedding." },
     { t: "code", title: "You can define methods on any type you own", code:
 `type Rect struct{ W, H float64 }
 
