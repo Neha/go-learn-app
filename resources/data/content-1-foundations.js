@@ -176,23 +176,34 @@ go build -gcflags="-m" .`
   icon: "🧱",
   title: "Object-Oriented Programming in Go",
   minutes: 18,
-  blurb: "What OOP is, why it is useful, and how Go supports that style.",
+  blurb: "What OOP is, why it is useful, whether Go recommends it, and how Go supports that style.",
   blocks: [
     { t: "h", text: "What OOP is" },
-    { t: "p", html: "A program is data and the functions that use it. <strong>Object-oriented programming (OOP)</strong> keeps a piece of data next to the functions that know how to use it. Instead of a utilities file full of <code>area(rect)</code> and <code>name(user)</code>, you write <code>rect.Area()</code> and <code>user.Name()</code>." },
-    { t: "p", html: "That grouping is useful as a program grows. A user, an order, a file, and an HTTP handler each carry their own behaviour, so you do not hunt through a thousand functions to find the right one. Callers see a small surface. The insides can change later. One function can work on many types that share a behaviour, such as any shape that has an area." },
+    { t: "p", html: "Think of a person you know. They have a name and an age. They can speak, walk, and log in to an app." },
+    { t: "list", items: [
+      "<strong>Facts</strong> about them: name, age, email.",
+      "<strong>Actions</strong> they can take: speak, walk, log in."
+    ]},
+    { t: "p", html: "In a program, that person is an <strong>object</strong>. An object is one thing that holds both the facts and the actions." },
+    { t: "diagram", id: "oop-object" },
+    { t: "p", html: "<strong>Object-oriented programming (OOP)</strong> is writing a program as a set of objects. A shopping cart knows its items and can add one. A photo knows its width and can resize. You pick the things in the problem, then you give each thing what it knows and what it can do." },
+    { t: "p", html: "This is useful as a program grows. Login lives on the user. The total lives on the order. You open the right object to change it. In Go, the facts sit in a <strong>struct</strong> and each action is a <strong>method</strong>, so a call looks like <code>user.Login()</code>." },
     { t: "p", html: "Some courses write <strong>OOPS</strong>, short for Object Oriented Programming System. The name used in the <a href=\"https://go.dev/doc/faq#Is_Go_an_object-oriented_language\" target=\"_blank\" rel=\"noopener\">Go FAQ</a>, and in this course, is <strong>OOP</strong>." },
     { t: "p", html: "Four ideas turn up in every OOP language:" },
     { t: "list", items: [
-      "<strong>Encapsulation.</strong> Hide the insides. Callers use a small public surface, so you can change the insides later.",
-      "<strong>Abstraction.</strong> Show <code>Area</code>, hide the multiplication. Callers need the result, not the formula.",
-      "<strong>Polymorphism.</strong> One function works on many types. <code>describe</code> can print the area of a rectangle or a circle.",
-      "<strong>Inheritance.</strong> A child type is a kind of its parent, and a call on the parent can run the child's method. Java and Python are built this way."
+      "<strong>Encapsulation.</strong> Keep the insides private. Other code uses the actions you published, such as Login.",
+      "<strong>Abstraction.</strong> Show a simple action. Login is the name people use. The password check stays inside.",
+      "<strong>Polymorphism.</strong> Different objects can share an action name. A rectangle and a circle can both give an area.",
+      "<strong>Inheritance.</strong> Some languages let a child type copy a parent type. Java and Python are built this way."
     ]},
     { t: "diagram", id: "oop-ideas" },
 
     { t: "h", text: "Does Go support OOP?" },
     { t: "p", html: "Yes. You can write object-oriented programs in Go. The FAQ says Go has types and methods, so an object-oriented style is available. Encapsulation is the exported identifier rule. Abstraction and polymorphism are interfaces. Reuse is composition, including embedding. There is no <code>class</code> keyword and no type hierarchy." },
+
+    { t: "h", text: "Does Go recommend OOP?" },
+    { t: "p", html: "Go recommends types and methods when a thing has facts and actions. That is normal Go, and the <a href=\"https://go.dev/doc/faq#Is_Go_an_object-oriented_language\" target=\"_blank\" rel=\"noopener\">FAQ</a> calls it an object-oriented style. An HTTP handler has <code>ServeHTTP</code>. A file can <code>Close</code>. A rectangle can give its area." },
+    { t: "p", html: "A function in a package is still normal Go when the work does not belong to one object: <code>fmt.Println</code>, <code>json.Marshal</code>, adding two numbers. Go has no class tree to extend. When you reuse, the usual tools are a small interface and composition, including embedding. The FAQ chose that shape so objects in Go stay lightweight." },
     { t: "p", html: "The rest of this lesson is those pieces in code: a struct with a method, an interface that several types satisfy, and embedding as the way to reuse fields and methods." },
 
     { t: "h", text: "Structs and methods" },
@@ -266,8 +277,8 @@ fmt.Println(d.Name, d.Speak())`,
     { t: "p", html: "Encapsulation is the exported identifier rule: a name that starts with an uppercase letter is visible to another package. A constructor is an ordinary function, often named <code>NewT</code>. Method sets, the nil-interface trap, and embedding in real APIs are in <a href=\"#/m/methods-interfaces\">Methods, Interfaces &amp; Composition</a>." }
   ],
   summary: [
-    "OOP keeps data next to the behaviour that uses it, so a growing program stays organised. Some courses write OOPS; this course and the Go FAQ use OOP.",
-    "Go supports an object-oriented style. Encapsulation, abstraction, and polymorphism are there. Reuse is composition. There is no class keyword and no type hierarchy.",
+    "OOP builds a program from objects. Each object holds facts and actions, such as a person with a name who can log in. Some courses write OOPS; this course and the Go FAQ use OOP.",
+    "Go supports an object-oriented style, and recommends it when facts and actions belong together. A plain function is still normal Go when the work stands on its own. Reuse is composition. There is no class keyword and no type hierarchy.",
     "A struct groups fields. A method is a function with a receiver, used when behaviour belongs with that data.",
     "An interface is a list of methods. A type satisfies it by having those methods. There is no implements keyword.",
     "Embedding promotes fields and methods of an inner type. The outer type stays a separate type."
@@ -294,9 +305,13 @@ fmt.Println(d.Name, d.Speak())`,
       answer: 1,
       explain: "An exported identifier starts with an uppercase letter. Lowercase stays inside the package. There is no private keyword." },
     { q: "What is object-oriented programming useful for?",
-      options: ["Making the compiler faster", "Keeping data next to the behaviour that uses it, so a growing program stays organised", "Removing the need for functions", "Replacing the garbage collector"],
+      options: ["Making the compiler faster", "Building a program from objects that know facts and can do actions", "Removing the need for functions", "Replacing the garbage collector"],
       answer: 1,
-      explain: "OOP groups a piece of data with the functions that know how to use it. Callers see a small surface. One function can work on many types that share a behaviour." }
+      explain: "An object is one thing that holds facts and actions, such as a person with a name who can log in. OOP writes the program as a set of those objects. In Go the facts sit in a struct and each action is a method." },
+    { q: "Does Go recommend writing every piece of code as OOP?",
+      options: ["Yes, every function must be a method on a class", "Use types and methods when facts and actions belong together, and plain functions when the work stands on its own", "Never use methods", "Only after Go 1.18"],
+      answer: 1,
+      explain: "Go recommends types and methods when a thing has facts and actions. That is an object-oriented style, and it is normal Go. A function in a package is still right when the work does not belong to one object. There is no class tree." }
   ]
 },
 

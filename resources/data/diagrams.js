@@ -1225,6 +1225,28 @@ select: {
 },
 
 /* ─────────────── object-oriented style ─────────────── */
+"oop-object": {
+  title: "An object is one thing",
+  caption: "A person knows a name and an age, and can log in. Facts plus actions: that bundle is an object.",
+  svg: `<svg viewBox="0 0 960 440" role="img" aria-label="A person object holds facts, name and age, and actions, login and speak.">
+    <text class="dg-t lg" x="24" y="36">1. Facts this person knows</text>
+    <rect class="dg-box accent dg-step" style="--i:0" x="24" y="56" width="912" height="150" rx="16"/>
+    <text class="dg-t mono lg" x="480" y="100" text-anchor="middle">Person</text>
+    <rect class="dg-box" x="160" y="120" width="240" height="64" rx="14"/>
+    <text class="dg-t mono lg" x="280" y="160" text-anchor="middle">Name: Ada</text>
+    <rect class="dg-box" x="560" y="120" width="240" height="64" rx="14"/>
+    <text class="dg-t mono lg" x="680" y="160" text-anchor="middle">Age: 30</text>
+
+    <text class="dg-t lg" x="24" y="244">2. Actions this person can take</text>
+    <rect class="dg-box dg-step" style="--i:1" x="24" y="264" width="440" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="244" y="324" text-anchor="middle">Login()</text>
+    <text class="dg-t lg" x="244" y="370" text-anchor="middle">an action</text>
+    <rect class="dg-box dg-step" style="--i:2" x="496" y="264" width="440" height="140" rx="16"/>
+    <text class="dg-t mono lg" x="716" y="324" text-anchor="middle">Speak()</text>
+    <text class="dg-t lg" x="716" y="370" text-anchor="middle">an action</text>
+  </svg>`
+},
+
 "oop-ideas": {
   title: "Four OOP ideas, and where they land in Go",
   caption: "Encapsulation, abstraction, and polymorphism are in Go. Reuse is composition, including embedding.",
