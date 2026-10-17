@@ -9,18 +9,10 @@ window.CURRICULUM_PARTS.push([
   icon: "🧩",
   title: "Functions, Multiple Returns & Closures",
   minutes: 20,
-  blurb: "What a function is, how it can return a number and an error, and how a function can be stored in a variable.",
+  blurb: "What a function is, how it can return a number and an error, and how a function can sit in a variable.",
   blocks: [
     { t: "h", text: "What a function is" },
     { t: "p", html: "A function is a named piece of code you can run again. You give it inputs. It can give a value back. Write one when the same work happens more than once: add two numbers, load a config, handle a request." },
-    { t: "list", items: [
-      "<code>func</code> starts the definition.",
-      "<code>add</code> is the name you call.",
-      "<code>a</code> and <code>b</code> are the inputs, both of type <code>int</code>.",
-      "The <code>int</code> after the parentheses is the type of the value it gives back.",
-      "<code>return a + b</code> is that value.",
-      "<code>add(2, 3)</code> runs the function with those two inputs and prints <code>5</code>."
-    ]},
     { t: "diagram", id: "func-parts" },
     { t: "code", title: "The smallest function", code:
 `func add(a int, b int) int {
@@ -30,23 +22,20 @@ window.CURRICULUM_PARTS.push([
 fmt.Println(add(2, 3))`,
       out: `5`
     },
-    { t: "p", html: "When two inputs share a type, you can write the type once." },
     { t: "list", items: [
-      "<code>func add(a, b int)</code> means the same as <code>func add(a int, b int)</code>."
+      "<code>func</code> starts the definition.",
+      "<code>add</code> is the name you call.",
+      "<code>a</code> and <code>b</code> are the inputs, both of type <code>int</code>.",
+      "The <code>int</code> after the parentheses is the type of the value it gives back.",
+      "<code>return a + b</code> is that value.",
+      "<code>add(2, 3)</code> runs the function with 2 and 3 and prints <code>5</code>."
     ]},
+    { t: "p", html: "When two inputs share a type, write the type once: <code>func add(a, b int)</code>." },
+    { t: "note", kind: "tip", title: "One name, one function", html: "Each function in a package has its own name. <code>Print</code>, <code>Printf</code>, and <code>Println</code> are three names, so the compiler always knows which one you meant." },
 
     { t: "h", text: "Multiple results" },
-    { t: "p", html: "A function can give two values back: the answer, and an error if the work failed. That is how Go reports failure. The caller looks at the error before using the number." },
-    { t: "p", html: "<code>error</code> is a built-in interface with one method, <code>Error() string</code>. It holds a message when something went wrong, or <code>nil</code> when the work succeeded. Go has no <code>class</code> keyword. Object-oriented style is types, methods, and interfaces, in <a href=\"#/m/oop-in-go\">Object-oriented programming in Go</a>. <code>errors</code> is a package in the standard library. Import it, then call <code>errors.New</code> to make an error with a message. <code>fmt</code> is the printing package. Import that too." },
-    { t: "list", items: [
-      "<code>package main</code> makes this file a program.",
-      "<code>import \"errors\"</code> brings in the package that builds an error.",
-      "<code>import \"fmt\"</code> brings in the package that prints.",
-      "<code>(float64, error)</code> means two results: the answer, then the error. The type name is <code>error</code>, lowercase.",
-      "<code>errors.New(\"division by zero\")</code> is the error when <code>b</code> is 0.",
-      "<code>nil</code> for the error means it worked. Use the number.",
-      "Look at <code>err</code> before using the number."
-    ]},
+    { t: "p", html: "A function can give two values back: the answer, and an error if the work failed. That is how Go reports failure. Look at the error before using the number." },
+    { t: "p", html: "The second result has type <code>error</code>. It holds a message when something went wrong. <code>nil</code> means the call worked. The <code>errors</code> package builds that message with <code>errors.New</code>. Print with <code>fmt</code>, the same package as earlier lessons." },
     { t: "diagram", id: "func-returns" },
     { t: "code", title: "A full program: imports, divide, and both calls", code:
 `package main
@@ -81,53 +70,50 @@ func main() {
       out: `5
 division by zero`
     },
-    { t: "p", html: "<code>divide(10, 2)</code> prints <code>5</code>. <code>divide(10, 0)</code> prints the error text. The <code>0</code> that came back with the error is unused." },
+    { t: "list", items: [
+      "<code>package main</code> makes this file a program.",
+      "<code>import \"errors\"</code> brings in the package that builds an error.",
+      "<code>import \"fmt\"</code> brings in the package that prints.",
+      "<code>(float64, error)</code> means two results: the answer, then the error.",
+      "<code>errors.New(\"division by zero\")</code> is the error when <code>b</code> is 0.",
+      "<code>nil</code> for the error means it worked. Use the number.",
+      "<code>divide(10, 2)</code> prints <code>5</code>. <code>divide(10, 0)</code> prints the error text."
+    ]},
     { t: "note", kind: "tip", title: "Error goes last, and you check it", html: "Write <code>(result, error)</code>, with <code>error</code> as the final value. If <code>err != nil</code>, treat every other return as unusable." },
     { t: "p", html: "The next examples skip <code>package main</code> and the import lines so you can see the new idea. Add those lines the same way when you run them. This <code>divide</code> still needs <code>errors</code> and <code>fmt</code>." },
 
     { t: "h", text: "The blank identifier" },
-    { t: "p", html: "The blank identifier is <code>_</code>. Use it when a function gives you a value you must receive and you have no use for it, like the number from <code>divide</code> when you only care whether it failed." },
-    { t: "list", items: [
-      "<code>divide</code> gives two results: the number, then the error.",
-      "The blank identifier <code>_</code> takes the number and discards it.",
-      "<code>err</code> is the error, which we print."
-    ]},
+    { t: "p", html: "Sometimes a function gives you a value you must receive, and you have no use for it. The blank identifier <code>_</code> holds that slot. Use it for the number from <code>divide</code> when you only care whether the call failed." },
     { t: "code", title: "The blank identifier discards the number", code:
 `_, err := divide(10, 0)
 fmt.Println(err)`,
       out: `division by zero`
     },
+    { t: "list", items: [
+      "<code>divide</code> gives two results: the number, then the error.",
+      "<code>_</code> takes the number and discards it.",
+      "<code>err</code> is the error, which we print."
+    ]},
 
     { t: "h", text: "Named return values" },
-    { t: "p", html: "Named return values are results declared in the signature, so they exist as variables from the start of the function. A naked return, <code>return</code> with no arguments, sends those names. They help on a short function that builds two related numbers, like splitting a total." },
-    { t: "p", html: "<code>(x, y int)</code> declares <code>x</code> and <code>y</code> at the top of the function, both starting at 0. A naked <code>return</code> then sends whatever is in them." },
+    { t: "p", html: "You can name the results on the function line. Those names exist as variables from the start, both starting at 0. Use this on a short function that builds two related values, like swapping two numbers." },
     { t: "code", title: "Named return values, and a naked return", code:
-`func split(sum int) (x, y int) {
-    x = sum * 4 / 9
-    y = sum - x
+`func swap(a, b int) (x, y int) {
+    x = b
+    y = a
     return
 }
 
-fmt.Println(split(9))`,
-      out: `4 5`
+fmt.Println(swap(3, 7))`,
+      out: `7 3`
     },
+    { t: "p", html: "<code>(x, y int)</code> declares <code>x</code> and <code>y</code> at the top of the function. A <code>return</code> with nothing after it, a naked return, sends whatever is in those names. <code>swap(3, 7)</code> puts 7 in <code>x</code> and 3 in <code>y</code>, then prints <code>7 3</code>." },
 
     { t: "h", text: "Variadic functions" },
-    { t: "p", html: "A variadic function takes zero or more arguments of one type. <code>fmt.Println</code> is the one you already use: it prints one value or twenty. Use one when the caller should pass a list without building a slice first: a sum, a log line, a join." },
-    { t: "p", html: "The last parameter is written with a type prefixed by <code>...</code>, such as <code>...int</code>. Inside the function that parameter has type <code>[]int</code>, a slice. If the caller passes no arguments, the slice is <code>nil</code>. The <a href=\"https://go.dev/tour/basics/15\" target=\"_blank\" rel=\"noopener\">Tour of Go</a> and the <a href=\"https://go.dev/ref/spec#Passing_arguments_to_..._parameters\" target=\"_blank\" rel=\"noopener\">language spec</a> both use this word." },
-    { t: "list", items: [
-      "<code>func sum(nums ...int)</code> is a variadic function.",
-      "<code>...</code> may appear only on the last parameter.",
-      "Inside, <code>nums</code> has type <code>[]int</code>.",
-      "<code>sum()</code> passes none, so <code>nums</code> is <code>nil</code> and the total is <code>0</code>.",
-      "<code>sum(1, 2, 3)</code> passes three ints. Inside, <code>nums</code> is <code>[1 2 3]</code>. The total is <code>6</code>."
-    ]},
-    { t: "p", html: "<code>range nums</code> gives two things each time: the place, then the number. This loop only needs the number." },
-    { t: "list", items: [
-      "The blank identifier <code>_</code> discards the place.",
-      "<code>n</code> is the number, which we add to <code>total</code>."
-    ]},
-    { t: "p", html: "If you already have a slice, write it followed by <code>...</code>. Go passes that slice unchanged as the variadic argument. <code>sum(nums...)</code> is the same call as <code>sum(1, 2, 3)</code>, so it also prints <code>6</code>." },
+    { t: "p", html: "A variadic function accepts as many arguments of one type as the caller wants, including none. <code>fmt.Println</code> is the one you already use: it prints one value or twenty. Use one for a sum, a log line, or a join, when the caller should pass the numbers directly." },
+    { t: "p", html: "Write the last input as <code>...int</code>. <code>sum()</code> passes none, so the total is <code>0</code>. <code>sum(1, 2, 3)</code> passes three numbers, so the total is <code>6</code>." },
+    { t: "p", html: "Inside the function those numbers sit in a list called a slice, written <code>[]int</code>. The loop walks that list. <code>range</code> gives the place and the number. <code>_</code> discards the place, and <code>n</code> is added to <code>total</code>." },
+    { t: "p", html: "If the numbers already sit in a slice, write <code>nums...</code> after the name. Go passes that list into <code>sum</code>, so <code>sum(nums...)</code> also prints <code>6</code>." },
     { t: "diagram", id: "func-dots" },
     { t: "code", title: "A variadic function", code:
 `func sum(nums ...int) int {
@@ -146,15 +132,11 @@ fmt.Println(sum(nums...))`,
 6
 6`
     },
-    { t: "note", kind: "tip", title: "There are no default arguments", html: "You cannot write <code>func f(port int = 8080)</code>, and you cannot have two functions with the same name. If some arguments are optional, pass a struct of settings, or use functional options at the end of this lesson." },
+    { t: "note", kind: "tip", title: "Dots only at the end", html: "<code>...</code> goes only on the last input. <code>sum</code> can take none, or three, or a list written <code>nums...</code>." },
 
     { t: "h", text: "Function values" },
-    { t: "p", html: "A function is a value. You can store it in a variable, pass it into another function, and return it. That is useful when the same loop should run a different operation: double each number, or take the absolute value. The type of that value is a function type: the shape of the function. A function written in place, with no name, is a function literal." },
-    { t: "list", items: [
-      "<code>func(int, int) int</code> means a function that takes two ints and returns an int.",
-      "<code>add</code> has that shape, so it can be stored in <code>op</code>.",
-      "Calling <code>op(2, 3)</code> calls <code>add</code> and prints <code>5</code>."
-    ]},
+    { t: "p", html: "A function is a value. You can store it in a variable, pass it into another function, and return it. That is useful when the same steps should run a different operation: add, or multiply." },
+    { t: "p", html: "The type of that value is a function type, written as the inputs and the result: <code>func(int, int) int</code>. Store <code>add</code> in <code>op</code>, then call <code>op(2, 3)</code>." },
     { t: "code", title: "Store a function in a variable", code:
 `func add(a, b int) int { return a + b }
 
@@ -162,36 +144,32 @@ var op func(int, int) int = add
 fmt.Println(op(2, 3))`,
       out: `5`
     },
-    { t: "p", html: "If that function type gets long, give it a name with <code>type</code>. <code>type Op func(int, int) int</code> is a defined type for the same shape. Store <code>add</code> in a variable of type <code>Op</code>, then call it." },
+    { t: "p", html: "If that function type gets long, give it a name with <code>type</code>. <code>type Op func(int, int) int</code> is a name for the same inputs and result. The <code>add</code> from the last snippet still fits." },
     { t: "diagram", id: "func-op" },
-    { t: "code", title: "A name for the shape", code:
+    { t: "code", title: "A name for the function type", code:
 `type Op func(int, int) int
-
-func add(a, b int) int { return a + b }
-
 var op Op = add
 fmt.Println(op(2, 3))`,
       out: `5`
     },
-    { t: "p", html: "A function can also be an argument. <code>apply</code> takes a slice and a function <code>f</code>. It calls <code>f</code> on each number. The function passed here is a function literal, sometimes called an anonymous function: <code>func(n int) int { return n * 2 }</code>. It exists only for this call. <code>for _, n := range nums</code> uses the blank identifier the same way as in <code>sum</code>: discard the index, keep the element." },
+
+    { t: "h", text: "Passing a function" },
+    { t: "p", html: "A function can also be an argument. <code>twice</code> runs another function two times on a number. Store the function you pass in a variable first, so the call stays short." },
     { t: "code", title: "Pass a function in", code:
-`func apply(nums []int, f func(int) int) []int {
-    out := make([]int, 0, len(nums))
-    for _, n := range nums {
-        out = append(out, f(n))
-    }
-    return out
+`func twice(n int, f func(int) int) int {
+    return f(f(n))
 }
 
-doubled := apply([]int{1, 2, 3}, func(n int) int { return n * 2 })
-fmt.Println(doubled)`,
-      out: `[2 4 6]`
+inc := func(n int) int { return n + 1 }
+fmt.Println(twice(2, inc))`,
+      out: `4`
     },
+    { t: "p", html: "<code>inc</code> is a function literal: a function with no name, used only here. <code>twice</code> starts at 2. <code>inc</code> adds 1, then adds 1 again, and prints <code>4</code>. You can also write that function in the call: <code>twice(2, func(n int) int { return n + 1 })</code>." },
 
     { t: "h", text: "Closures" },
-    { t: "p", html: "A <strong>closure</strong> is a function written inside another function that keeps a variable from the outer function. Use one when the inner function needs its own lasting state, like a counter that remembers how many times it has been called. \"Captures by reference\" means it keeps that variable itself. It does not copy the number that was in the variable at the moment the inner function was created." },
-    { t: "p", html: "<code>counter</code> makes <code>count</code>, starting at 0, and returns an inner function. That inner function is what you call later. Each call does <code>count++</code> on the <strong>same</strong> <code>count</code> and returns it. If the closure had copied the value, every call would see 0, add 1, and return 1. It does not. The 1 is still there for the next call, then 2, then 3." },
-    { t: "p", html: "<code>counter()</code> has already returned by the time you call <code>c()</code>. A local variable would normally disappear with that return. This one cannot, because the inner function still uses it, so Go keeps <code>count</code> on the heap for as long as <code>c</code> exists. Call <code>counter()</code> again and you get a new function with a new <code>count</code>. The two counters do not share." },
+    { t: "p", html: "A <strong>closure</strong> is a function written inside another function that still sees a variable from the outer function. Use one when the inner function needs lasting state, like a counter that remembers how many times it has been called." },
+    { t: "p", html: "Look at the type <code>func() int</code> on the first line. It means a function with no inputs that gives an int back. That is what <code>counter</code> returns, and that is what you store in <code>c</code>." },
+    { t: "p", html: "<code>counter</code> makes <code>count</code>, starting at 0, and returns that inner function. Each time you call it, it adds 1 to the same <code>count</code> and gives it back: 1, then 2, then 3. Call <code>counter()</code> again and you get a new function with a new <code>count</code>. The two counters keep their own numbers." },
     { t: "diagram", id: "closure" },
     { t: "code", title: "Same function, two separate counters", code:
 `func counter() func() int {
@@ -214,62 +192,13 @@ fmt.Println(c2())`,
 3
 1`
     },
-    { t: "note", kind: "tip", title: "Loop variables", html: "Before Go 1.22, a <code>for</code> loop had one <code>i</code> reused every pass. A function created inside the loop saw whatever <code>i</code> held at the end, usually the last value. From Go 1.22 each pass has its own <code>i</code>, so the function sees the value from that pass." },
-
-    { t: "h", text: "Functional options" },
-    { t: "p", html: "Optional settings can be a composite literal on a struct, or extra functions that change only the fields you pass. The functional options pattern is useful in a library: you can add a new setting later without breaking every existing call." },
-    { t: "p", html: "The simple way to set a port is a composite literal. You write the fields you care about, then print them. This example needs <code>import \"fmt\"</code> to print." },
-    { t: "diagram", id: "func-option" },
-    { t: "code", title: "Set the port on the struct", code:
-`type Server struct {
-    Host string
-    Port int
-}
-
-s := Server{Host: "localhost", Port: 9000}
-fmt.Println(s.Port)`,
-      out: `9000`
-    },
-    { t: "p", html: "Libraries that need optional settings often use functional options. <code>WithPort(9000)</code> returns a function. <code>NewServer</code> calls each of those functions on the server it is building, and anything you did not pass keeps the default. The extra functions exist so a call that already compiled still compiles when a new setting is added. This example needs <code>import \"fmt\"</code> and <code>import \"time\"</code>, because <code>time.Duration</code> and <code>time.Second</code> live in the <code>time</code> package." },
-    { t: "code", title: "Pass only the settings you want to change", code:
-`package main
-
-import (
-    "fmt"
-    "time"
-)
-
-type Server struct {
-    host    string
-    port    int
-    timeout time.Duration
-}
-
-type Option func(*Server)
-
-func WithPort(p int) Option            { return func(s *Server) { s.port = p } }
-func WithTimeout(d time.Duration) Option { return func(s *Server) { s.timeout = d } }
-
-func NewServer(host string, opts ...Option) *Server {
-    s := &Server{host: host, port: 8080, timeout: 30 * time.Second}
-    for _, opt := range opts { opt(s) }
-    return s
-}
-
-func main() {
-    srv := NewServer("localhost", WithPort(9000), WithTimeout(time.Minute))
-    fmt.Println(srv.host, srv.port, srv.timeout)
-}`,
-      out: `localhost 9000 1m0s`
-    },
-    { t: "note", kind: "tip", title: "One name, one function", html: "A package cannot have two functions named <code>Print</code>. <code>Print</code>, <code>Printf</code>, and <code>Println</code> are three different names. That is how Go avoids guessing which version you meant." },
 
     { t: "h", text: "Write these five programs" },
-    { t: "p", html: "You will write five small programs that use the functions from this lesson." },
-    { t: "p", html: "These use the beginner lessons: variables, types, strings, printing, <code>if</code>, <code>for</code>, <code>switch</code>, <code>defer</code>, and functions. Two of them are small number problems you can solve with a loop and a function. Each one is a small <code>package main</code>. You are done when the program prints what the description says." },
+    { t: "p", html: "Five small programs that use the functions from this lesson." },
+    { t: "p", html: "These use the beginner lessons: variables, types, strings, printing, <code>if</code>, <code>for</code>, <code>switch</code>, <code>defer</code>, and functions. One of them is a small loop. Each one is a small <code>package main</code>. You are done when the program prints what the description says." },
     { t: "list", ordered: true, items: [
       "<strong>Fibonacci.</strong> <code>fib(n int) int</code> uses a loop. <code>fib(1)</code> and <code>fib(2)</code> are <code>1</code>. Each later number is the sum of the two before it. Print <code>n</code> and <code>fib(n)</code> for <code>n</code> from <code>1</code> to <code>10</code>. The last line is <code>10 55</code>.",
-      "<strong>Reverse the digits.</strong> <code>reverse(n int) int</code> turns <code>1234</code> into <code>4321</code>. <code>palindrome(n int) bool</code> is true when <code>n</code> equals <code>reverse(n)</code>. Print <code>reverse(1234)</code>, then whether <code>121</code> and <code>123</code> are palindromes. The prints are <code>4321</code>, <code>true</code>, <code>false</code>.",
+      "<strong>Min and max.</strong> <code>minmax(a, b int) (int, int)</code> gives the smaller number, then the larger. Use <code>if</code>. Print <code>minmax(3, 7)</code> and <code>minmax(9, 2)</code>. The prints are <code>3 7</code> and <code>2 9</code>.",
       "<strong>Grade.</strong> <code>grade(score int) (string, bool)</code> uses a <code>switch</code> with no value after it. <code>90</code> and above is <code>A</code>, <code>80</code> is <code>B</code>, <code>70</code> is <code>C</code>, and anything else is <code>F</code>. The bool is true when the letter is not <code>F</code>. Print the result for <code>95</code>, <code>80</code>, and <code>50</code>.",
       "<strong>Safe divide.</strong> <code>divide(a, b int) (int, error)</code>. When <code>b</code> is <code>0</code>, return <code>0</code> and an error. Print <code>10/2</code> and <code>10/0</code>, including the error text.",
       "<strong>Two counters.</strong> <code>counter()</code> returns a function. That function adds <code>1</code> to its own count and returns the new count. Create two counters. Call the first three times and the second once. The prints are <code>1</code>, <code>2</code>, <code>3</code>, then <code>1</code>."
@@ -279,32 +208,32 @@ func main() {
     "A function has a name, inputs, and a value it can give back. `add(2, 3)` prints `5`.",
     "Two results are written `(value, error)`, with the error last. Check `err` before using the number.",
     "The blank identifier `_` discards a value you are not using. After `divide`, it discards the number. In `for _, n := range nums`, it discards the place.",
-    "A variadic function ends with `...int`. Inside, `nums` is a `[]int`. `nums...` passes a slice as that argument.",
-    "A function value can be stored, passed, and returned. A function type names that shape. A function literal is a function written in place, with no name.",
-    "A closure keeps the outer variable itself. `c()` three times prints 1, then 2, then 3. A second `counter()` has its own count.",
-    "Set optional fields with a composite literal. Functional options let a call that already compiled still compile when a new setting is added."
+    "A variadic function ends with `...int`. Inside, those numbers sit in a slice, `[]int`. `nums...` passes that list into the function.",
+    "A function value can be stored, passed, and returned. A function type names the inputs and result. A function literal is a function written in place, with no name.",
+    "A closure still sees a variable from the outer function. `c()` three times prints 1, then 2, then 3. A second `counter()` has its own count.",
+    "A function can be an argument. Store a function literal in `inc`, then `twice(2, inc)` prints `4`."
   ],
   quiz: [
-    { q: "Idiomatic signature for a function that can fail?",
+    { q: "When a function can fail, which line is the usual way to write the results?",
       options: ["`func f() (error, int)`", "`func f() (int, error)`", "`func f() int` that panics", "`func f(out *int) bool`"],
       answer: 1,
-      explain: "Write the result first and the error last. Panic is for bugs in your own code." },
+      explain: "Write the result first and the error last: `(int, error)`." },
     { q: "Inside `func sum(nums ...int)`, what is `nums`?",
       options: ["An array", "A `[]int` slice", "A pointer to int", "An interface"],
       answer: 1,
-      explain: "Inside a variadic function the last parameter has type `[]int`. With no arguments it is nil." },
-    { q: "`c := counter()` returning a closure over `count := 0`. Calling c() three times yields?",
+      explain: "Inside a variadic function those numbers sit in a slice, `[]int`. With no arguments the list is empty." },
+    { q: "After `c := counter()`, three calls to `c()` print?",
       options: ["1, 1, 1", "1, 2, 3", "0, 1, 2", "Undefined"],
       answer: 1,
-      explain: "Each call to c() adds 1 to the same count and returns it, so three calls give 1, then 2, then 3. The inner function kept the variable. It did not copy 0." },
-    { q: "Go's way to express optional parameters?",
-      options: ["Default parameter values", "Function overloading", "Functional options or a config struct", "Passing nil for unused args"],
+      explain: "Each call to c() adds 1 to the same count, so three calls print 1, then 2, then 3." },
+    { q: "What is a function literal?",
+      options: ["A function stored in a file", "A method on a struct", "A function written in place, with no name", "A function that returns two values"],
       answer: 2,
-      explain: "Neither defaults nor overloading exist. `...Option` closures are the common library pattern." },
-    { q: "`sum(nums...)` where `nums` is a `[]int` does what?",
-      options: ["Passes the slice as a single argument", "Spreads the elements as individual arguments", "Compile error", "Copies into an array"],
+      explain: "`inc := func(n int) int { return n + 1 }` is a function with no name, stored so `twice(2, inc)` can use it." },
+    { q: "What does `sum(nums...)` do when `nums` is a `[]int`?",
+      options: ["Passes the slice as a single argument", "Sends the numbers in that list into `sum`", "Compile error", "Copies into an array"],
       answer: 1,
-      explain: "A slice followed by `...` is passed unchanged as the variadic argument." }
+      explain: "`nums...` sends that list into the variadic function, so `sum(nums...)` prints `6`, the same as `sum(1, 2, 3)`." }
   ]
 },
 
