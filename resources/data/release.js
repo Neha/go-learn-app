@@ -1,8 +1,16 @@
 /* Version and release notes. The footer and #/releases read this file.
    When stage is promoted to main, bump version and add a note at the top. */
 window.RELEASE = {
-  version: "0.1.6",
+  version: "0.1.7",
   notes: [
+    {
+      version: "0.1.7",
+      date: "2026-10-17",
+      items: [
+        "A new beginner lesson explains what OOP is, why it is useful, and how Go supports that style with types, methods, interfaces, and embedding.",
+        "The functions lesson says what each idea is and where it is useful."
+      ]
+    },
     {
       version: "0.1.6",
       date: "2026-10-17",

@@ -16,9 +16,9 @@ about: {
     { t: "h", text: "What's inside" },
     { t: "p", html: "The course is modules, projects, diagrams, cheat sheets, and a glossary. This is the inventory." },
     { t: "list", items: [
-      "<strong>24 modules</strong> across four levels, Beginner, Intermediate, Advanced and Production, each ending with a summary and five questions with explanations.",
+      "<strong>25 modules</strong> across four levels, Beginner, Intermediate, Advanced and Production, each ending with a summary and five questions with explanations.",
       "<strong>13 end-to-end projects</strong> in four tracks (CLI tools, web apps, APIs &amp; services, systems &amp; data), each a full build guide with a tickable milestone plan and an honest definition of done.",
-      "<strong>18 animated diagrams</strong> for the things that are genuinely hard to picture: the compile pipeline, the slice header, escape analysis, interface values, channel rendezvous, the G-M-P scheduler, tri-colour GC.",
+      "<strong>Animated diagrams</strong> for the things that are genuinely hard to picture: the compile pipeline, object-oriented style, the slice header, escape analysis, interface values, channel rendezvous, the G-M-P scheduler, tri-colour GC.",
       "<strong>12 printable cheat sheets</strong>, each downloadable as a real PDF generated in your browser.",
       "<strong>An 80-term glossary</strong> with tooltips wherever a term appears, so nothing is left as unexplained jargon.",
       "{{playground}}<strong>18 runnable programs</strong> you can send straight to the Go Playground."
@@ -57,7 +57,7 @@ about: {
         ["<strong>Projects</strong>", "13 builds", "Prove it, a CLI, a web app, an API, a storage engine, a job queue, a gateway"]
       ]
     },
-    { t: "note", kind: "tip", title: "Already know another language?", html: "Skim modules 1–8 for the Go-specific bits (zero values, <code>:=</code> rules, bytes vs runes, <code>defer</code>, the <code>fmt</code> verbs) and slow down from module 9, slices, interfaces, errors and concurrency are where Go differs most from what you already know, and where experienced developers make the most mistakes." },
+    { t: "note", kind: "tip", title: "Already know another language?", html: "Skim modules 1–9 for the Go-specific bits (zero values, <code>:=</code> rules, bytes vs runes, <code>defer</code>, the <code>fmt</code> verbs) and slow down from module 10, slices, interfaces, errors and concurrency are where Go differs most from what you already know, and where experienced developers make the most mistakes." },
 
     { t: "h", text: "How to work through one module" },
     { t: "p", html: "Do these in order. The quiz at the end passes only when every answer is right." },
@@ -99,7 +99,7 @@ about: {
       "<strong>Weekend deep-dives</strong>, one level per weekend, plus a project. Works well if you already program daily in something else.",
       "<strong>Reference mode</strong>, ignore the order, use search and the glossary, download the cheat sheets. Perfectly valid if you're already shipping Go and want the internals and production modules."
     ]},
-    { t: "note", kind: "warn", title: "The one mistake to avoid", html: "Reading all 24 modules without writing any code feels productive and teaches you very little. You will understand <code>append</code> the day a sub-slice mutation surprises you, not the day you read about it. <strong>Target ratio: one hour reading to two hours typing.</strong> Start project 1 (<em>gostat</em>) as soon as you finish the Beginner level, do not wait until you feel ready." },
+    { t: "note", kind: "warn", title: "The one mistake to avoid", html: "Reading all 25 modules without writing any code feels productive and teaches you very little. You will understand <code>append</code> the day a sub-slice mutation surprises you, not the day you read about it. <strong>Target ratio: one hour reading to two hours typing.</strong> Start project 1 (<em>gostat</em>) as soon as you finish the Beginner level, do not wait until you feel ready." },
 
     { t: "h", text: "What to keep nearby" },
     { t: "p", html: "Keep these open in another tab while you work through a module." },
